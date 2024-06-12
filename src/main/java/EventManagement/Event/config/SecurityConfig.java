@@ -37,6 +37,8 @@ public class SecurityConfig {
                     author.requestMatchers("/api-visitor/**").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/api-feedbacks/**").hasRole("EO");
                     author.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll();
+                    author.requestMatchers(HttpMethod.GET,"/api-events/**").permitAll();
+                    author.requestMatchers(HttpMethod.POST,"/api-events/**").hasRole("EO");
                     author.anyRequest().authenticated();
                 })
                 .addFilterBefore(customFilterSecurity, UsernamePasswordAuthenticationFilter.class)
