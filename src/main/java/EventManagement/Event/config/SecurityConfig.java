@@ -41,6 +41,7 @@ public class SecurityConfig {
                     author.requestMatchers(HttpMethod.POST,"/api-events/**").hasRole("EO");
                     author.requestMatchers(HttpMethod.GET,"/api/v1/vnpay/**").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/api-sponsor/**").permitAll();
+                    author.requestMatchers(HttpMethod.POST,"/api-sponsor/{id}").permitAll();
                     author.anyRequest().authenticated();
                 })
                 .addFilterBefore(customFilterSecurity, UsernamePasswordAuthenticationFilter.class)
