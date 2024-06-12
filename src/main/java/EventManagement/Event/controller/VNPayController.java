@@ -2,6 +2,8 @@ package EventManagement.Event.controller;
 
 import EventManagement.Event.DTO.PaymentRestDTO;
 import EventManagement.Event.config.VnPayConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +22,10 @@ public class VNPayController {
 
     @GetMapping("/pay")
     public ResponseEntity<?> pay() {
+        Logger logger = null;
         try {
+            logger = LoggerFactory.getLogger(VNPayController.class);
+
             long amount = 1000000;
 
             String vnp_TxnRef = VnPayConfig.getRandomNumber(8);
@@ -85,9 +90,10 @@ public class VNPayController {
             return ResponseEntity.status(HttpStatus.OK).body(restDTO);
         } catch (Exception e) {
             // Log the exception for debugging purposes
-            e.printStackTrace();
+            logger.error("Error processing payment", e);
             // Return an error response
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing payment: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error processing payment: " + e.getMessage());
         }
     }
 }
