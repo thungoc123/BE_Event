@@ -1,12 +1,14 @@
 package EventManagement.Event.payload.Request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 public class InsertEventRequest {
@@ -24,9 +26,10 @@ public class InsertEventRequest {
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime time;
     private String client;
-    private int event_schedule_id;
+
     private double price;
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime duration;
+    private String schedules;
 
 }

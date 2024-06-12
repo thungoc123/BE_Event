@@ -3,13 +3,16 @@ package EventManagement.Event.service;
 import EventManagement.Event.entity.Event;
 import EventManagement.Event.entity.EventDetails;
 import EventManagement.Event.entity.EventImage;
+import EventManagement.Event.entity.EventSchedule;
 import EventManagement.Event.payload.Request.InsertEventRequest;
+import EventManagement.Event.payload.Request.InsertScheduleRequest;
 import EventManagement.Event.repository.EventDetailsRepository;
 import EventManagement.Event.repository.EventImageRepository;
 import EventManagement.Event.repository.EventRepository;
 import EventManagement.Event.repository.EventScheduleRepository;
 import EventManagement.Event.service.imp.EventServiceImp;
 import EventManagement.Event.service.imp.FileServiceImp;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +32,8 @@ public class EventService implements EventServiceImp {
     private EventDetailsRepository eventDetailsRepository;
     @Autowired
     private EventScheduleRepository eventScheduleRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
     public List<Event> getAllEvents() {
@@ -43,6 +48,9 @@ public class EventService implements EventServiceImp {
         boolean isCopySuccess = fileServiceimp.saveFile(request.getFile());
 
         if(isCopySuccess){
+            try {
+                List<InsertScheduleRequest> schedules = objectMapper.readValue(request.getSchedules(),
+                        objectMapper.getTypeFactory().constructCollectionType(List.class, InsertScheduleRequest.class));
             Event eventEntity = new Event();
             eventEntity.setDescription(request.getDescription());
             eventEntity.setName(request.getEventName());
@@ -65,6 +73,24 @@ public class EventService implements EventServiceImp {
             eventDetails.setEvent(eventSaved);
             eventDetails.setDuration(request.getDuration());
             eventDetailsRepository.save(eventDetails);
+
+                schedules.forEach(scheduleRequest -> {
+                    EventSchedule eventSchedule = new EventSchedule();
+                    eventSchedule.setDetails(scheduleRequest.getDetails());
+                    eventSchedule.setActor(scheduleRequest.getActor());
+                    eventSchedule.setTime(scheduleRequest.getTime());
+                    eventSchedule.setPlace(scheduleRequest.getPlace());
+                    eventSchedule.setEventDetails(eventDetails);
+                    eventScheduleRepository.save(eventSchedule);
+                });
+
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+
+
 
 
 

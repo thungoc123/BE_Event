@@ -34,10 +34,12 @@ public class EventController {
     }
 
     @PostMapping
-    public ResponseEntity<?> insertEvent(InsertEventRequest request) {
-        eventServiceimp.insertEvent(request);
-        System.out.println("kiem tra a: " + request.getDescription());
-
-        return new ResponseEntity<>("Insert Event", OK);
+    public ResponseEntity<?> insertEvent(@ModelAttribute  InsertEventRequest request) {
+        boolean isInserted = eventService.insertEvent(request);
+        if (isInserted) {
+            return ResponseEntity.ok("Event inserted successfully");
+        } else {
+            return ResponseEntity.status(500).body("Failed to insert event");
+        }
     }
 }
