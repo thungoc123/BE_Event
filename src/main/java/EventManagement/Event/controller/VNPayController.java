@@ -59,6 +59,7 @@ public class VNPayController {
             SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
             timeFormatter.setTimeZone(timeZone);
             String expirationTime = timeFormatter.format(cld.getTime());
+            String locationTakeTime = timeFormatter.format(new Date()); // Current server time
 
             List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
             Collections.sort(fieldNames);
@@ -91,8 +92,9 @@ public class VNPayController {
             restDTO.setStatus("ok");
             restDTO.setMessage("successfully");
             restDTO.setURL(paymentUrl);
-            restDTO.setExpirationTime(expirationTime);
-            restDTO.setExpirationDate(vnp_ExpireDate);
+            restDTO.setExpirationTime(expirationTime); // Set the expiration time in the DTO
+            restDTO.setExpirationDate(vnp_ExpireDate); // Add expiration date
+            restDTO.setTimeZone(timeZone.getID());  // Set the time zone in the DTO
 
             return ResponseEntity.status(HttpStatus.OK).body(restDTO);
         } catch (Exception e) {
