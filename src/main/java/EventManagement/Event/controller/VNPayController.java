@@ -19,11 +19,12 @@ import java.util.*;
 @RequestMapping("/api/v1/vnpay")
 public class VNPayController {
 
-    private static final Logger logger = LoggerFactory.getLogger(VNPayController.class);
-
     @GetMapping("/pay")
     public ResponseEntity<?> pay() {
+        Logger logger = null;
         try {
+            logger = LoggerFactory.getLogger(VNPayController.class);
+
             long amount = 1000000;
 
             String vnp_TxnRef = VnPayConfig.getRandomNumber(8);
@@ -44,8 +45,11 @@ public class VNPayController {
             vnp_Params.put("vnp_OrderType", "other"); // Use the appropriate order type
             vnp_Params.put("vnp_ReturnUrl", returnUrl);
 
-            Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+            // Get current time and expiration time in the correct time zone
+            TimeZone timeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh");
+            Calendar cld = Calendar.getInstance(timeZone);
             SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMddHHmmss");
+            dateFormatter.setTimeZone(timeZone);
             String vnp_CreateDate = dateFormatter.format(cld.getTime());
             vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
 
@@ -54,23 +58,32 @@ public class VNPayController {
             vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 
             SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
+            timeFormatter.setTimeZone(timeZone);
             String expirationTime = timeFormatter.format(cld.getTime());
 
             List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
             Collections.sort(fieldNames);
             StringBuilder hashData = new StringBuilder();
             StringBuilder query = new StringBuilder();
-            for (String fieldName : fieldNames) {
+            Iterator<String> itr = fieldNames.iterator();
+            while (itr.hasNext()) {
+                String fieldName = itr.next();
                 String fieldValue = vnp_Params.get(fieldName);
-                if (fieldValue != null && fieldValue.length() > 0) {
-                    hashData.append(fieldName).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
-                    query.append(URLEncoder.encode(fieldName, StandardCharsets.UTF_8.toString())).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
-                    hashData.append('&');
-                    query.append('&');
+                if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                    hashData.append(fieldName);
+                    hashData.append('=');
+                    hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
+                    query.append(URLEncoder.encode(fieldName, StandardCharsets.UTF_8.toString()));
+                    query.append('=');
+                    query.append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
+                    if (itr.hasNext()) {
+                        query.append('&');
+                        hashData.append('&');
+                    }
                 }
             }
 
-            String queryUrl = query.substring(0, query.length() - 1); // Remove last '&'
+            String queryUrl = query.toString();
             String vnp_SecureHash = VnPayConfig.hmacSHA512(VnPayConfig.secretKey, hashData.toString());
             queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
             String paymentUrl = VnPayConfig.vnp_PayUrl + "?" + queryUrl;
@@ -79,13 +92,14 @@ public class VNPayController {
             restDTO.setStatus("ok");
             restDTO.setMessage("successfully");
             restDTO.setURL(paymentUrl);
-            restDTO.setExpirationTime(expirationTime);
-            restDTO.setExpirationDate(vnp_ExpireDate);
+            restDTO.setExpirationTime(expirationTime); // Set the expiration time in the DTO
 
             return ResponseEntity.status(HttpStatus.OK).body(restDTO);
         } catch (Exception e) {
             // Log the exception for debugging purposes
-            logger.error("Error processing payment", e);
+            if (logger != null) {
+                logger.error("Error processing payment", e);
+            }
             // Return an error response
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error processing payment: " + e.getMessage());
