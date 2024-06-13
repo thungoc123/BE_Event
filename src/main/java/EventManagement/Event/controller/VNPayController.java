@@ -21,10 +21,9 @@ public class VNPayController {
 
     @GetMapping("/pay")
     public ResponseEntity<?> pay() {
-        Logger logger = null;
-        try {
-            logger = LoggerFactory.getLogger(VNPayController.class);
+        Logger logger = LoggerFactory.getLogger(VNPayController.class);
 
+        try {
             long amount = 1000000;
 
             String vnp_TxnRef = VnPayConfig.getRandomNumber(8);
@@ -45,7 +44,7 @@ public class VNPayController {
             vnp_Params.put("vnp_OrderType", "other"); // Use the appropriate order type
             vnp_Params.put("vnp_ReturnUrl", returnUrl);
 
-            // Get current time and expiration time in the correct time zone
+            // Set time zone
             TimeZone timeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh");
             Calendar cld = Calendar.getInstance(timeZone);
             SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -92,14 +91,13 @@ public class VNPayController {
             restDTO.setStatus("ok");
             restDTO.setMessage("successfully");
             restDTO.setURL(paymentUrl);
-            restDTO.setExpirationTime(expirationTime); // Set the expiration time in the DTO
+            restDTO.setExpirationTime(expirationTime);
+            restDTO.setExpirationDate(vnp_ExpireDate);
 
             return ResponseEntity.status(HttpStatus.OK).body(restDTO);
         } catch (Exception e) {
             // Log the exception for debugging purposes
-            if (logger != null) {
-                logger.error("Error processing payment", e);
-            }
+            logger.error("Error processing payment", e);
             // Return an error response
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error processing payment: " + e.getMessage());
