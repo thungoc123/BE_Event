@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/Auth")
-@CrossOrigin(origins = "*")
+@CrossOrigin
+//        (origins = "http://localhost:5173")// CORS cho tất cả các endpoint trong controller này
 public class LoginController {
 //    Spel : Spring boot express language
 //    @PreAuthorize() : Khi gọi link thì kiểm luôn quyền trước khi chạy logic code

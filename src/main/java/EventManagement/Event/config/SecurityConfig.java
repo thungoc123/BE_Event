@@ -32,7 +32,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, CustomFilterSecurity customFilterSecurity) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests( author -> {
-                    author.requestMatchers("/Auth/login").permitAll(); //Tự do không cần đăng nhập
+                    author.requestMatchers("/Auth/**").permitAll(); //Tự do không cần đăng nhập
                     author.requestMatchers("/api-sponsor/**").permitAll(); //Tự do không cần đăng nhập
                     author.requestMatchers("/api-visitor/**").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/api-feedbacks/**").hasRole("EO");
