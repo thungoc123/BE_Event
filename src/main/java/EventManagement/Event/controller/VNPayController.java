@@ -79,7 +79,8 @@ public class VNPayController {
             restDTO.setStatus("ok");
             restDTO.setMessage("successfully");
             restDTO.setURL(paymentUrl);
-            restDTO.setExpirationTime(expirationTime); // Set the expiration time in the DTO
+            restDTO.setExpirationTime(expirationTime);
+            restDTO.setExpirationDate(vnp_ExpireDate);
 
             return ResponseEntity.status(HttpStatus.OK).body(restDTO);
         } catch (Exception e) {

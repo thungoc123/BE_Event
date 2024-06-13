@@ -13,4 +13,6 @@ public class PaymentRestDTO implements Serializable {
     private String message;
     private String URL;
     private String expirationTime;
+    private String expirationDate;
+
 }
