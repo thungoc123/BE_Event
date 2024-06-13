@@ -12,9 +12,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
+
 @RestController
 @RequestMapping("/Auth")
+@CrossOrigin
 public class LoginController {
 //    Spel : Spring boot express language
 //    @PreAuthorize() : Khi gọi link thì kiểm luôn quyền trước khi chạy logic code

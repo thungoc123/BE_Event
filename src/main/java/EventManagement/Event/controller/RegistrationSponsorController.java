@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api-sponsor")
+
 public class RegistrationSponsorController {
     @Autowired
     private SponsorService sponsorService;
