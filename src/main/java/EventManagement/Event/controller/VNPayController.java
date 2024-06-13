@@ -47,13 +47,16 @@ public class VNPayController {
             vnp_Params.put("vnp_ReturnUrl", returnUrl);
 
             Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-            String vnp_CreateDate = formatter.format(cld.getTime());
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMddHHmmss");
+            String vnp_CreateDate = dateFormatter.format(cld.getTime());
             vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
 
             cld.add(Calendar.MINUTE, 30);
-            String vnp_ExpireDate = formatter.format(cld.getTime());
+            String vnp_ExpireDate = dateFormatter.format(cld.getTime());
             vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
+
+            SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
+            String expirationTime = timeFormatter.format(cld.getTime());
 
             List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
             Collections.sort(fieldNames);
@@ -86,6 +89,7 @@ public class VNPayController {
             restDTO.setStatus("ok");
             restDTO.setMessage("successfully");
             restDTO.setURL(paymentUrl);
+            restDTO.setExpirationTime(expirationTime); // Set the expiration time in the DTO
 
             return ResponseEntity.status(HttpStatus.OK).body(restDTO);
         } catch (Exception e) {
