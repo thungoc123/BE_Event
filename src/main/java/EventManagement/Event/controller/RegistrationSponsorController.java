@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api-sponsor")
+
 public class RegistrationSponsorController {
     @Autowired
     private SponsorService sponsorService;
