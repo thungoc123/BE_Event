@@ -34,7 +34,7 @@ public class LoginController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<?> signIn(@RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<?> signIn(@RequestBody String email, @RequestBody String password) {
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password);
         authenticationManager.authenticate(token);
