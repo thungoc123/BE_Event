@@ -1,12 +1,11 @@
 package EventManagement.Event.config;
 
 import javax.crypto.Mac;
-import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.Random;
 
 public class VnPayConfig {
 
@@ -57,7 +56,8 @@ public class VnPayConfig {
         Random rnd = new Random();
         String chars = "0123456789";
         StringBuilder sb = new StringBuilder(len);
-        for (int i = 0; i < len; i++) {
+        for (
+                int i = 0; i < len; i++) {
             sb.append(chars.charAt(rnd.nextInt(chars.length())));
         }
         return sb.toString();

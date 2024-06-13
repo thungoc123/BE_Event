@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -20,12 +19,11 @@ import java.util.*;
 @RequestMapping("/api/v1/vnpay")
 public class VNPayController {
 
+    private static final Logger logger = LoggerFactory.getLogger(VNPayController.class);
+
     @GetMapping("/pay")
     public ResponseEntity<?> pay() {
-        Logger logger = null;
         try {
-            logger = LoggerFactory.getLogger(VNPayController.class);
-
             long amount = 1000000;
 
             String vnp_TxnRef = VnPayConfig.getRandomNumber(8);
@@ -62,25 +60,17 @@ public class VNPayController {
             Collections.sort(fieldNames);
             StringBuilder hashData = new StringBuilder();
             StringBuilder query = new StringBuilder();
-            Iterator<String> itr = fieldNames.iterator();
-            while (itr.hasNext()) {
-                String fieldName = itr.next();
+            for (String fieldName : fieldNames) {
                 String fieldValue = vnp_Params.get(fieldName);
-                if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                    hashData.append(fieldName);
-                    hashData.append('=');
-                    hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
-                    query.append(URLEncoder.encode(fieldName, StandardCharsets.UTF_8.toString()));
-                    query.append('=');
-                    query.append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
-                    if (itr.hasNext()) {
-                        query.append('&');
-                        hashData.append('&');
-                    }
+                if (fieldValue != null && fieldValue.length() > 0) {
+                    hashData.append(fieldName).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
+                    query.append(URLEncoder.encode(fieldName, StandardCharsets.UTF_8.toString())).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
+                    hashData.append('&');
+                    query.append('&');
                 }
             }
 
-            String queryUrl = query.toString();
+            String queryUrl = query.substring(0, query.length() - 1); // Remove last '&'
             String vnp_SecureHash = VnPayConfig.hmacSHA512(VnPayConfig.secretKey, hashData.toString());
             queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
             String paymentUrl = VnPayConfig.vnp_PayUrl + "?" + queryUrl;
