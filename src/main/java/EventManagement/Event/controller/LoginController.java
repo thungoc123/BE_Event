@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/Auth")
-@CrossOrigin
+@CrossOrigin(origins = "*")
 public class LoginController {
 //    Spel : Spring boot express language
 //    @PreAuthorize() : Khi gọi link thì kiểm luôn quyền trước khi chạy logic code
