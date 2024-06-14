@@ -38,7 +38,10 @@ public class SecurityConfig {
                     author.requestMatchers(HttpMethod.POST,"/api-feedbacks/**").hasRole("EO");
                     author.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll();
                     author.requestMatchers(HttpMethod.GET,"/api-events/**").permitAll();
-                    author.requestMatchers(HttpMethod.POST,"/api-events/**").permitAll();
+                    author.requestMatchers(HttpMethod.POST,"/api-events/**").hasRole("EO");
+                    author.requestMatchers(HttpMethod.GET,"/api/v1/vnpay/**").permitAll();
+                    author.requestMatchers(HttpMethod.POST,"/api-sponsor/**").permitAll();
+                    author.requestMatchers(HttpMethod.POST,"/api-sponsor/{id}").permitAll();
                     author.anyRequest().authenticated();
                 })
                 .addFilterBefore(customFilterSecurity, UsernamePasswordAuthenticationFilter.class)
