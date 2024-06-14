@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
@@ -13,20 +14,25 @@ public class EventSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "details")
-    private String details;
+    @Column(name = "name")
+    private String name;
     @Column(name = "actor")
-
     private String actor;
-    @Column(name = "time")
-
-    private LocalTime time;
-    @Column(name = "place")
-    private String place;
+    @Column(name = "date")
+    private LocalDate date;
+    @Column(name = "timestart")
+    private LocalTime timestart;
+    @Column(name = "duration")
+    private LocalTime duration;
+    @Column(name = "event_type")
+    private String eventType;
+    @Column(name = "description")
+    private String description;
+    @Column(name = "location")
+    private String location;
 
     @ManyToOne
     @JsonBackReference
-
-    @JoinColumn(name = "event_details_id")
-    private EventDetails eventDetails;
+    @JoinColumn(name = "event_id")
+    private Event event;
 }
