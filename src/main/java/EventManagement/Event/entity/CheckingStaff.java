@@ -14,4 +14,8 @@ public class CheckingStaff {
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
+
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    private Event event;
 }

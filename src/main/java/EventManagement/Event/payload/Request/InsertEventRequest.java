@@ -13,23 +13,20 @@ import java.util.List;
 @Data
 public class InsertEventRequest {
 
-    private MultipartFile file;
+
     private String eventName;
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime timeStart;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime timeEnd;
-    private String location;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate date;
-    @JsonFormat(pattern = "HH:mm:ss")
-    private LocalTime time;
-    private String client;
-
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime timeOpenSale;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime timeCloseSale;
     private double price;
-    @JsonFormat(pattern = "HH:mm:ss")
-    private LocalTime duration;
-    private String schedules;
+
+
+
 
 }
