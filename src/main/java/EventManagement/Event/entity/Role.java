@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 import java.util.Set;
 
-@Entity
+@Entity(name = "role")
 @Data
 public class Role {
     @Id

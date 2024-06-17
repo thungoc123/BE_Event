@@ -24,10 +24,7 @@ public class EventService implements EventServiceImp {
     @Autowired
     private EventRepository eventRepository;
 
-    @Autowired
-    private EventScheduleRepository eventScheduleRepository;
-    @Autowired
-    private ObjectMapper objectMapper;
+
 
     //list event
     public List<Event> getAllEvents() {
@@ -41,7 +38,7 @@ public class EventService implements EventServiceImp {
 
     //insert event
     @Override
-    public Boolean insertEvent(InsertEventRequest request) {
+    public boolean insertEvent(InsertEventRequest request) {
 
         try {
             Event eventEntity = new Event();

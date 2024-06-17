@@ -15,8 +15,7 @@ public class ScheduleService implements ScheduleServiceImp{
    @Autowired
    private EventRepository eventRepository;
 
-   @Autowired
-   private EventService eventService;
+
    @Autowired
    private EventScheduleRepository eventScheduleRepository;
     @Override
@@ -24,6 +23,7 @@ public class ScheduleService implements ScheduleServiceImp{
 
         int eventId = insertScheduleRequest.getEventId();
        Event event = eventRepository.findById(eventId).orElse(null);
+        System.out.println("Fetching event with ID: " + eventId);
        if (event == null) {
            return false; // neu k tim thay eventid tra ve false
         }

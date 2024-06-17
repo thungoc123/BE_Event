@@ -1,15 +1,14 @@
 package EventManagement.Event.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
-@Entity
+@Data
+@Entity(name = "checking_staff")
 public class CheckingStaff {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Lob
-    private String information;
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)

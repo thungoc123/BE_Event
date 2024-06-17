@@ -5,7 +5,7 @@ import lombok.Data;
 
 import java.util.Set;
 
-@Entity
+@Entity(name = "account")
 @Data
 public class Account {
     @Id
