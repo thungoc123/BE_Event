@@ -22,9 +22,21 @@ spring:
 jwt:
   private-key: CLp/edt3SGCOs7+ByILRGWPR5N168VSi8TG12KBe2/Y=
 
-path:
-  save-file: C:\Users\duy\Desktop\upload
 
+#server:
+#  port: 7979
+#
+#spring:
+#  jpa:
+#    hibernate:
+#      ddl-auto: none
+#  datasource:
+#    url: jdbc:mysql://localhost:3307/EventManagement
+#    username: root
+#    password: admin123
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#jwt:
+#  private-key: CLp/edt3SGCOs7+ByILRGWPR5N168VSi8TG12KBe2/Y=
 #server:
 #  port: 7979
 #

@@ -78,6 +78,7 @@ public class LoginController {
             BaseResponse baseResponse = new BaseResponse();
             baseResponse.setStatusCode(200);
             baseResponse.setData(jwtToken);
+            baseResponse.setRole_name(roleUser);
 
             return ResponseEntity.ok(baseResponse);
         } catch (AuthenticationException e) {
