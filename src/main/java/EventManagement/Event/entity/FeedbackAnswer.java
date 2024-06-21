@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Data
@@ -22,4 +23,55 @@ public class FeedbackAnswer {
     @ManyToOne
     @JoinColumn(name = "feedbackQuestionID", nullable = false)
     private FeedbackQuestion feedbackQuestion;
+
+    @OneToMany(mappedBy = "feedbackAnswer")
+    private Set<VisitorAnswer> visitorAnswers;
+
+    public int getFeedbackAnswerID() {
+        return feedbackAnswerID;
+    }
+
+    public void setFeedbackAnswerID(int feedbackAnswerID) {
+        this.feedbackAnswerID = feedbackAnswerID;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    public LocalDateTime getModifiedAt() {
+        return modifiedAt;
+    }
+
+    public void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
+    }
+
+    public FeedbackQuestion getFeedbackQuestion() {
+        return feedbackQuestion;
+    }
+
+    public void setFeedbackQuestion(FeedbackQuestion feedbackQuestion) {
+        this.feedbackQuestion = feedbackQuestion;
+    }
+
+    public Set<VisitorAnswer> getVisitorAnswers() {
+        return visitorAnswers;
+    }
+
+    public void setVisitorAnswers(Set<VisitorAnswer> visitorAnswers) {
+        this.visitorAnswers = visitorAnswers;
+    }
 }

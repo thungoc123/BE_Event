@@ -1,4 +1,7 @@
 package EventManagement.Event.repository;
 
-public interface StateRepository {
+import EventManagement.Event.entity.State;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface StateRepository extends JpaRepository<State,Integer> {
 }

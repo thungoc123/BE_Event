@@ -35,13 +35,17 @@ public class SecurityConfig {
                     author.requestMatchers("/Auth/**").permitAll(); //Tự do không cần đăng nhập
                     author.requestMatchers("/api-sponsor/**").permitAll(); //Tự do không cần đăng nhập
                     author.requestMatchers("/api-visitor/**").permitAll();
-                    author.requestMatchers(HttpMethod.POST,"/api-feedbacks/**").hasRole("EO");
+
                     author.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll();
                     author.requestMatchers(HttpMethod.GET,"/api-events/**").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/api-events/**").hasRole("EO");
                     author.requestMatchers(HttpMethod.GET,"/api/v1/vnpay/**").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/api-sponsor/**").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/api-sponsor/{id}").permitAll();
+                    author.requestMatchers("/api-feedbacks/**").hasRole("EO");
+                    author.requestMatchers("/api-feedbackanswer/**").hasRole("EO");
+                    author.requestMatchers("/feedbackQuestions/**").hasRole("EO");
+
                     author.anyRequest().authenticated();
                 })
                 .addFilterBefore(customFilterSecurity, UsernamePasswordAuthenticationFilter.class)
