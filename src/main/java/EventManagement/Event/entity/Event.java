@@ -6,7 +6,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity(name = "event")
@@ -40,5 +42,7 @@ public class Event {
     private List<EventSchedule> eventSchedules;
     @OneToMany(mappedBy = "event")
     private List<CheckingStaff> eventCheckingStaffs;
+    @ManyToMany(mappedBy = "events")
+    private Set<SponsorProgram> sponsorPrograms = new HashSet<>();
 
 }

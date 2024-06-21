@@ -1,10 +1,13 @@
 package EventManagement.Event.controller;
 
+import EventManagement.Event.entity.Account;
 import EventManagement.Event.entity.Event;
+import EventManagement.Event.payload.Request.InsertCheckingStaffRequest;
 import EventManagement.Event.payload.Request.InsertEventRequest;
+import EventManagement.Event.payload.Request.InsertImageRequest;
 import EventManagement.Event.payload.Request.InsertScheduleRequest;
-import EventManagement.Event.service.EventService;
-import EventManagement.Event.service.ScheduleService;
+import EventManagement.Event.repository.AccountRepository;
+import EventManagement.Event.service.*;
 import EventManagement.Event.service.imp.EventServiceImp;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 import static org.springframework.http.HttpStatus.OK;
@@ -25,13 +30,23 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/api-events")
 public class EventController {
     @Autowired
-    private EventServiceImp eventServiceimp;
+    private AccountService accountService;
     @Autowired
     private EventService eventService;
     @Autowired
     private ScheduleService scheduleService;
+    @Autowired
+    private AccountRepository accountRepository;
+    @Autowired
+    private CheckingStaffService checkingStaffService;
+    @Autowired
+    private ImageService imageService;
+
 
     @GetMapping
+
+
+
     public List<Event> getAllEvent() {
 
         return eventService.getAllEvents();
@@ -43,34 +58,91 @@ public class EventController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> insertEvent(InsertEventRequest request) {
+    public ResponseEntity<Map<String, String>> insertEvent(InsertEventRequest request) {
         boolean isInserted = eventService.insertEvent(request);
 
+        Map<String, String> response = new HashMap<>();
         if (isInserted) {
-            return ResponseEntity.ok("Event inserted successfully");
+            response.put("message", "Event inserted successfully");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(500).body("Failed to insert event");
+            response.put("message", "Failed to insert event");
+            return ResponseEntity.status(500).body(response);
         }
     }
 
     @PostMapping("/{id}/create-schedule")
-    public ResponseEntity<?> insertSchedule(@PathVariable int id,
+    public ResponseEntity<Map<String, String>> insertSchedule(@PathVariable int id,
                                             InsertScheduleRequest insertScheduleRequest) {
 
         Event event = eventService.getEventById(id);
+        Map<String, String> response = new HashMap<>();
+
         if (event == null) {
-            return ResponseEntity.status(400).body("Please create an event first");
+            response.put("message", "Please create an event first");
+            return ResponseEntity.status(400).body(response);
         }
+
         insertScheduleRequest.setEventId(id);
         boolean isSuccess = scheduleService.insertSchedule(insertScheduleRequest);
+
         if (isSuccess) {
-            return ResponseEntity.ok("Schedule created successfully for event with ID: " + id);
+            response.put("message", "Schedule created successfully for event with ID: " + id);
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(500).body("Failed to create schedule");
+            response.put("message", "Failed to create schedule");
+            return ResponseEntity.status(500).body(response);
         }
     }
+    @PostMapping("/{id}/create-staff")
+    public ResponseEntity<Map<String, String>> insertCheckingStaff(@PathVariable int id,
+
+                                         @RequestBody InsertCheckingStaffRequest insertCheckingStaffRequest
+
+                                         ){
+        Event event = eventService.getEventById(id);
+        String email = insertCheckingStaffRequest.getEmail();
+        insertCheckingStaffRequest.setEventId(id);
+
+        Map<String, String> response = new HashMap<>();
+        if (event == null) {
+            response.put("message", "Please create an event first");
+            return ResponseEntity.status(400).body(response);
+        }
+        Account account = accountService.getAccountByEmail(email);
+        if (account != null) {
+            response.put("message", "Please check email");
+            return ResponseEntity.status(400).body(response);
+        }
+
+        boolean isSuccess = checkingStaffService.insertCheckingStaff(insertCheckingStaffRequest);
+        if (isSuccess) {
+            response.put("message", "Checking staff added successfully.");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "Event not found or role not found.");
+            return ResponseEntity.status(400).body(response);
+        }
+    }
+    @PostMapping("{id}/add-image")
+    public ResponseEntity<Map<String, String>> insertImage(@PathVariable int id,
+                                                           @RequestBody InsertImageRequest insertImageRequest
+                                         ){
+        Event event = eventService.getEventById(id);
+        insertImageRequest.setEventId(id);
+        boolean isSuccess = imageService.insertImage(insertImageRequest);
+        Map<String, String> response = new HashMap<>();
+        if (isSuccess) {
+            response.put("message", "Image added successfully.");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "Failed to add image.");
+            return ResponseEntity.status(400).body(response);
+        }
+
 
     }
+}
 
 
 
