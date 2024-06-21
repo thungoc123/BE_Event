@@ -1,5 +1,6 @@
 package EventManagement.Event.controller;
 
+import EventManagement.Event.DTO.SponsorDTO;
 import EventManagement.Event.entity.Account;
 import EventManagement.Event.entity.Event;
 import EventManagement.Event.payload.Request.InsertCheckingStaffRequest;
@@ -47,9 +48,11 @@ public class EventController {
 
 
 
-    public List<Event> getAllEvent() {
+    public  ResponseEntity<List<Event>> getAllEvents() {
+        List<Event> events = eventService.getAllEvents();
+        return ResponseEntity.ok(events);
 
-        return eventService.getAllEvents();
+
     }
 
     @GetMapping("/{id}")
