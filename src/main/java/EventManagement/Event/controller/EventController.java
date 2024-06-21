@@ -19,7 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 import static org.springframework.http.HttpStatus.OK;
@@ -56,34 +58,44 @@ public class EventController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> insertEvent(InsertEventRequest request) {
+    public ResponseEntity<Map<String, String>> insertEvent(InsertEventRequest request) {
         boolean isInserted = eventService.insertEvent(request);
 
+        Map<String, String> response = new HashMap<>();
         if (isInserted) {
-            return ResponseEntity.ok("Event inserted successfully");
+            response.put("message", "Event inserted successfully");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(500).body("Failed to insert event");
+            response.put("message", "Failed to insert event");
+            return ResponseEntity.status(500).body(response);
         }
     }
 
     @PostMapping("/{id}/create-schedule")
-    public ResponseEntity<?> insertSchedule(@PathVariable int id,
+    public ResponseEntity<Map<String, String>> insertSchedule(@PathVariable int id,
                                             InsertScheduleRequest insertScheduleRequest) {
 
         Event event = eventService.getEventById(id);
+        Map<String, String> response = new HashMap<>();
+
         if (event == null) {
-            return ResponseEntity.status(400).body("Please create an event first");
+            response.put("message", "Please create an event first");
+            return ResponseEntity.status(400).body(response);
         }
+
         insertScheduleRequest.setEventId(id);
         boolean isSuccess = scheduleService.insertSchedule(insertScheduleRequest);
+
         if (isSuccess) {
-            return ResponseEntity.ok("Schedule created successfully for event with ID: " + id);
+            response.put("message", "Schedule created successfully for event with ID: " + id);
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(500).body("Failed to create schedule");
+            response.put("message", "Failed to create schedule");
+            return ResponseEntity.status(500).body(response);
         }
     }
     @PostMapping("/{id}/create-staff")
-    public ResponseEntity<?> insertCheckingStaff(@PathVariable int id,
+    public ResponseEntity<Map<String, String>> insertCheckingStaff(@PathVariable int id,
 
                                          @RequestBody InsertCheckingStaffRequest insertCheckingStaffRequest
 
@@ -92,32 +104,40 @@ public class EventController {
         String email = insertCheckingStaffRequest.getEmail();
         insertCheckingStaffRequest.setEventId(id);
 
+        Map<String, String> response = new HashMap<>();
         if (event == null) {
-            return ResponseEntity.status(400).body("Please create an event first");
+            response.put("message", "Please create an event first");
+            return ResponseEntity.status(400).body(response);
         }
         Account account = accountService.getAccountByEmail(email);
         if (account != null) {
-            return ResponseEntity.status(400).body("Please check email");
+            response.put("message", "Please check email");
+            return ResponseEntity.status(400).body(response);
         }
 
         boolean isSuccess = checkingStaffService.insertCheckingStaff(insertCheckingStaffRequest);
         if (isSuccess) {
-            return ResponseEntity.ok("Checking staff added successfully.");
+            response.put("message", "Checking staff added successfully.");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(400).body("Event not found or role not found.");
+            response.put("message", "Event not found or role not found.");
+            return ResponseEntity.status(400).body(response);
         }
     }
     @PostMapping("{id}/add-image")
-    public ResponseEntity<?> insertImage(@PathVariable int id,
-                                         @RequestBody InsertImageRequest insertImageRequest
+    public ResponseEntity<Map<String, String>> insertImage(@PathVariable int id,
+                                                           @RequestBody InsertImageRequest insertImageRequest
                                          ){
         Event event = eventService.getEventById(id);
         insertImageRequest.setEventId(id);
         boolean isSuccess = imageService.insertImage(insertImageRequest);
+        Map<String, String> response = new HashMap<>();
         if (isSuccess) {
-            return ResponseEntity.ok("Image added successfully.");
+            response.put("message", "Image added successfully.");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(400).body("Failed to add image");
+            response.put("message", "Failed to add image.");
+            return ResponseEntity.status(400).body(response);
         }
 
 

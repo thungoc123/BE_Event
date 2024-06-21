@@ -2,28 +2,33 @@ package EventManagement.Event.service;
 
 import EventManagement.Event.DTO.SponsorDTO;
 import EventManagement.Event.DTO.SponsorRegistrationDto;
-import EventManagement.Event.entity.Account;
-import EventManagement.Event.entity.Role;
-import EventManagement.Event.entity.Sponsor;
+import EventManagement.Event.entity.*;
 import EventManagement.Event.mapper.SponsorMapper;
-import EventManagement.Event.repository.AccountRepository;
-import EventManagement.Event.repository.RoleRepository;
-import EventManagement.Event.repository.SponsorRepository;
+import EventManagement.Event.payload.Request.InsertSponsorProgramRequest;
+import EventManagement.Event.repository.*;
+import EventManagement.Event.service.imp.SponsorProgramImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class SponsorService {
+public class SponsorService implements SponsorProgramImp {
+    @Autowired
+    private SponsorProgramRepository sponsorProgramRepository;
     @Autowired
     private AccountRepository accountRepository;
-
+    @Autowired
+    private EventRepository eventRepository;
     @Autowired
     private SponsorRepository sponsorRepository;
 
+    @Autowired
+    private EventService eventService;
     @Autowired
     private RoleRepository roleRepository;
 
@@ -73,5 +78,41 @@ public class SponsorService {
         } else {
             return Optional.empty();
         }
+    }
+    @Override
+    public boolean insertSponsorProgram(InsertSponsorProgramRequest insertSponsorProgramRequest){
+        if (insertSponsorProgramRequest.getTitle() == null || insertSponsorProgramRequest.getTitle().isEmpty()) {
+            throw new RuntimeException("Sponsor program title cannot be empty");
+        } // check name ko co
+        if (sponsorProgramRepository.existsByTitle(insertSponsorProgramRequest.getTitle())) {
+            throw new RuntimeException("Sponsor program with title '" + insertSponsorProgramRequest.getTitle() + "' already exists");
+        } // check title trung
+        SponsorProgram sponsorProgram = new SponsorProgram();
+        sponsorProgram.setTitle(insertSponsorProgramRequest.getTitle());
+        sponsorProgram.setLink(insertSponsorProgramRequest.getWebsiteLink());
+        sponsorProgram.setDescription(insertSponsorProgramRequest.getDescription());
+        sponsorProgram.setThumbnail(insertSponsorProgramRequest.getThumbnail());
+        sponsorProgram.setLocation(insertSponsorProgramRequest.getLocation());
+
+        try {
+            SponsorProgram.State state = SponsorProgram.State.valueOf(insertSponsorProgramRequest.getState().toUpperCase());
+            sponsorProgram.setState(state);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid state value: " + insertSponsorProgramRequest.getState());
+        }
+        List<Event> events = new ArrayList<>();
+        for (Integer  eventId : insertSponsorProgramRequest.getEventIds()){
+            Event event = eventRepository.findById(eventId).orElse(null);
+            if (event == null) {
+                throw new RuntimeException("Event not found");
+            }
+            events.add(event);
+
+
+
+        }
+        sponsorProgram.setEvents(new HashSet<>(events));
+        sponsorProgramRepository.save(sponsorProgram);
+        return true;
     }
 }
