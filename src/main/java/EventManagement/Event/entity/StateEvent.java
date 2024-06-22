@@ -1,9 +1,6 @@
 package EventManagement.Event.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -11,7 +8,9 @@ import lombok.Data;
 public class StateEvent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private int id;
+    @Column(name = "name")
     private String name;
 
 
