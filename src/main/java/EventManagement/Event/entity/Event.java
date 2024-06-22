@@ -35,9 +35,9 @@ public class Event {
     @Column(name = "timeclosesale")
     private LocalDateTime timeclosesale;
 
-//    @ManyToOne
-//    @JoinColumn(name = "state_id")
-//    private State state;
+    @ManyToOne
+    @JoinColumn(name = "state_event_id")
+    private StateEvent stateEvent;
     @OneToMany(mappedBy = "event")
     @JsonManagedReference
     private List<EventImage> eventImages;
