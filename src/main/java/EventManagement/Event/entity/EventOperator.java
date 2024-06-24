@@ -1,8 +1,13 @@
 package EventManagement.Event.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.Data;
 
-@Entity
+import java.util.List;
+
+@Data
+@Entity(name = "event_operator")
 public class EventOperator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

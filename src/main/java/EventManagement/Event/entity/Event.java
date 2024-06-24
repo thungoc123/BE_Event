@@ -36,6 +36,11 @@ public class Event {
     private LocalDateTime timeclosesale;
 
     @ManyToOne
+    @JoinColumn(name = "account_id")
+    @JsonBackReference
+    private Account account;
+
+    @ManyToOne
     @JoinColumn(name = "state_event_id")
     private StateEvent stateEvent;
     @OneToMany(mappedBy = "event")
@@ -49,5 +54,6 @@ public class Event {
     private List<CheckingStaff> eventCheckingStaffs;
     @ManyToMany(mappedBy = "events")
     private Set<SponsorProgram> sponsorPrograms = new HashSet<>();
+
 
 }

@@ -38,7 +38,7 @@ public class SecurityConfig {
 
                     author.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll();
                     author.requestMatchers("/api-events/**").permitAll();
-                 //   author.requestMatchers(HttpMethod.POST,"/api-events/**").hasRole("EO");
+                    author.requestMatchers(HttpMethod.POST,"/api-events/**").hasRole("EO");
                     author.requestMatchers(HttpMethod.GET,"/api/v1/vnpay/**").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/api-sponsor/**").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/api-sponsor/{id}").permitAll();

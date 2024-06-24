@@ -57,7 +57,7 @@ public class EventController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Map<String, String>> insertEvent(InsertEventRequest request) {
+    public ResponseEntity<Map<String, String>> insertEvent(@RequestBody InsertEventRequest request) {
         boolean isInserted = eventService.insertEvent(request);
 
         Map<String, String> response = new HashMap<>();

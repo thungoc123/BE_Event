@@ -69,10 +69,11 @@ public class LoginController {
 
             // Xác thực thành công, lấy thông tin tài khoản
             Account account = feedbackService.findByEmail(email);
+            String accountId = String.valueOf(account.getId());
             String roleUser = account.getRole().getRoleName();
 
             // Tạo mã JWT
-            String jwtToken = jwtHelper.generateToken(roleUser);
+            String jwtToken = jwtHelper.generateToken(accountId, roleUser);
 
             // Chuẩn bị phản hồi thành công
             BaseResponse baseResponse = new BaseResponse();

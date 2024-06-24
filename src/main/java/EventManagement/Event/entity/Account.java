@@ -1,8 +1,10 @@
 package EventManagement.Event.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity(name = "account")
@@ -33,6 +35,11 @@ public class Account {
 
     @OneToMany(mappedBy = "account")
     private Set<CheckingStaff> checkingStaffs;
+
+
+    @OneToMany(mappedBy = "account")
+    @JsonManagedReference
+    private List<Event> events;
 
     public int getId() {
         return id;
