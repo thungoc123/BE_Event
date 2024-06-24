@@ -5,15 +5,13 @@ import EventManagement.Event.DTO.SponsorRegistrationDto;
 import EventManagement.Event.entity.*;
 import EventManagement.Event.mapper.SponsorMapper;
 import EventManagement.Event.payload.Request.InsertSponsorProgramRequest;
+import EventManagement.Event.payload.Request.InsertSponsorRequest;
 import EventManagement.Event.repository.*;
 import EventManagement.Event.service.imp.SponsorProgramImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,8 +25,6 @@ public class SponsorService implements SponsorProgramImp {
     @Autowired
     private SponsorRepository sponsorRepository;
 
-    @Autowired
-    private EventService eventService;
     @Autowired
     private RoleRepository roleRepository;
 
@@ -114,5 +110,36 @@ public class SponsorService implements SponsorProgramImp {
         sponsorProgram.setEvents(new HashSet<>(events));
         sponsorProgramRepository.save(sponsorProgram);
         return true;
+    }
+    @Override
+    public boolean insertSponsor(InsertSponsorRequest insertSponsorRequest) {
+
+        try {
+            int eventId = insertSponsorRequest.getEventId();
+            Event event = eventRepository.findById(eventId)
+                    .orElseThrow(() -> new NoSuchElementException("Event not found for ID: " + eventId));
+
+            String email = insertSponsorRequest.getEmail();
+            Sponsor sponsor = sponsorRepository.findByfptStaffEmail(email);
+            if (sponsor == null) {
+                throw new RuntimeException("Account not found");
+            }
+            if (event.getSponsor() != null) {
+                throw new RuntimeException("Event already has a sponsor");
+            }
+
+            event.setSponsor(sponsor);
+            eventRepository.save(event);
+
+            return true;
+        } catch (NoSuchElementException e) {
+            System.out.println("Exception occurred: " + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            System.out.println("Unexpected error occurred: " + e.getMessage());
+            return false;
+        }
+
+
     }
 }

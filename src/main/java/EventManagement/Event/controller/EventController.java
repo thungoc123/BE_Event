@@ -3,11 +3,9 @@ package EventManagement.Event.controller;
 import EventManagement.Event.DTO.SponsorDTO;
 import EventManagement.Event.entity.Account;
 import EventManagement.Event.entity.Event;
-import EventManagement.Event.payload.Request.InsertCheckingStaffRequest;
-import EventManagement.Event.payload.Request.InsertEventRequest;
-import EventManagement.Event.payload.Request.InsertImageRequest;
-import EventManagement.Event.payload.Request.InsertScheduleRequest;
+import EventManagement.Event.payload.Request.*;
 import EventManagement.Event.repository.AccountRepository;
+import EventManagement.Event.repository.SponsorRepository;
 import EventManagement.Event.service.*;
 import EventManagement.Event.service.imp.EventServiceImp;
 import jakarta.servlet.http.HttpSession;
@@ -31,6 +29,8 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/api-events")
 public class EventController {
     @Autowired
+    private SponsorService sponsorService;
+    @Autowired
     private AccountService accountService;
     @Autowired
     private EventService eventService;
@@ -42,6 +42,7 @@ public class EventController {
     private CheckingStaffService checkingStaffService;
     @Autowired
     private ImageService imageService;
+
 
 
     @GetMapping
@@ -140,6 +141,22 @@ public class EventController {
         }
 
 
+    }
+    @PostMapping("{id}/add-sponsor")
+    public ResponseEntity<Map<String, String>> insertSponsor(@PathVariable int id,
+                                                           @RequestBody InsertSponsorRequest insertSponsorRequest
+    ){
+        Event event = eventService.getEventById(id);
+        insertSponsorRequest.setEventId(id);
+        boolean isSuccess = sponsorService.insertSponsor(insertSponsorRequest);
+        Map<String, String> response = new HashMap<>();
+        if (isSuccess) {
+            response.put("message", "Sponsor added successfully.");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "Event already has a sponsor.");
+            return ResponseEntity.status(400).body(response);
+        }
     }
 }
 
