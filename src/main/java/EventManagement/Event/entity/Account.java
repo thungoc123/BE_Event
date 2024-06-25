@@ -37,7 +37,9 @@ public class Account {
     @OneToMany(mappedBy = "account")
     private Set<CheckingStaff> checkingStaffs;
 
-
+    @OneToMany(mappedBy = "account")
+    @JsonManagedReference
+    private List<SponsorProgram> sponsorPrograms;
     @OneToMany(mappedBy = "account")
     @JsonManagedReference
     private List<Event> events;

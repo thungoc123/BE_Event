@@ -85,14 +85,14 @@ public class SponsorService implements SponsorProgramImp {
             throw new RuntimeException("Sponsor program with title '" + insertSponsorProgramRequest.getTitle() + "' already exists");
         } // check title trung
 
-            int sponsorId = insertSponsorProgramRequest.getSponsorId();
+            int accountId = insertSponsorProgramRequest.getAccountId();
 
-            Sponsor sponsor = sponsorRepository.findById(sponsorId);
-            if (sponsor == null) {
-                throw new RuntimeException("Can't find sponsorId: " + insertSponsorProgramRequest.getSponsorId());
+            Account account = accountRepository.findById(accountId);
+            if (account == null) {
+                throw new RuntimeException("Can't find accountId: " + insertSponsorProgramRequest.getAccountId());
             }
             SponsorProgram sponsorProgram = new SponsorProgram();
-            sponsorProgram.setSponsor(sponsor);
+            sponsorProgram.setAccount(account);
             sponsorProgram.setTitle(insertSponsorProgramRequest.getTitle());
             sponsorProgram.setLink(insertSponsorProgramRequest.getWebsiteLink());
             sponsorProgram.setDescription(insertSponsorProgramRequest.getDescription());

@@ -36,7 +36,7 @@ public class SponsorController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
     @PostMapping("/create-program")
-    public ResponseEntity<?> createProgram(@RequestBody InsertSponsorProgramRequest insertSponsorProgramRequest){
+    public ResponseEntity<Map<String, String>> createProgram(@RequestBody InsertSponsorProgramRequest insertSponsorProgramRequest){
         boolean isSuccess = sponsorService.insertSponsorProgram(insertSponsorProgramRequest);
         Map<String, String> response = new HashMap<>();
         if (isSuccess) {

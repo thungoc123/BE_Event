@@ -31,9 +31,9 @@ import java.util.Set;
     UNPUBLISH
  }
  @ManyToOne
- @JoinColumn(name = "sponsor_id")
+ @JoinColumn(name = "account_id")
  @JsonBackReference
- private Sponsor sponsor;
+ private Account account;
     @ManyToMany
     @JoinTable(
          name = "sponsor_program_event",

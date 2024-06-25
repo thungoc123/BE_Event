@@ -23,9 +23,7 @@ public class Sponsor {
 
     @OneToMany(mappedBy = "sponsor")
     private List<Event> events;
-    @OneToMany(mappedBy = "sponsor")
-    @JsonManagedReference
-    private List<SponsorProgram> sponsorPrograms;
+
 
 
     @ManyToOne
