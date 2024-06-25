@@ -1,8 +1,11 @@
 package EventManagement.Event.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
-@Entity
+import java.util.List;
+@Data
+@Entity(name = "sponsor")
 public class Sponsor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,6 +19,10 @@ public class Sponsor {
     private String companyID;
     @Column(name = "fpt_staff_email")
     private String fptStaffEmail;
+
+    @OneToMany(mappedBy = "sponsor")
+    private List<Event> events;
+
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)

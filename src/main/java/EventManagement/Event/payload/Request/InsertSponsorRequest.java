@@ -1,5 +1,9 @@
 package EventManagement.Event.payload.Request;
 
-public class InsertSponsorRequest {
+import lombok.Data;
 
+@Data
+public class InsertSponsorRequest {
+      private String email;
+      private int eventId;
 }

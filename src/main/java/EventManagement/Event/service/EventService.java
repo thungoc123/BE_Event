@@ -1,11 +1,9 @@
 package EventManagement.Event.service;
 
-import EventManagement.Event.entity.Account;
-import EventManagement.Event.entity.Event;
-import EventManagement.Event.entity.EventImage;
-import EventManagement.Event.entity.EventSchedule;
+import EventManagement.Event.entity.*;
 import EventManagement.Event.payload.Request.InsertEventRequest;
 import EventManagement.Event.payload.Request.InsertScheduleRequest;
+import EventManagement.Event.payload.Request.InsertSponsorRequest;
 import EventManagement.Event.repository.*;
 import EventManagement.Event.service.imp.EventServiceImp;
 //import EventManagement.Event.service.imp.FileServiceImp;
@@ -15,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class EventService implements EventServiceImp {
@@ -27,6 +26,8 @@ public class EventService implements EventServiceImp {
     private AccountService accountService;
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private SponsorService sponsorService;
 
 
     //list event
@@ -67,4 +68,8 @@ public class EventService implements EventServiceImp {
             return false; // Trả về false nếu có lỗi xảy ra
         }
     }
-}
+
+
+
+    }
+
