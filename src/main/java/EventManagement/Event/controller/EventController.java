@@ -148,7 +148,7 @@ public class EventController {
     ){
         Event event = eventService.getEventById(id);
         insertSponsorRequest.setEventId(id);
-        boolean isSuccess = eventService.insertSponsor(insertSponsorRequest);
+        boolean isSuccess = sponsorService.insertSponsor(insertSponsorRequest);
         Map<String, String> response = new HashMap<>();
         if (isSuccess) {
             response.put("message", "Sponsor added successfully.");

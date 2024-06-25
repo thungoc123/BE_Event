@@ -75,8 +75,9 @@ public class SponsorService implements SponsorProgramImp {
             return Optional.empty();
         }
     }
+
     @Override
-    public boolean insertSponsorProgram(InsertSponsorProgramRequest insertSponsorProgramRequest){
+    public boolean insertSponsorProgram(InsertSponsorProgramRequest insertSponsorProgramRequest) {
         if (insertSponsorProgramRequest.getTitle() == null || insertSponsorProgramRequest.getTitle().isEmpty()) {
             throw new RuntimeException("Sponsor program title cannot be empty");
         } // check name ko co
@@ -97,7 +98,7 @@ public class SponsorService implements SponsorProgramImp {
             throw new RuntimeException("Invalid state value: " + insertSponsorProgramRequest.getState());
         }
         List<Event> events = new ArrayList<>();
-        for (Integer  eventId : insertSponsorProgramRequest.getEventIds()){
+        for (Integer eventId : insertSponsorProgramRequest.getEventIds()) {
             Event event = eventRepository.findById(eventId).orElse(null);
             if (event == null) {
                 throw new RuntimeException("Event not found");
@@ -105,41 +106,39 @@ public class SponsorService implements SponsorProgramImp {
             events.add(event);
 
 
-
         }
         sponsorProgram.setEvents(new HashSet<>(events));
         sponsorProgramRepository.save(sponsorProgram);
         return true;
     }
-//    @Override
-//    public boolean insertSponsor(InsertSponsorRequest insertSponsorRequest) {
-//
-//        try {
-//            int eventId = insertSponsorRequest.getEventId();
-//            Event event = eventRepository.findById(eventId)
-//                    .orElseThrow(() -> new NoSuchElementException("Event not found for ID: " + eventId));
-//
-//            String email = insertSponsorRequest.getEmail();
-//            Sponsor sponsor = sponsorRepository.findByfptStaffEmail(email);
-//            if (sponsor == null) {
-//                throw new RuntimeException("Account not found");
-//            }
-//            if (event.getSponsor() != null) {
-//                throw new RuntimeException("Event already has a sponsor");
-//            }
-//
-//            event.setSponsor(sponsor);
-//            eventRepository.save(event);
-//
-//            return true;
-//        } catch (NoSuchElementException e) {
-//            System.out.println("Exception occurred: " + e.getMessage());
-//            return false;
-//        } catch (Exception e) {
-//            System.out.println("Unexpected error occurred: " + e.getMessage());
-//            return false;
-//        }
-//
-//
-//    }
+
+    @Override
+    public boolean insertSponsor(InsertSponsorRequest insertSponsorRequest) {
+
+        try {
+            int eventId = insertSponsorRequest.getEventId();
+            Event event = eventRepository.findById(eventId)
+                    .orElseThrow(() -> new NoSuchElementException("Event not found for ID: " + eventId));
+
+            String email = insertSponsorRequest.getEmail();
+            Sponsor sponsor = sponsorRepository.findByfptStaffEmail(email);
+            if (sponsor == null) {
+                throw new RuntimeException("Account not found");
+            }
+            if (event.getSponsor() != null) {
+                throw new RuntimeException("Event already has a sponsor");
+            }
+
+            event.setSponsor(sponsor);
+            eventRepository.save(event);
+
+            return true;
+        } catch (NoSuchElementException e) {
+            System.out.println("Exception occurred: " + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            System.out.println("Unexpected error occurred: " + e.getMessage());
+            return false;
+        }
+    }
 }

@@ -5,7 +5,7 @@ import EventManagement.Event.payload.Request.InsertSponsorRequest;
 
 public interface EventServiceImp {
     boolean insertEvent(InsertEventRequest request);
-    boolean insertSponsor(InsertSponsorRequest insertSponsorRequest);
+
 
 }
 
