@@ -1,5 +1,6 @@
 package EventManagement.Event.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -29,6 +30,10 @@ import java.util.Set;
     PUBLISH,
     UNPUBLISH
  }
+ @ManyToOne
+ @JoinColumn(name = "sponsor_id")
+ @JsonBackReference
+ private Sponsor sponsor;
     @ManyToMany
     @JoinTable(
          name = "sponsor_program_event",

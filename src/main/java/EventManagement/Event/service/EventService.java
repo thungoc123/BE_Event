@@ -23,11 +23,10 @@ public class EventService implements EventServiceImp {
     @Autowired
     private EventRepository eventRepository;
     @Autowired
-    private AccountService accountService;
+    private StateEventRepository stateEventRepository;
     @Autowired
     private AccountRepository accountRepository;
-    @Autowired
-    private SponsorRepository sponsorRepository;
+
 
 
     //list event
@@ -51,8 +50,13 @@ public class EventService implements EventServiceImp {
             if (account == null) {
                 throw new RuntimeException("Can't find accountId: " + request.getAccountId());
             }
+            StateEvent stateEvent = stateEventRepository.findById(1);
+            if (stateEvent == null) {
+                throw new RuntimeException("Can't find StateEvent with id: " + 1);
+            }
             Event eventEntity = new Event();
             eventEntity.setAccount(account);
+            eventEntity.setStateEvent(stateEvent);
             eventEntity.setDescription(request.getDescription());
             eventEntity.setName(request.getEventName());
             eventEntity.setTimestart(request.getTimeStart());

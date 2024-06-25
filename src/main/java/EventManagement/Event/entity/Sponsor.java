@@ -1,5 +1,6 @@
 package EventManagement.Event.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -22,6 +23,9 @@ public class Sponsor {
 
     @OneToMany(mappedBy = "sponsor")
     private List<Event> events;
+    @OneToMany(mappedBy = "sponsor")
+    @JsonManagedReference
+    private List<SponsorProgram> sponsorPrograms;
 
 
     @ManyToOne

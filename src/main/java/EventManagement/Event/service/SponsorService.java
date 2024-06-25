@@ -84,33 +84,43 @@ public class SponsorService implements SponsorProgramImp {
         if (sponsorProgramRepository.existsByTitle(insertSponsorProgramRequest.getTitle())) {
             throw new RuntimeException("Sponsor program with title '" + insertSponsorProgramRequest.getTitle() + "' already exists");
         } // check title trung
-        SponsorProgram sponsorProgram = new SponsorProgram();
-        sponsorProgram.setTitle(insertSponsorProgramRequest.getTitle());
-        sponsorProgram.setLink(insertSponsorProgramRequest.getWebsiteLink());
-        sponsorProgram.setDescription(insertSponsorProgramRequest.getDescription());
-        sponsorProgram.setThumbnail(insertSponsorProgramRequest.getThumbnail());
-        sponsorProgram.setLocation(insertSponsorProgramRequest.getLocation());
 
-        try {
-            SponsorProgram.State state = SponsorProgram.State.valueOf(insertSponsorProgramRequest.getState().toUpperCase());
-            sponsorProgram.setState(state);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid state value: " + insertSponsorProgramRequest.getState());
-        }
-        List<Event> events = new ArrayList<>();
-        for (Integer eventId : insertSponsorProgramRequest.getEventIds()) {
-            Event event = eventRepository.findById(eventId).orElse(null);
-            if (event == null) {
-                throw new RuntimeException("Event not found");
+            int sponsorId = insertSponsorProgramRequest.getSponsorId();
+
+            Sponsor sponsor = sponsorRepository.findById(sponsorId);
+            if (sponsor == null) {
+                throw new RuntimeException("Can't find sponsorId: " + insertSponsorProgramRequest.getSponsorId());
             }
-            events.add(event);
+            SponsorProgram sponsorProgram = new SponsorProgram();
+            sponsorProgram.setSponsor(sponsor);
+            sponsorProgram.setTitle(insertSponsorProgramRequest.getTitle());
+            sponsorProgram.setLink(insertSponsorProgramRequest.getWebsiteLink());
+            sponsorProgram.setDescription(insertSponsorProgramRequest.getDescription());
+            sponsorProgram.setThumbnail(insertSponsorProgramRequest.getThumbnail());
+            sponsorProgram.setLocation(insertSponsorProgramRequest.getLocation());
 
 
+            try {
+                SponsorProgram.State state = SponsorProgram.State.valueOf(insertSponsorProgramRequest.getState().toUpperCase());
+                sponsorProgram.setState(state);
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Invalid state value: " + insertSponsorProgramRequest.getState());
+            }
+            List<Event> events = new ArrayList<>();
+            for (Integer eventId : insertSponsorProgramRequest.getEventIds()) {
+                Event event = eventRepository.findById(eventId).orElse(null);
+                if (event == null) {
+                    throw new RuntimeException("Event not found");
+                }
+                events.add(event);
+
+
+            }
+            sponsorProgram.setEvents(new HashSet<>(events));
+            sponsorProgramRepository.save(sponsorProgram);
+            return true;
         }
-        sponsorProgram.setEvents(new HashSet<>(events));
-        sponsorProgramRepository.save(sponsorProgram);
-        return true;
-    }
+
 
     @Override
     public boolean insertSponsor(InsertSponsorRequest insertSponsorRequest) {
