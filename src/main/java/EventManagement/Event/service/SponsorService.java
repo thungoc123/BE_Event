@@ -111,35 +111,35 @@ public class SponsorService implements SponsorProgramImp {
         sponsorProgramRepository.save(sponsorProgram);
         return true;
     }
-    @Override
-    public boolean insertSponsor(InsertSponsorRequest insertSponsorRequest) {
-
-        try {
-            int eventId = insertSponsorRequest.getEventId();
-            Event event = eventRepository.findById(eventId)
-                    .orElseThrow(() -> new NoSuchElementException("Event not found for ID: " + eventId));
-
-            String email = insertSponsorRequest.getEmail();
-            Sponsor sponsor = sponsorRepository.findByfptStaffEmail(email);
-            if (sponsor == null) {
-                throw new RuntimeException("Account not found");
-            }
-            if (event.getSponsor() != null) {
-                throw new RuntimeException("Event already has a sponsor");
-            }
-
-            event.setSponsor(sponsor);
-            eventRepository.save(event);
-
-            return true;
-        } catch (NoSuchElementException e) {
-            System.out.println("Exception occurred: " + e.getMessage());
-            return false;
-        } catch (Exception e) {
-            System.out.println("Unexpected error occurred: " + e.getMessage());
-            return false;
-        }
-
-
-    }
+//    @Override
+//    public boolean insertSponsor(InsertSponsorRequest insertSponsorRequest) {
+//
+//        try {
+//            int eventId = insertSponsorRequest.getEventId();
+//            Event event = eventRepository.findById(eventId)
+//                    .orElseThrow(() -> new NoSuchElementException("Event not found for ID: " + eventId));
+//
+//            String email = insertSponsorRequest.getEmail();
+//            Sponsor sponsor = sponsorRepository.findByfptStaffEmail(email);
+//            if (sponsor == null) {
+//                throw new RuntimeException("Account not found");
+//            }
+//            if (event.getSponsor() != null) {
+//                throw new RuntimeException("Event already has a sponsor");
+//            }
+//
+//            event.setSponsor(sponsor);
+//            eventRepository.save(event);
+//
+//            return true;
+//        } catch (NoSuchElementException e) {
+//            System.out.println("Exception occurred: " + e.getMessage());
+//            return false;
+//        } catch (Exception e) {
+//            System.out.println("Unexpected error occurred: " + e.getMessage());
+//            return false;
+//        }
+//
+//
+//    }
 }
