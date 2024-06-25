@@ -142,7 +142,7 @@ public class EventController {
 
 
     }
-    @PostMapping("{id}/add-sponsor")
+    @PostMapping("{id}/insert-sponsor")
     public ResponseEntity<Map<String, String>> insertSponsor(@PathVariable int id,
                                                            @RequestBody InsertSponsorRequest insertSponsorRequest
     ){
