@@ -14,4 +14,5 @@ public class InsertSponsorProgramRequest {
     private String description;
     private String state;
     private List<Integer> eventIds;
+    private int accountId;
 }

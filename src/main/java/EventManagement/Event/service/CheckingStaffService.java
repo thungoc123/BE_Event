@@ -78,6 +78,35 @@ public class CheckingStaffService implements CheckingStaffImp {
         }
         return password.toString();
     }
+    @Override
+    public boolean deleteCheckingStaff(int checkingStaffId, int eventId){
+        try {
+            Event event = eventRepository.findById(eventId).orElse(null);
+            if (event == null) {
+                throw new RuntimeException("Can't find eventId: " + eventId);
+            }
+
+
+            CheckingStaff checkingStaff = checkingStaffRepository.findById(checkingStaffId).orElse(null);
+            if (checkingStaff == null) {
+                System.out.println("CheckingStaff with ID " + checkingStaffId + " not found.");
+                return false;
+            }
+            if (checkingStaff.getEvent().getId() != eventId) {
+                System.out.println("CheckingStaff with ID " + checkingStaffId + " does not belong to event with ID " + eventId);
+                return false;
+            }
+            Account account = checkingStaff.getAccount();
+            checkingStaffRepository.delete(checkingStaff);
+            accountRepository.delete(account);
+
+            System.out.println("CheckingStaff with ID " + checkingStaffId + " and associated account deleted successfully.");
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 
 }

@@ -5,15 +5,15 @@ import EventManagement.Event.DTO.SponsorRegistrationDto;
 import EventManagement.Event.entity.*;
 import EventManagement.Event.mapper.SponsorMapper;
 import EventManagement.Event.payload.Request.InsertSponsorProgramRequest;
+import EventManagement.Event.payload.Request.InsertSponsorRequest;
 import EventManagement.Event.repository.*;
 import EventManagement.Event.service.imp.SponsorProgramImp;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,9 +28,15 @@ public class SponsorService implements SponsorProgramImp {
     private SponsorRepository sponsorRepository;
 
     @Autowired
-    private EventService eventService;
-    @Autowired
     private RoleRepository roleRepository;
+
+    public List<SponsorProgram> getProgramsByAccountId(HttpServletRequest request) {
+        String accountId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return sponsorProgramRepository.findByAccountId(Integer.parseInt(accountId));
+
+
+    }
 
     public void registerSponsor(SponsorRegistrationDto sponsorDto) throws Exception {
         if (accountRepository.existsByEmail(sponsorDto.getEmail())) {
@@ -79,40 +85,133 @@ public class SponsorService implements SponsorProgramImp {
             return Optional.empty();
         }
     }
+
     @Override
-    public boolean insertSponsorProgram(InsertSponsorProgramRequest insertSponsorProgramRequest){
+    public boolean insertSponsorProgram(InsertSponsorProgramRequest insertSponsorProgramRequest) {
         if (insertSponsorProgramRequest.getTitle() == null || insertSponsorProgramRequest.getTitle().isEmpty()) {
             throw new RuntimeException("Sponsor program title cannot be empty");
         } // check name ko co
         if (sponsorProgramRepository.existsByTitle(insertSponsorProgramRequest.getTitle())) {
             throw new RuntimeException("Sponsor program with title '" + insertSponsorProgramRequest.getTitle() + "' already exists");
         } // check title trung
-        SponsorProgram sponsorProgram = new SponsorProgram();
-        sponsorProgram.setTitle(insertSponsorProgramRequest.getTitle());
-        sponsorProgram.setLink(insertSponsorProgramRequest.getWebsiteLink());
-        sponsorProgram.setDescription(insertSponsorProgramRequest.getDescription());
-        sponsorProgram.setThumbnail(insertSponsorProgramRequest.getThumbnail());
-        sponsorProgram.setLocation(insertSponsorProgramRequest.getLocation());
+
+            int accountId = insertSponsorProgramRequest.getAccountId();
+
+            Account account = accountRepository.findById(accountId);
+            if (account == null) {
+                throw new RuntimeException("Can't find accountId: " + insertSponsorProgramRequest.getAccountId());
+            }
+            SponsorProgram sponsorProgram = new SponsorProgram();
+        try {
+            sponsorProgram.setAccount(account);
+        } catch (Exception e) {
+            System.out.println("Error setting account: " + e.getMessage());
+        }
 
         try {
-            SponsorProgram.State state = SponsorProgram.State.valueOf(insertSponsorProgramRequest.getState().toUpperCase());
-            sponsorProgram.setState(state);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid state value: " + insertSponsorProgramRequest.getState());
+            sponsorProgram.setTitle(insertSponsorProgramRequest.getTitle());
+        } catch (Exception e) {
+            System.out.println("Error setting title: " + e.getMessage());
         }
-        List<Event> events = new ArrayList<>();
-        for (Integer  eventId : insertSponsorProgramRequest.getEventIds()){
+
+        try {
+            sponsorProgram.setLink(insertSponsorProgramRequest.getWebsiteLink());
+        } catch (Exception e) {
+            System.out.println("Error setting link: " + e.getMessage());
+        }
+        try {
+            sponsorProgram.setDescription(insertSponsorProgramRequest.getDescription());
+        } catch (Exception e) {
+            System.out.println("Error setting description: " + e.getMessage());
+        }
+        try {
+            sponsorProgram.setThumbnail(insertSponsorProgramRequest.getThumbnail());
+        } catch (Exception e) {
+            System.out.println("Error setting thumbnail: " + e.getMessage());
+        }
+        try {
+            sponsorProgram.setLocation(insertSponsorProgramRequest.getLocation());
+        } catch (Exception e) {
+            System.out.println("Error setting location: " + e.getMessage());
+        }
+
+
+            try {
+                SponsorProgram.State state = SponsorProgram.State.valueOf(insertSponsorProgramRequest.getState().toUpperCase());
+                sponsorProgram.setState(state);
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Invalid state value: " + insertSponsorProgramRequest.getState());
+            }
+            List<Event> events = new ArrayList<>();
+            for (Integer eventId : insertSponsorProgramRequest.getEventIds()) {
+                Event event = eventRepository.findById(eventId).orElse(null);
+                if (event == null) {
+                    throw new RuntimeException("Event not found");
+                }
+                events.add(event);
+
+
+            }
+            sponsorProgram.setEvents(new HashSet<>(events));
+            sponsorProgramRepository.save(sponsorProgram);
+            return true;
+        }
+
+
+    @Override
+    public boolean insertSponsor(InsertSponsorRequest insertSponsorRequest) {
+
+        try {
+            int eventId = insertSponsorRequest.getEventId();
+            Event event = eventRepository.findById(eventId)
+                    .orElseThrow(() -> new NoSuchElementException("Event not found for ID: " + eventId));
+
+            String email = insertSponsorRequest.getEmail();
+            Sponsor sponsor = sponsorRepository.findByfptStaffEmail(email);
+            if (sponsor == null) {
+                throw new RuntimeException("Account not found");
+            }
+            if (event.getSponsor() != null) {
+                throw new RuntimeException("Event already has a sponsor");
+            }
+
+            event.setSponsor(sponsor);
+            eventRepository.save(event);
+
+            return true;
+        } catch (NoSuchElementException e) {
+            System.out.println("Exception occurred: " + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            System.out.println("Unexpected error occurred: " + e.getMessage());
+            return false;
+        }
+    }
+    @Override
+    public boolean deleteSponsor(int eventId){
+        try {
             Event event = eventRepository.findById(eventId).orElse(null);
             if (event == null) {
-                throw new RuntimeException("Event not found");
+                throw new RuntimeException("Can't find eventId: " + eventId);
             }
-            events.add(event);
 
 
 
+            if (event.getSponsor() == null) {
+                throw new RuntimeException("Event does not have a sponsor");
+            }
+            event.setSponsor(null);
+            eventRepository.save(event);
+
+            System.out.println("Sponsor removed successfully from event with ID " + eventId);
+            return true;
+        } catch (NoSuchElementException e) {
+            System.out.println("Exception occurred: " + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            System.out.println("Unexpected error occurred: " + e.getMessage());
+            return false;
         }
-        sponsorProgram.setEvents(new HashSet<>(events));
-        sponsorProgramRepository.save(sponsorProgram);
-        return true;
+
     }
 }

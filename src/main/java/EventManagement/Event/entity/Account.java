@@ -33,13 +33,16 @@ public class Account {
     @OneToMany(mappedBy = "account")
     private Set<EventOperator> eventOperators;
 
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Set<Sponsor> sponsors;
 
     @OneToMany(mappedBy = "account")
     private Set<CheckingStaff> checkingStaffs;
 
-
+    @OneToMany(mappedBy = "account")
+    @JsonManagedReference
+    private List<SponsorProgram> sponsorPrograms;
     @OneToMany(mappedBy = "account")
     @JsonManagedReference
     private List<Event> events;

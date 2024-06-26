@@ -2,13 +2,17 @@ package EventManagement.Event.controller;
 
 import EventManagement.Event.entity.Account;
 import EventManagement.Event.entity.Event;
-import EventManagement.Event.payload.Request.InsertCheckingStaffRequest;
-import EventManagement.Event.payload.Request.InsertEventRequest;
-import EventManagement.Event.payload.Request.InsertImageRequest;
-import EventManagement.Event.payload.Request.InsertScheduleRequest;
+import EventManagement.Event.payload.Request.*;
 import EventManagement.Event.repository.AccountRepository;
+import EventManagement.Event.repository.SponsorRepository;
 import EventManagement.Event.service.*;
+
+import EventManagement.Event.service.imp.EventServiceImp;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +23,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api-events")
 public class EventController {
+    @Autowired
+    private SponsorService sponsorService;
     @Autowired
     private AccountService accountService;
     @Autowired
@@ -32,6 +38,19 @@ public class EventController {
     @Autowired
     private ImageService imageService;
 
+    @GetMapping("/account")
+    public ResponseEntity<List<Event>> getEventsByAccount(HttpServletRequest request) {
+        List<Event> events = eventService.getEventsByAccountId(request);
+        return ResponseEntity.ok(events);
+    }
+    @GetMapping("/state/{stateEventId}")
+    public ResponseEntity<List<Event>> getEventsByState(@PathVariable int stateEventId) {
+        List<Event> events =    eventService.getEventsByStateId(stateEventId);
+        if (events.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(events, HttpStatus.OK);
+    }
 
     @GetMapping
 
@@ -129,6 +148,49 @@ public class EventController {
         }
 
 
+    }
+    @PostMapping("{id}/add-sponsor")
+    public ResponseEntity<Map<String, String>> insertSponsor(@PathVariable int id,
+                                                           @RequestBody InsertSponsorRequest insertSponsorRequest
+    ){
+        Event event = eventService.getEventById(id);
+        insertSponsorRequest.setEventId(id);
+        boolean isSuccess = sponsorService.insertSponsor(insertSponsorRequest);
+        Map<String, String> response = new HashMap<>();
+        if (isSuccess) {
+            response.put("message", "Sponsor added successfully.");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "Event already has a sponsor.");
+            return ResponseEntity.status(400).body(response);
+        }
+    }
+    @PutMapping("/{eventId}")
+    public ResponseEntity<String> updateEvent(@PathVariable int eventId, @RequestBody InsertEventRequest request) {
+        boolean isUpdated = eventService.updateEvent(eventId, request);
+        if (isUpdated) {
+            return new ResponseEntity<>("Event updated successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Failed to update event", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @DeleteMapping("/staff{checkingStaffId}/event{eventId}")
+    public ResponseEntity<String> deleteCheckingStaff(@PathVariable int checkingStaffId,@PathVariable int eventId) {
+        boolean isDeleted = checkingStaffService.deleteCheckingStaff(checkingStaffId, eventId);
+        if (isDeleted) {
+            return ResponseEntity.ok("CheckingStaff deleted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete CheckingStaff");
+        }
+    }
+    @DeleteMapping("/{eventId}/sponsor")
+    public ResponseEntity<String> deleteSponsor(@PathVariable int eventId) {
+        boolean isDeleted = sponsorService.deleteSponsor( eventId);
+        if (isDeleted) {
+            return ResponseEntity.ok("Sponsor deleted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete Sponsor");
+        }
     }
 }
 
