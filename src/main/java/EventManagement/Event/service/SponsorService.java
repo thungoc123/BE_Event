@@ -151,4 +151,36 @@ public class SponsorService implements SponsorProgramImp {
             return false;
         }
     }
+    @Override
+    public boolean deleteSponsor(int eventId, int sponsorId, int accountId){
+        try {
+
+            Event event = eventRepository.findById(eventId)
+                    .orElseThrow(() -> new NoSuchElementException("Event not found for ID: " + eventId));
+
+
+            if (event.getAccount().getId() != accountId) {
+                throw new RuntimeException("Event does not belong to accountId: " + accountId);
+            }
+
+
+            if (event.getSponsor() == null) {
+                throw new RuntimeException("Event does not have a sponsor");
+            }
+
+
+            event.setSponsor(null);
+            eventRepository.save(event);
+
+            System.out.println("Sponsor removed successfully from event with ID " + eventId);
+            return true;
+        } catch (NoSuchElementException e) {
+            System.out.println("Exception occurred: " + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            System.out.println("Unexpected error occurred: " + e.getMessage());
+            return false;
+        }
+
+    }
 }

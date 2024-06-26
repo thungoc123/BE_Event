@@ -7,4 +7,5 @@ import EventManagement.Event.payload.Request.InsertSponsorRequest;
 public interface SponsorProgramImp {
     boolean insertSponsorProgram(InsertSponsorProgramRequest insertSponsorProgramRequest);
     boolean insertSponsor(InsertSponsorRequest insertSponsorRequest);
+    boolean deleteSponsor(int eventId, int sponsorId, int accountId);
 }

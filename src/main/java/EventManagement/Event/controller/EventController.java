@@ -11,6 +11,7 @@ import EventManagement.Event.service.imp.EventServiceImp;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,7 +44,22 @@ public class EventController {
     @Autowired
     private ImageService imageService;
 
-
+    @GetMapping("/account/{accountId}")
+    public ResponseEntity<List<Event>> getEventsByAccount(@PathVariable int accountId) {
+        List<Event> events =    eventService.getEventsByAccountId(accountId);
+        if (events.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(events, HttpStatus.OK);
+    }
+    @GetMapping("/state/{stateEventId}")
+    public ResponseEntity<List<Event>> getEventsByState(@PathVariable int stateEventId) {
+        List<Event> events =    eventService.getEventsByStateId(stateEventId);
+        if (events.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(events, HttpStatus.OK);
+    }
 
     @GetMapping
 
@@ -158,6 +174,25 @@ public class EventController {
             return ResponseEntity.status(400).body(response);
         }
     }
+    @PutMapping("/{eventId}/account/{accountId}")
+    public ResponseEntity<String> updateEvent(@PathVariable int eventId, @PathVariable int accountId, @RequestBody InsertEventRequest request) {
+        boolean isUpdated = eventService.updateEvent(eventId,accountId, request);
+        if (isUpdated) {
+            return new ResponseEntity<>("Event updated successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Failed to update event", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @DeleteMapping("/staff{checkingStaffId}/event{eventId}/account{accountId}")
+    public ResponseEntity<String> deleteCheckingStaff(@PathVariable int checkingStaffId,@PathVariable int eventId, @PathVariable int accountId) {
+        boolean isDeleted = checkingStaffService.deleteCheckingStaff(checkingStaffId, eventId, accountId );
+        if (isDeleted) {
+            return ResponseEntity.ok("CheckingStaff deleted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete CheckingStaff");
+        }
+    }
+
 }
 
 
