@@ -182,7 +182,7 @@ public class EventController {
         }
     }
     @DeleteMapping("/staff{checkingStaffId}/event{eventId}")
-    public ResponseEntity<String> deleteCheckingStaff(@PathVariable int checkingStaffId,@PathVariable int eventId,) {
+    public ResponseEntity<String> deleteCheckingStaff(@PathVariable int checkingStaffId,@PathVariable int eventId) {
         boolean isDeleted = checkingStaffService.deleteCheckingStaff(checkingStaffId, eventId);
         if (isDeleted) {
             return ResponseEntity.ok("CheckingStaff deleted successfully");

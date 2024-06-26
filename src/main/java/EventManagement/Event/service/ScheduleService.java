@@ -47,7 +47,7 @@ public class ScheduleService implements ScheduleServiceImp{
     }
 
     @Override
-    public boolean updateSchedule(int eventId, int accountId, int scheduleId, InsertScheduleRequest insertScheduleRequest) {
+    public boolean updateSchedule(int eventId, int scheduleId, InsertScheduleRequest insertScheduleRequest) {
 
         try {
             Event event = eventRepository.findById(eventId).orElse(null);
@@ -56,9 +56,7 @@ public class ScheduleService implements ScheduleServiceImp{
             }
 
 
-            if (event.getAccount().getId() != accountId) {
-                throw new RuntimeException("Event does not belong to accountId: " + accountId);
-            }
+
             EventSchedule scheduleToUpdate = eventScheduleRepository.findById(scheduleId).orElse(null);
             if (scheduleToUpdate == null) {
                 throw new RuntimeException("Can't find scheduleId: " + scheduleId);
