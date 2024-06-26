@@ -192,7 +192,15 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete CheckingStaff");
         }
     }
-
+    @DeleteMapping("/{eventId}/account{accountId}/sponsor")
+    public ResponseEntity<String> deleteSponsor(@PathVariable int eventId, @PathVariable int accountId) {
+        boolean isDeleted = sponsorService.deleteSponsor( eventId, accountId );
+        if (isDeleted) {
+            return ResponseEntity.ok("Sponsor deleted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete Sponsor");
+        }
+    }
 }
 
 
