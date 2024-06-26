@@ -5,5 +5,5 @@ import EventManagement.Event.payload.Request.InsertCheckingStaffRequest;
 
 public interface CheckingStaffImp {
     boolean insertCheckingStaff(InsertCheckingStaffRequest insertCheckingStaffRequest );
-    boolean deleteCheckingStaff(int checkingStaffId, int eventId,int accountId);
+    boolean deleteCheckingStaff(int checkingStaffId, int eventId);
 }

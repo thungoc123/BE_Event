@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface EventServiceImp {
     boolean insertEvent(InsertEventRequest request);
-    boolean updateEvent(int EventId,int accountId,  InsertEventRequest request);
+    boolean updateEvent(int EventId,  InsertEventRequest request);
 
 }
 

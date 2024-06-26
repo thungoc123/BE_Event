@@ -80,16 +80,14 @@ public class CheckingStaffService implements CheckingStaffImp {
         return password.toString();
     }
     @Override
-    public boolean deleteCheckingStaff(int checkingStaffId, int eventId,int accountId){
+    public boolean deleteCheckingStaff(int checkingStaffId, int eventId){
         try {
             Event event = eventRepository.findById(eventId).orElse(null);
             if (event == null) {
                 throw new RuntimeException("Can't find eventId: " + eventId);
             }
 
-            if (event.getAccount().getId() != accountId) {
-                throw new RuntimeException("Event does not belong to accountId: " + accountId);
-            }
+
             CheckingStaff checkingStaff = checkingStaffRepository.findById(checkingStaffId).orElse(null);
             if (checkingStaff == null) {
                 System.out.println("CheckingStaff with ID " + checkingStaffId + " not found.");

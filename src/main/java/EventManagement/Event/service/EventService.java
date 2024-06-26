@@ -9,10 +9,13 @@ import EventManagement.Event.service.imp.EventServiceImp;
 //import EventManagement.Event.service.imp.FileServiceImp;
 import EventManagement.Event.utils.JwtHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Service
@@ -72,40 +75,42 @@ public class EventService implements EventServiceImp {
             return false;
         }
     }
-    public List<Event> getEventsByAccountId(int accountId) {
-        return eventRepository.findByAccountId(accountId);
-    }
-    public List<Event> getEventsByStateId(int stateEventId) {
-        return eventRepository.findByStateEventId(stateEventId);
-    }
-    @Override
-    public boolean updateEvent(int eventId, int accountId, InsertEventRequest request) {
-        try{
-            Event event = eventRepository.findById(eventId).orElse(null);
-            if (event == null) {
-                throw new RuntimeException("Can't find eventId: " + eventId);
+
+    public List<Event> getEventsByAccountId(HttpServletRequest request) {
+        String accountId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            return eventRepository.findByAccountId(Integer.parseInt(accountId));
+
+
+        }
+        public List<Event> getEventsByStateId ( int stateEventId){
+            return eventRepository.findByStateEventId(stateEventId);
+        }
+        @Override
+        public boolean updateEvent ( int eventId, InsertEventRequest request){
+            try {
+                Event event = eventRepository.findById(eventId).orElse(null);
+                if (event == null) {
+                    throw new RuntimeException("Can't find eventId: " + eventId);
+                }
+
+
+
+
+                event.setDescription(request.getDescription());
+                event.setName(request.getEventName());
+                event.setTimestart(request.getTimeStart());
+                event.setTimeend(request.getTimeEnd());
+                event.setPrice(request.getPrice());
+                event.setTimeopensale(request.getTimeOpenSale());
+                event.setTimeclosesale(request.getTimeCloseSale());
+                Event eventUpdated = eventRepository.save(event);
+                return eventUpdated != null;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
             }
-
-            Account account = accountRepository.findById(accountId);
-            if (event.getAccount().getId() != accountId) {
-                throw new RuntimeException("Event does not belong to accountId: " + accountId);
-            }
-
-
-
-            event.setDescription(request.getDescription());
-            event.setName(request.getEventName());
-            event.setTimestart(request.getTimeStart());
-            event.setTimeend(request.getTimeEnd());
-            event.setPrice(request.getPrice());
-            event.setTimeopensale(request.getTimeOpenSale());
-            event.setTimeclosesale(request.getTimeCloseSale());
-            Event eventUpdated = eventRepository.save(event);
-            return eventUpdated != null;
-        }catch (Exception e) {
-            e.printStackTrace();
-            return false;
         }
     }
-}
+
 
