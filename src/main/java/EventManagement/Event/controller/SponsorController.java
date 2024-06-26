@@ -25,7 +25,7 @@ public class SponsorController {
     @Autowired
     private SponsorService sponsorService;
 
-    @GetMapping("/program")
+    @GetMapping("/sponsor-program")
     public ResponseEntity<List<SponsorProgram>> getProgramsByAccount(HttpServletRequest request) {
         List<SponsorProgram> sponsorPrograms = sponsorService.getProgramsByAccountId(request);
         return ResponseEntity.ok(sponsorPrograms);
