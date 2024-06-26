@@ -1,12 +1,12 @@
 package EventManagement.Event.controller;
 
-import EventManagement.Event.DTO.SponsorDTO;
 import EventManagement.Event.entity.Account;
 import EventManagement.Event.entity.Event;
 import EventManagement.Event.payload.Request.*;
 import EventManagement.Event.repository.AccountRepository;
 import EventManagement.Event.repository.SponsorRepository;
 import EventManagement.Event.service.*;
+
 import EventManagement.Event.service.imp.EventServiceImp;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -15,17 +15,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
-import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/api-events")
