@@ -1,8 +1,11 @@
 package EventManagement.Event.controller;
 
+import EventManagement.Event.entity.Event;
+import EventManagement.Event.entity.SponsorProgram;
 import EventManagement.Event.payload.Request.InsertSponsorProgramRequest;
 import EventManagement.Event.service.SponsorService;
 import EventManagement.Event.DTO.SponsorDTO;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +25,11 @@ public class SponsorController {
     @Autowired
     private SponsorService sponsorService;
 
+    @GetMapping("/program")
+    public ResponseEntity<List<SponsorProgram>> getProgramsByAccount(HttpServletRequest request) {
+        List<SponsorProgram> sponsorPrograms = sponsorService.getProgramsByAccountId(request);
+        return ResponseEntity.ok(sponsorPrograms);
+    }
     @GetMapping
     public ResponseEntity<List<SponsorDTO>> getAllSponsors() {
         List<SponsorDTO> sponsors = sponsorService.getAllSponsors();

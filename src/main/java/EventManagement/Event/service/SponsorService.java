@@ -8,7 +8,9 @@ import EventManagement.Event.payload.Request.InsertSponsorProgramRequest;
 import EventManagement.Event.payload.Request.InsertSponsorRequest;
 import EventManagement.Event.repository.*;
 import EventManagement.Event.service.imp.SponsorProgramImp;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,6 +29,14 @@ public class SponsorService implements SponsorProgramImp {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    public List<SponsorProgram> getProgramsByAccountId(HttpServletRequest request) {
+        String accountId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return sponsorProgramRepository.findByAccountId(Integer.parseInt(accountId));
+
+
+    }
 
     public void registerSponsor(SponsorRegistrationDto sponsorDto) throws Exception {
         if (accountRepository.existsByEmail(sponsorDto.getEmail())) {
@@ -92,12 +102,38 @@ public class SponsorService implements SponsorProgramImp {
                 throw new RuntimeException("Can't find accountId: " + insertSponsorProgramRequest.getAccountId());
             }
             SponsorProgram sponsorProgram = new SponsorProgram();
+        try {
             sponsorProgram.setAccount(account);
+        } catch (Exception e) {
+            System.out.println("Error setting account: " + e.getMessage());
+        }
+
+        try {
             sponsorProgram.setTitle(insertSponsorProgramRequest.getTitle());
+        } catch (Exception e) {
+            System.out.println("Error setting title: " + e.getMessage());
+        }
+
+        try {
             sponsorProgram.setLink(insertSponsorProgramRequest.getWebsiteLink());
+        } catch (Exception e) {
+            System.out.println("Error setting link: " + e.getMessage());
+        }
+        try {
             sponsorProgram.setDescription(insertSponsorProgramRequest.getDescription());
+        } catch (Exception e) {
+            System.out.println("Error setting description: " + e.getMessage());
+        }
+        try {
             sponsorProgram.setThumbnail(insertSponsorProgramRequest.getThumbnail());
+        } catch (Exception e) {
+            System.out.println("Error setting thumbnail: " + e.getMessage());
+        }
+        try {
             sponsorProgram.setLocation(insertSponsorProgramRequest.getLocation());
+        } catch (Exception e) {
+            System.out.println("Error setting location: " + e.getMessage());
+        }
 
 
             try {

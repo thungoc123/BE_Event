@@ -21,7 +21,7 @@ import java.util.Set;
     private String link;
     @Column(name = "location")
     private String location;
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
     @Enumerated(EnumType.STRING)
     private State state;
