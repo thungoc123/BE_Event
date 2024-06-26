@@ -1,20 +1,22 @@
 package EventManagement.Event.service;
 
-import EventManagement.Event.entity.Account;
-import EventManagement.Event.entity.Event;
-import EventManagement.Event.entity.EventImage;
-import EventManagement.Event.entity.EventSchedule;
+import EventManagement.Event.entity.*;
 import EventManagement.Event.payload.Request.InsertEventRequest;
 import EventManagement.Event.payload.Request.InsertScheduleRequest;
+import EventManagement.Event.payload.Request.InsertSponsorRequest;
 import EventManagement.Event.repository.*;
 import EventManagement.Event.service.imp.EventServiceImp;
 //import EventManagement.Event.service.imp.FileServiceImp;
 import EventManagement.Event.utils.JwtHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Service
 public class EventService implements EventServiceImp {
@@ -24,9 +26,10 @@ public class EventService implements EventServiceImp {
     @Autowired
     private EventRepository eventRepository;
     @Autowired
-    private AccountService accountService;
+    private StateEventRepository stateEventRepository;
     @Autowired
     private AccountRepository accountRepository;
+
 
 
     //list event
@@ -50,8 +53,13 @@ public class EventService implements EventServiceImp {
             if (account == null) {
                 throw new RuntimeException("Can't find accountId: " + request.getAccountId());
             }
+            StateEvent stateEvent = stateEventRepository.findById(1);
+            if (stateEvent == null) {
+                throw new RuntimeException("Can't find StateEvent with id: " + 1);
+            }
             Event eventEntity = new Event();
             eventEntity.setAccount(account);
+            eventEntity.setStateEvent(stateEvent);
             eventEntity.setDescription(request.getDescription());
             eventEntity.setName(request.getEventName());
             eventEntity.setTimestart(request.getTimeStart());
@@ -64,7 +72,45 @@ public class EventService implements EventServiceImp {
             return eventSaved != null; // Trả về true nếu lưu thành công, false nếu không thành công
         } catch (Exception e) {
             e.printStackTrace(); // In ra lỗi nếu có lỗi xảy ra
-            return false; // Trả về false nếu có lỗi xảy ra
+            return false;
         }
     }
-}
+
+    public List<Event> getEventsByAccountId(HttpServletRequest request) {
+        String accountId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            return eventRepository.findByAccountId(Integer.parseInt(accountId));
+
+
+        }
+        public List<Event> getEventsByStateId ( int stateEventId){
+            return eventRepository.findByStateEventId(stateEventId);
+        }
+        @Override
+        public boolean updateEvent ( int eventId, InsertEventRequest request){
+            try {
+                Event event = eventRepository.findById(eventId).orElse(null);
+                if (event == null) {
+                    throw new RuntimeException("Can't find eventId: " + eventId);
+                }
+
+
+
+
+                event.setDescription(request.getDescription());
+                event.setName(request.getEventName());
+                event.setTimestart(request.getTimeStart());
+                event.setTimeend(request.getTimeEnd());
+                event.setPrice(request.getPrice());
+                event.setTimeopensale(request.getTimeOpenSale());
+                event.setTimeclosesale(request.getTimeCloseSale());
+                Event eventUpdated = eventRepository.save(event);
+                return eventUpdated != null;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+    }
+
+

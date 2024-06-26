@@ -39,6 +39,9 @@ public class Event {
     @JoinColumn(name = "account_id")
     @JsonBackReference
     private Account account;
+    @ManyToOne
+    @JoinColumn(name = "sponsor_id")
+    private Sponsor sponsor;
 
     @ManyToOne
     @JoinColumn(name = "state_event_id")
@@ -54,6 +57,8 @@ public class Event {
     private List<CheckingStaff> eventCheckingStaffs;
     @ManyToMany(mappedBy = "events")
     private Set<SponsorProgram> sponsorPrograms = new HashSet<>();
+
+
 
 
 }
