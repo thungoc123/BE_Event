@@ -1,6 +1,7 @@
 package EventManagement.Event.controller;
 
 import EventManagement.Event.DTO.FeedbackAnswerDTO;
+import EventManagement.Event.DTO.FeedbackAnswerDetailsDTO;
 import EventManagement.Event.entity.FeedbackAnswer;
 import EventManagement.Event.service.FeedbackAnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,21 +9,32 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api-feedbackanswer")
 public class FeedbackAnswerController {
 
+
+
+
     @Autowired
     private FeedbackAnswerService feedbackAnswerService;
-    @PostMapping("/create")
-    public ResponseEntity<String> createFeedbackAnswer(@RequestBody FeedbackAnswerDTO feedbackAnswerDTO) {
-        try {
-            feedbackAnswerService.createFeedbackAnswer(feedbackAnswerDTO);
-            return new ResponseEntity<>("Feedback answwer created successfully", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
+
+
+    @GetMapping("/feedback-answer-details")
+    public List<FeedbackAnswerDetailsDTO> getAllFeedbackAnswerDetails() {
+        return feedbackAnswerService.getAllFeedbackAnswerDetails();
     }
+
+
+
+    @PostMapping("/create")
+    public FeedbackAnswerDTO createFeedbackAnswer(@RequestBody FeedbackAnswerDTO feedbackAnswerDTO) {
+        return feedbackAnswerService.createFeedbackAnswer(feedbackAnswerDTO);
+    }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<FeedbackAnswerDTO> updateFeedbackAnswer(
             @PathVariable int id,
