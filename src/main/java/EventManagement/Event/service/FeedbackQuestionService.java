@@ -21,12 +21,13 @@ public class FeedbackQuestionService {
     @Autowired
     private FeedbackAnswerService feedbackAnswerService;
 
-    public void createFeedbackQuestion(FeedbackQuestionDTO questionDTO) {
+    public FeedbackQuestionDTO createFeedbackQuestion(FeedbackQuestionDTO questionDTO) {
         FeedbackQuestion feedbackQuestion = new FeedbackQuestion();
         feedbackQuestion.setTypeQuestion(questionDTO.getTypeQuestion());
         feedbackQuestion.setTextQuestion(questionDTO.getTextQuestion());
         feedbackQuestion.setDeletedAt(questionDTO.getDeletedAt());
         feedbackQuestion.setModifiedAt(questionDTO.getModifiedAt());
+
         Optional<Feedback> feedbackOptional = feedbackRepository.findById(questionDTO.getFeedbackID());
         if (!feedbackOptional.isPresent()) {
             throw new RuntimeException("Không tìm thấy Feedback với ID: " + questionDTO.getFeedbackID());
@@ -34,8 +35,19 @@ public class FeedbackQuestionService {
 
         feedbackQuestion.setFeedback(feedbackOptional.get());
 
-        feedbackQuestionRepository.save(feedbackQuestion);
+        FeedbackQuestion savedFeedbackQuestion = feedbackQuestionRepository.save(feedbackQuestion);
+
+        FeedbackQuestionDTO responseDTO = new FeedbackQuestionDTO();
+        responseDTO.setFeedbackQuestionID(savedFeedbackQuestion.getFeedbackQuestionID());
+        responseDTO.setTypeQuestion(savedFeedbackQuestion.getTypeQuestion());
+        responseDTO.setTextQuestion(savedFeedbackQuestion.getTextQuestion());
+        responseDTO.setDeletedAt(savedFeedbackQuestion.getDeletedAt());
+        responseDTO.setModifiedAt(savedFeedbackQuestion.getModifiedAt());
+        responseDTO.setFeedbackID(savedFeedbackQuestion.getFeedback().getFeedbackID());
+
+        return responseDTO;
     }
+
     public FeedbackQuestion updateFeedbackQuestion(int feedbackQuestionID, FeedbackQuestionDTO questionDTO) {
         Optional<FeedbackQuestion> feedbackQuestionOptional = feedbackQuestionRepository.findById(feedbackQuestionID);
         if (!feedbackQuestionOptional.isPresent()) {

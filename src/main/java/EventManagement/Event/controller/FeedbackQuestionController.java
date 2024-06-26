@@ -23,14 +23,10 @@ public class FeedbackQuestionController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<String> createFeedbackQuestion(@RequestBody FeedbackQuestionDTO questionDTO) {
-        try {
-            feedbackQuestionService.createFeedbackQuestion(questionDTO);
-            return new ResponseEntity<>("Feedback Question created successfully", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public FeedbackQuestionDTO createFeedbackQuestion(@RequestBody FeedbackQuestionDTO feedbackQuestionDTO) {
+        return feedbackQuestionService.createFeedbackQuestion(feedbackQuestionDTO);
     }
+
 
 
     @GetMapping("/all")
