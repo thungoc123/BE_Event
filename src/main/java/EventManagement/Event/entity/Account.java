@@ -1,26 +1,31 @@
 package EventManagement.Event.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Set;
 
-@Entity
+@Entity(name = "account")
 @Data
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
+
     @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    private Set<Feedback> feedbacks;
 
     @OneToMany(mappedBy = "account")
     private Set<Visitor> visitors;
@@ -28,73 +33,20 @@ public class Account {
     @OneToMany(mappedBy = "account")
     private Set<EventOperator> eventOperators;
 
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Set<Sponsor> sponsors;
 
     @OneToMany(mappedBy = "account")
     private Set<CheckingStaff> checkingStaffs;
 
-    public int getId() {
-        return id;
-    }
+    @OneToMany(mappedBy = "account")
+    @JsonManagedReference
+    private List<SponsorProgram> sponsorPrograms;
+    @OneToMany(mappedBy = "account")
+    @JsonManagedReference
+    private List<Event> events;
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Set<Visitor> getVisitors() {
-        return visitors;
-    }
-
-    public void setVisitors(Set<Visitor> visitors) {
-        this.visitors = visitors;
-    }
-
-    public Set<EventOperator> getEventOperators() {
-        return eventOperators;
-    }
-
-    public void setEventOperators(Set<EventOperator> eventOperators) {
-        this.eventOperators = eventOperators;
-    }
-
-    public Set<Sponsor> getSponsors() {
-        return sponsors;
-    }
-
-    public void setSponsors(Set<Sponsor> sponsors) {
-        this.sponsors = sponsors;
-    }
-
-    public Set<CheckingStaff> getCheckingStaffs() {
-        return checkingStaffs;
-    }
-
-    public void setCheckingStaffs(Set<CheckingStaff> checkingStaffs) {
-        this.checkingStaffs = checkingStaffs;
-    }
+    // Constructors, getters, setters, and other fields as needed
 }

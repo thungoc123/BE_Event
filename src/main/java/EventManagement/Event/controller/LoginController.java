@@ -38,26 +38,7 @@ public class LoginController {
     private FeedbackService feedbackService;
 
 
-//    @PostMapping("/login")
-//    public ResponseEntity<?> signIn(@RequestBody String email, @RequestBody String password) {
-//
-//        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password);
-//        authenticationManager.authenticate(token);
-//
-//        Account account = feedbackService.findByEmail(email);
-//        String roleUser = account.getRole().getRoleName();
-//
-//
-//
-//
-//        String jwtToken = jwtHelper.generateToken(roleUser);
-//
-//        BaseResponse baseResponse = new BaseResponse();
-//        baseResponse.setStatusCode(200);
-//        baseResponse.setData(jwtToken);
-//
-//        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
-//    }
+
     @PostMapping("/login")
     public ResponseEntity<BaseResponse> signIn(@RequestBody LoginRequestDTO loginRequest) {
         String email = loginRequest.getEmail();
@@ -69,15 +50,17 @@ public class LoginController {
 
             // Xác thực thành công, lấy thông tin tài khoản
             Account account = feedbackService.findByEmail(email);
+            String accountId = String.valueOf(account.getId());
             String roleUser = account.getRole().getRoleName();
 
             // Tạo mã JWT
-            String jwtToken = jwtHelper.generateToken(roleUser);
+            String jwtToken = jwtHelper.generateToken(accountId, roleUser);
 
             // Chuẩn bị phản hồi thành công
             BaseResponse baseResponse = new BaseResponse();
             baseResponse.setStatusCode(200);
             baseResponse.setData(jwtToken);
+            baseResponse.setRole_name(roleUser);
 
             return ResponseEntity.ok(baseResponse);
         } catch (AuthenticationException e) {

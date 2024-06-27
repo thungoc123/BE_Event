@@ -25,6 +25,8 @@ public class InsertEventRequest {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime timeCloseSale;
     private double price;
+    private int accountId;
+
 
 
 

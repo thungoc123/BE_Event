@@ -1,6 +1,7 @@
 package EventManagement.Event.controller;
 
 import EventManagement.Event.DTO.SponsorRegistrationDto;
+import EventManagement.Event.payload.Request.VisitorResponseDTO;
 import EventManagement.Event.service.SponsorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,12 +19,14 @@ public class RegistrationSponsorController {
     private SponsorService sponsorService;
 
     @PostMapping("/sign-up-sponsor")
-    public ResponseEntity<String> signUpVisitor(@RequestBody SponsorRegistrationDto sponsorSignUp) {
+    public ResponseEntity<VisitorResponseDTO> signUpVisitor(@RequestBody SponsorRegistrationDto sponsorSignUp) {
         try {
             sponsorService.registerSponsor(sponsorSignUp);
-            return ResponseEntity.ok("Sponsor signed up successfully");
+            VisitorResponseDTO response = new VisitorResponseDTO("Đăng ký thành công", true);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            VisitorResponseDTO response = new VisitorResponseDTO(e.getMessage(), false);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 }

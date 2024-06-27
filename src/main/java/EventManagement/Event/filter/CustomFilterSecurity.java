@@ -17,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class CustomFilterSecurity extends OncePerRequestFilter {
@@ -27,27 +28,30 @@ public class CustomFilterSecurity extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorValue = request.getHeader("Authorization");
-        //Lấy token từ authorValue
-        //Giải mã token
-        if(authorValue != null && authorValue.startsWith("Bearer ")){
+
+        // Lấy token từ authorValue
+        if (authorValue != null && authorValue.startsWith("Bearer ")) {
             String token = authorValue.substring(7);
-            if(!token.equals("")){
-                String roleName = jwtHelper.decodeToken(token);
-                if(!roleName.equals("")){
+            if (!token.isEmpty()) {
+                Map<String, String> claims = jwtHelper.decodeToken(token);
+                String accountId = claims.get("accountId");
+                String roleName = claims.get("role");
+
+                if (accountId != null && roleName != null) {
                     System.out.println("Kiem tra: " + roleName);
                     List<GrantedAuthority> roleList = new ArrayList<>();
                     SimpleGrantedAuthority role = new SimpleGrantedAuthority(roleName);
 
                     roleList.add(role);
 
-                    UsernamePasswordAuthenticationToken tokenAuthen = new UsernamePasswordAuthenticationToken("","", roleList);
-//
+                    UsernamePasswordAuthenticationToken tokenAuthen = new UsernamePasswordAuthenticationToken(accountId, null, roleList);
+
                     SecurityContext context = SecurityContextHolder.getContext();
                     context.setAuthentication(tokenAuthen);
                 }
             }
         }
 
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 }

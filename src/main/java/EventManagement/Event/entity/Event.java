@@ -1,15 +1,21 @@
 package EventManagement.Event.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity(name = "event")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +36,16 @@ public class Event {
     private LocalDateTime timeclosesale;
 
     @ManyToOne
-    @JoinColumn(name = "state_id")
-    private State state;
+    @JoinColumn(name = "account_id")
+    @JsonBackReference
+    private Account account;
+    @ManyToOne
+    @JoinColumn(name = "sponsor_id")
+    private Sponsor sponsor;
+
+    @ManyToOne
+    @JoinColumn(name = "state_event_id")
+    private StateEvent stateEvent;
     @OneToMany(mappedBy = "event")
     @JsonManagedReference
     private List<EventImage> eventImages;
@@ -39,6 +53,12 @@ public class Event {
     @JsonManagedReference
     private List<EventSchedule> eventSchedules;
     @OneToMany(mappedBy = "event")
+
     private List<CheckingStaff> eventCheckingStaffs;
+    @ManyToMany(mappedBy = "events")
+    private Set<SponsorProgram> sponsorPrograms = new HashSet<>();
+
+
+
 
 }

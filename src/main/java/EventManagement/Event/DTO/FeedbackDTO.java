@@ -6,9 +6,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 @Data
 public class FeedbackDTO {
+    private int feedbackID;
     private String title;
     private LocalDateTime deletedAt;
     private LocalDateTime modifiedAt;
-    private List<FeedbackQuestionDTO> questions;
+    private int stateID;
+    private Long accountId;
+
+
+    private List<FeedbackQuestionDTO> feedbackQuestions;
+
+
 }
 
