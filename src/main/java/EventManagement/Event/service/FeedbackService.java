@@ -6,7 +6,9 @@ import EventManagement.Event.DTO.FeedbackDataDTO;
 import EventManagement.Event.DTO.FeedbackQuestionDTO;
 import EventManagement.Event.entity.*;
 import EventManagement.Event.repository.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -140,9 +142,10 @@ public class FeedbackService {
 
         return feedbackDataDTO;
     }
-    public List<FeedbackDTO> getAllFeedbackByAccountId(Long accountId) {
-        List<Feedback> feedbackList = feedbackRepository.findByAccount_Id(accountId);
-        return feedbackList.stream().map(this::convertFeedbackToDTO).collect(Collectors.toList());
+    public List<Feedback> getAllFeedbackByAccountId(HttpServletRequest request) {
+        String accountid = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return feedbackRepository.findByAccount_Id(Integer.parseInt(accountid));
     }
 
 

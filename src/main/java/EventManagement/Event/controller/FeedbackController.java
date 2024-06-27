@@ -3,10 +3,14 @@ package EventManagement.Event.controller;
 import EventManagement.Event.DTO.FeedbackDTO;
 import EventManagement.Event.DTO.FeedbackDataDTO;
 import EventManagement.Event.entity.Feedback;
+import EventManagement.Event.repository.FeedbackRepository;
 import EventManagement.Event.service.FeedbackService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +20,8 @@ import java.util.List;
 public class FeedbackController {
     @Autowired
     private FeedbackService feedbackService;
+    @Autowired
+    private FeedbackRepository feedbackRepository;
 
     @GetMapping("")
     public ResponseEntity<?> getAllFeedBack() {
@@ -55,9 +61,11 @@ public class FeedbackController {
         feedbackService.deleteFeedback(feedbackID);
         return ResponseEntity.noContent().build();
     }
-    @GetMapping("/account/{accountId}")
-    public List<FeedbackDTO> getAllFeedbackByAccountId(@PathVariable Long accountId) {
-        return feedbackService.getAllFeedbackByAccountId(accountId);
+    @GetMapping("/account")
+    public List<Feedback> getAllFeedbackByAccountId(HttpServletRequest request) {
+        String accountid = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return feedbackRepository.findByAccount_Id(Integer.parseInt(accountid));
     }
 
 
