@@ -101,7 +101,7 @@ public class EventController {
             return ResponseEntity.status(500).body(response);
         }
     }
-    @PostMapping("/{id}/create-staff")
+    @PostMapping("/create-staff")
     public ResponseEntity<Map<String, String>> insertCheckingStaff(@PathVariable int id,
 
                                          @RequestBody InsertCheckingStaffRequest insertCheckingStaffRequest
@@ -139,6 +139,10 @@ public class EventController {
         insertImageRequest.setEventId(id);
         boolean isSuccess = imageService.insertImage(insertImageRequest);
         Map<String, String> response = new HashMap<>();
+        if (event == null) {
+            response.put("message", "Please create an event first");
+            return ResponseEntity.status(400).body(response);
+        }
         if (isSuccess) {
             response.put("message", "Image added successfully.");
             return ResponseEntity.ok(response);
@@ -157,6 +161,10 @@ public class EventController {
         insertSponsorRequest.setEventId(id);
         boolean isSuccess = sponsorService.insertSponsor(insertSponsorRequest);
         Map<String, String> response = new HashMap<>();
+        if (event == null) {
+            response.put("message", "Please create an event first");
+            return ResponseEntity.status(400).body(response);
+        }
         if (isSuccess) {
             response.put("message", "Sponsor added successfully.");
             return ResponseEntity.ok(response);

@@ -45,14 +45,13 @@ public class ImageService implements ImageServiceImp {
                 if (event == null) {
                     return false;
                 }
-                List<EventImage> images = new ArrayList<>();
-                for (String url : insertImageRequest.getImagesUrl()) {
+
                     EventImage eventImage = new EventImage();
                     eventImage.setEvent(event);
-                    eventImage.setUrl(url);
-                    images.add(eventImage);
-                }
-                eventImageRepository.saveAll(images);
+                    eventImage.setUrl(insertImageRequest.getImagesUrl());
+
+
+                eventImageRepository.save(eventImage);
                 return true;
             } catch (Exception e) {
                 return false;

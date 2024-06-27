@@ -26,7 +26,7 @@ public class EventSchedule {
     private LocalTime duration;
     @Column(name = "event_type")
     private String eventType;
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "text")
     private String description;
     @Column(name = "location")
     private String location;
