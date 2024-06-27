@@ -42,6 +42,7 @@ public class SecurityConfig {
                     author.requestMatchers(HttpMethod.GET,"/api/v1/vnpay/**").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/api-sponsor/**").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/api-sponsor/{id}").permitAll();
+                    author.requestMatchers(HttpMethod.POST,"/api-sponsor/orders/create").permitAll();
                     author.anyRequest().authenticated();
                 })
                 .addFilterBefore(customFilterSecurity, UsernamePasswordAuthenticationFilter.class)
