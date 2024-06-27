@@ -1,5 +1,6 @@
 package EventManagement.Event.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,6 +16,7 @@ public class StateEvent {
     @Column(name = "name")
     private String name;
     @OneToMany(mappedBy = "stateEvent", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Event> events;
 
 }

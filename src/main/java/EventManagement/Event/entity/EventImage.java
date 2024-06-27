@@ -17,7 +17,6 @@ public class EventImage {
 
     @ManyToOne
     @JsonBackReference
-
     @JoinColumn(name = "event_id")
     private Event event;
 }
