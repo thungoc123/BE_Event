@@ -10,7 +10,7 @@ public class InsertScheduleRequest {
 
 
     private String name;
-    @JsonFormat(pattern = "HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime timeStart;

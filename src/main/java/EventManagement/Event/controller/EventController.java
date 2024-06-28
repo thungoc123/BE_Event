@@ -80,7 +80,7 @@ public class EventController {
 
     @PostMapping("/{id}/create-schedule")
     public ResponseEntity<Map<String, String>> insertSchedule(@PathVariable int id,
-                                            InsertScheduleRequest insertScheduleRequest) {
+                                            @RequestBody InsertScheduleRequest insertScheduleRequest) {
 
         Event event = eventService.getEventById(id);
         Map<String, String> response = new HashMap<>();
@@ -101,7 +101,7 @@ public class EventController {
             return ResponseEntity.status(500).body(response);
         }
     }
-    @PostMapping("/create-staff")
+    @PostMapping("/{id}/create-staff")
     public ResponseEntity<Map<String, String>> insertCheckingStaff(@PathVariable int id,
 
                                          @RequestBody InsertCheckingStaffRequest insertCheckingStaffRequest
