@@ -45,18 +45,37 @@ public class ImageService implements ImageServiceImp {
                 if (event == null) {
                     return false;
                 }
-                List<EventImage> images = new ArrayList<>();
-                for (String url : insertImageRequest.getImagesUrl()) {
+
                     EventImage eventImage = new EventImage();
                     eventImage.setEvent(event);
-                    eventImage.setUrl(url);
-                    images.add(eventImage);
-                }
-                eventImageRepository.saveAll(images);
+                    eventImage.setUrl(insertImageRequest.getImagesUrl());
+
+
+                eventImageRepository.save(eventImage);
                 return true;
             } catch (Exception e) {
                 return false;
             }
+        }
+
+        @Override
+    public boolean deleteImage(int imageId){
+           try {
+
+               EventImage eventImage = eventImageRepository.findById(imageId).orElse(null);
+               if (eventImage == null) {
+                   throw new RuntimeException("Can't find imageId: " + imageId);
+               }
+               eventImageRepository.delete(eventImage);
+
+               System.out.println("Deleting image with ID " + imageId);
+               return true;
+
+           } catch (Exception e) {
+               e.printStackTrace();
+               return false;
+           }
+
         }
 
     }

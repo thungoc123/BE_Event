@@ -3,6 +3,7 @@ package EventManagement.Event.payload.Request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 @Data
@@ -10,7 +11,7 @@ public class InsertScheduleRequest {
 
 
     private String name;
-    @JsonFormat(pattern = "HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime timeStart;

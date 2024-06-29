@@ -88,12 +88,14 @@ public class SponsorService implements SponsorProgramImp {
 
     @Override
     public boolean insertSponsorProgram(InsertSponsorProgramRequest insertSponsorProgramRequest) {
-        if (insertSponsorProgramRequest.getTitle() == null || insertSponsorProgramRequest.getTitle().isEmpty()) {
-            throw new RuntimeException("Sponsor program title cannot be empty");
-        } // check name ko co
-        if (sponsorProgramRepository.existsByTitle(insertSponsorProgramRequest.getTitle())) {
-            throw new RuntimeException("Sponsor program with title '" + insertSponsorProgramRequest.getTitle() + "' already exists");
-        } // check title trung
+        try {
+            if (insertSponsorProgramRequest.getTitle() == null || insertSponsorProgramRequest.getTitle().isEmpty()) {
+                throw new RuntimeException("Sponsor program title cannot be empty");
+            } // check name ko co
+
+            if (sponsorProgramRepository.existsByTitle(insertSponsorProgramRequest.getTitle())) {
+                throw new RuntimeException("Sponsor program with title '" + insertSponsorProgramRequest.getTitle() + "' already exists");
+            } // check title trung
 
             int accountId = insertSponsorProgramRequest.getAccountId();
 
@@ -102,38 +104,38 @@ public class SponsorService implements SponsorProgramImp {
                 throw new RuntimeException("Can't find accountId: " + insertSponsorProgramRequest.getAccountId());
             }
             SponsorProgram sponsorProgram = new SponsorProgram();
-        try {
-            sponsorProgram.setAccount(account);
-        } catch (Exception e) {
-            System.out.println("Error setting account: " + e.getMessage());
-        }
+            try {
+                sponsorProgram.setAccount(account);
+            } catch (Exception e) {
+                System.out.println("Error setting account: " + e.getMessage());
+            }
 
-        try {
-            sponsorProgram.setTitle(insertSponsorProgramRequest.getTitle());
-        } catch (Exception e) {
-            System.out.println("Error setting title: " + e.getMessage());
-        }
+            try {
+                sponsorProgram.setTitle(insertSponsorProgramRequest.getTitle());
+            } catch (Exception e) {
+                System.out.println("Error setting title: " + e.getMessage());
+            }
 
-        try {
-            sponsorProgram.setLink(insertSponsorProgramRequest.getWebsiteLink());
-        } catch (Exception e) {
-            System.out.println("Error setting link: " + e.getMessage());
-        }
-        try {
-            sponsorProgram.setDescription(insertSponsorProgramRequest.getDescription());
-        } catch (Exception e) {
-            System.out.println("Error setting description: " + e.getMessage());
-        }
-        try {
-            sponsorProgram.setThumbnail(insertSponsorProgramRequest.getThumbnail());
-        } catch (Exception e) {
-            System.out.println("Error setting thumbnail: " + e.getMessage());
-        }
-        try {
-            sponsorProgram.setLocation(insertSponsorProgramRequest.getLocation());
-        } catch (Exception e) {
-            System.out.println("Error setting location: " + e.getMessage());
-        }
+            try {
+                sponsorProgram.setLink(insertSponsorProgramRequest.getWebsiteLink());
+            } catch (Exception e) {
+                System.out.println("Error setting link: " + e.getMessage());
+            }
+            try {
+                sponsorProgram.setDescription(insertSponsorProgramRequest.getDescription());
+            } catch (Exception e) {
+                System.out.println("Error setting description: " + e.getMessage());
+            }
+            try {
+                sponsorProgram.setThumbnail(insertSponsorProgramRequest.getThumbnail());
+            } catch (Exception e) {
+                System.out.println("Error setting thumbnail: " + e.getMessage());
+            }
+            try {
+                sponsorProgram.setLocation(insertSponsorProgramRequest.getLocation());
+            } catch (Exception e) {
+                System.out.println("Error setting location: " + e.getMessage());
+            }
 
 
             try {
@@ -153,9 +155,14 @@ public class SponsorService implements SponsorProgramImp {
 
             }
             sponsorProgram.setEvents(new HashSet<>(events));
-            sponsorProgramRepository.save(sponsorProgram);
-            return true;
+            SponsorProgram programSave = sponsorProgramRepository.save(sponsorProgram);
+            return programSave != null;
+
+        }  catch(Exception e){
+                e.printStackTrace();
+                return false;
         }
+    }
 
 
     @Override

@@ -1,6 +1,7 @@
 package EventManagement.Event.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,7 +22,7 @@ import java.util.Set;
     private String link;
     @Column(name = "location")
     private String location;
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "text")
     private String description;
     @Enumerated(EnumType.STRING)
     private State state;
@@ -32,7 +33,7 @@ import java.util.Set;
  }
  @ManyToOne
  @JoinColumn(name = "account_id")
- @JsonBackReference
+ @JsonIgnore
  private Account account;
     @ManyToMany
     @JoinTable(
