@@ -47,6 +47,8 @@ public class SecurityConfig {
                     author.requestMatchers("/feedbackQuestions/**").hasRole("EO");
                     author.requestMatchers("/api-visitor-answer/**").hasRole("VISITOR");
                     author.requestMatchers(HttpMethod.POST,"/api-orders/**").hasRole("VISITOR");
+                    author.requestMatchers("/api-accounts/**").permitAll();
+                    author.requestMatchers("/api-event-operators/**").permitAll();
 
                     author.anyRequest().authenticated();
                 })

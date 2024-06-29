@@ -23,10 +23,7 @@ public class FeedbackAnswerController {
 
 
 
-    @GetMapping("/feedback-answer-details")
-    public List<FeedbackAnswerDetailsDTO> getAllFeedbackAnswerDetails() {
-        return feedbackAnswerService.getAllFeedbackAnswerDetails();
-    }
+
 
 
 
