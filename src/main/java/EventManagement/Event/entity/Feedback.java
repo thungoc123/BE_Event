@@ -1,6 +1,6 @@
 package EventManagement.Event.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -26,12 +26,13 @@ public class Feedback {
     private State state;
 
     @OneToMany(mappedBy = "feedback", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference
     private Set<FeedbackQuestion> feedbackQuestions;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "account_id")
-    @JsonIgnoreProperties("feedbacks")
-    private Account account;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id")
+    @JsonBackReference // Sử dụng @JsonBackReference để ngăn chặn vòng lặp khi serialize
+    private Event event;
 
-
+    // constructors, getters, setters, etc.
 }

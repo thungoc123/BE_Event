@@ -1,9 +1,6 @@
 package EventManagement.Event.service;
 
-import EventManagement.Event.DTO.FeedbackAnswerDTO;
-import EventManagement.Event.DTO.FeedbackDTO;
-import EventManagement.Event.DTO.FeedbackDataDTO;
-import EventManagement.Event.DTO.FeedbackQuestionDTO;
+import EventManagement.Event.DTO.*;
 import EventManagement.Event.entity.*;
 import EventManagement.Event.repository.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,16 +34,22 @@ public class FeedbackService {
     public Feedback updateFeedback(int feedbackID, FeedbackDTO feedbackDTO) {
         Optional<Feedback> optionalFeedback = feedbackRepository.findById(feedbackID);
 
-        if (!optionalFeedback.isPresent()) {
+        if (optionalFeedback.isEmpty()) {
             throw new RuntimeException("Không tìm thấy Feedback với ID: " + feedbackID);
         }
 
         Feedback feedback = optionalFeedback.get();
 
         // Cập nhật các thông tin từ FeedbackDTO vào Feedback
-        feedback.setTitle(feedbackDTO.getTitle());
-        feedback.setModifiedAt(feedbackDTO.getModifiedAt());
-        feedback.setDeleteAt(feedbackDTO.getDeletedAt());
+        if (feedbackDTO.getTitle() != null) {
+            feedback.setTitle(feedbackDTO.getTitle());
+        }
+        if (feedbackDTO.getModifiedAt() != null) {
+            feedback.setModifiedAt(feedbackDTO.getModifiedAt());
+        }
+        if (feedbackDTO.getDeletedAt() != null) {
+            feedback.setDeleteAt(feedbackDTO.getDeletedAt());
+        }
 
         // Cập nhật State nếu stateID được cung cấp và là một giá trị hợp lệ
         if (feedbackDTO.getStateID() > 0) {
@@ -66,8 +69,9 @@ public class FeedbackService {
 
 
 
+
     @Transactional
-    public Feedback createFeedback(FeedbackDTO feedbackDTO, Long accountId) {
+    public Feedback createFeedback(FeedbackDTO feedbackDTO, int eventid) {
         Feedback feedback = new Feedback();
         feedback.setTitle(feedbackDTO.getTitle());
         feedback.setModifiedAt(feedbackDTO.getModifiedAt());
@@ -83,11 +87,11 @@ public class FeedbackService {
         }
 
         // Set accountId
-        Optional<Account> optionalAccount = accountRepository.findById(accountId);
-        if (optionalAccount.isPresent()) {
-            feedback.setAccount(optionalAccount.get());
+        Optional<Event> optionalEvent = eventRepository.findById(eventid);
+        if (optionalEvent.isPresent()) {
+            feedback.setEvent(optionalEvent.get());
         } else {
-            throw new IllegalArgumentException("Account not found with id: " + accountId);
+            throw new IllegalArgumentException("Event not found with id: " + eventid);
         }
 
         return feedbackRepository.save(feedback);
@@ -99,17 +103,13 @@ public class FeedbackService {
 
 
 
-
     @Transactional
     public void deleteFeedback(int feedbackID) {
-        Optional<Feedback> optionalFeedback = feedbackRepository.findById(feedbackID);
-
-        if (optionalFeedback.isPresent()) {
-            feedbackRepository.delete(optionalFeedback.get());
-        } else {
-            throw new RuntimeException("Không tìm thấy Feedback với ID: " + feedbackID);
-        }
+        feedbackRepository.deleteByFeedbackID(feedbackID);
     }
+
+
+
 
 
 
@@ -117,19 +117,7 @@ public class FeedbackService {
         return accountRepository.findByEmail(email);
     }
 
-//    public List<FeedbackDTO> getAll() {
-//        List<Feedback> feedbacks = feedbackRepository.findAll();
-//
-//        // Initialize lazy-loaded collections
-//        for (Feedback feedback : feedbacks) {
-//            Set<FeedbackQuestion> questions = feedback.getFeedbackQuestions();
-//            questions.forEach(question -> {
-//                question.getFeedbackAnswers().size(); // Initialize answers
-//            });
-//        }
-//
-//        return feedbacks.stream().map(this::convertFeedbackToDTO).collect(Collectors.toList());
-//    }
+
     public FeedbackDataDTO getAllFeedbackData() {
         List<Feedback> feedbacks = feedbackRepository.findAll();
         List<FeedbackQuestion> feedbackQuestions = feedBackQuestionRepository.findAll();
@@ -142,11 +130,12 @@ public class FeedbackService {
 
         return feedbackDataDTO;
     }
-    public List<Feedback> getAllFeedbackByAccountId(HttpServletRequest request) {
-        String accountid = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//    public List<Feedback> getAllFeedbackByAccountId(HttpServletRequest request) {
+//        String accountid = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//
+//        return feedbackRepository.findByAccount_Id(Integer.parseInt(accountid));
+//    }
 
-        return feedbackRepository.findByAccount_Id(Integer.parseInt(accountid));
-    }
 
 
 

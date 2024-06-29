@@ -23,16 +23,13 @@ public class FeedbackAnswerController {
 
 
 
-    @GetMapping("/feedback-answer-details")
-    public List<FeedbackAnswerDetailsDTO> getAllFeedbackAnswerDetails() {
-        return feedbackAnswerService.getAllFeedbackAnswerDetails();
-    }
+
 
 
 
     @PostMapping("/create")
-    public FeedbackAnswerDTO createFeedbackAnswer(@RequestBody FeedbackAnswerDTO feedbackAnswerDTO) {
-        return feedbackAnswerService.createFeedbackAnswer(feedbackAnswerDTO);
+    public List<FeedbackAnswerDTO> createFeedbackAnswers(@RequestBody List<FeedbackAnswerDTO> feedbackAnswerDTOs) {
+        return feedbackAnswerService.createFeedbackAnswers(feedbackAnswerDTOs);
     }
 
     @PutMapping("/update/{id}")
@@ -59,6 +56,11 @@ public class FeedbackAnswerController {
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();  // HTTP 404 Not Found nếu không tìm thấy FeedbackAnswer
         }
+    }
+    @GetMapping("/question/{feedbackQuestionID}")
+    public ResponseEntity<List<FeedbackAnswerDTO>> getFeedbackAnswersByQuestionID(@PathVariable int feedbackQuestionID) {
+        List<FeedbackAnswerDTO> feedbackAnswers = feedbackAnswerService.getListFeedbackAnswersByQuestionID(feedbackQuestionID);
+        return ResponseEntity.ok(feedbackAnswers);
     }
 
 }

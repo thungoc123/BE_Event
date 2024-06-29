@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FeedbackQuestionService {
@@ -82,6 +84,26 @@ public class FeedbackQuestionService {
 
         // Xóa FeedbackQuestion
         feedbackQuestionRepository.delete(feedbackQuestion);
+    }
+    public List<FeedbackQuestionDTO> getListFeedbackQuestionsByFeedbackID(int feedbackID) {
+        Optional<Feedback> feedbackOptional = feedbackRepository.findById(feedbackID);
+        if (!feedbackOptional.isPresent()) {
+            throw new RuntimeException("Không tìm thấy Feedback với ID: " + feedbackID);
+        }
+
+        Feedback feedback = feedbackOptional.get();
+        List<FeedbackQuestion> feedbackQuestions = feedbackQuestionRepository.findByFeedback(feedback);
+
+        return feedbackQuestions.stream().map(fq -> {
+            FeedbackQuestionDTO dto = new FeedbackQuestionDTO();
+            dto.setFeedbackQuestionID(fq.getFeedbackQuestionID());
+            dto.setTypeQuestion(fq.getTypeQuestion());
+            dto.setTextQuestion(fq.getTextQuestion());
+            dto.setDeletedAt(fq.getDeletedAt());
+            dto.setModifiedAt(fq.getModifiedAt());
+            dto.setFeedbackID(feedbackID);
+            return dto;
+        }).collect(Collectors.toList());
     }
 }
 

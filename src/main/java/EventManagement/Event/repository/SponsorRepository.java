@@ -8,4 +8,6 @@ public interface SponsorRepository extends JpaRepository<Sponsor,Long> {
 
     Sponsor findById(int Id);
     Sponsor getSponsorById(int id);
+    void deleteByAccountId(int accountId);
 }
+
