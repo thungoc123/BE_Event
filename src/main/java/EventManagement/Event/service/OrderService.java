@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -29,33 +31,42 @@ public class OrderService {
 
     @Transactional
     public Order createOrderAndAddToCart(CreateOrderDTO createOrderDTO, Integer visitorId) {
-        // Create Order
+        Cart cart = cartRepository.findByVisitorId(visitorId);
+        if (cart == null) {
+            throw new IllegalArgumentException("Cart not found for the visitor");
+        }
+
+        // Create a new order
         Order order = new Order();
         order.setOrderDate(LocalDate.now());
         order.setOrderTime(LocalTime.now());
-        order.setQuantity(createOrderDTO.getQuantity());
         order.setOrderState(Order.OrderState.PENDING);
-        order.setTotal(createOrderDTO.getPrice().multiply(new BigDecimal(createOrderDTO.getQuantity())));
-        order.setVisitorId(visitorId);
-        Order savedOrder = orderRepository.save(order);
+        order.setCartId(cart.getCartId());
 
-        // Create OrderDetail
+        // Calculate total
+        BigDecimal total = createOrderDTO.getPrice().multiply(BigDecimal.valueOf(createOrderDTO.getQuantity()));
+        order.setTotal(total);
+
+        // Save the order
+        order = orderRepository.save(order);
+
+        // Create order details
         OrderDetail orderDetail = new OrderDetail();
-        orderDetail.setOrderId(savedOrder.getOrderId());
+        orderDetail.setOrderId(order.getOrderId());
         orderDetail.setEventId(createOrderDTO.getEventId());
         orderDetail.setQuantity(createOrderDTO.getQuantity());
         orderDetail.setPrice(createOrderDTO.getPrice());
-        orderDetail.setStatus(OrderDetail.Status.OPEN);
+
+        // Save order detail
         orderDetailRepository.save(orderDetail);
+        return order;
+    }
 
-        // Create Cart
-        Cart cart = new Cart();
-        cart.setOrderId(savedOrder.getOrderId());
-        cart.setVisitorId(visitorId);
-        cart.setCreatedAt(LocalDate.now().atStartOfDay());
-        cart.setModifiedAt(LocalDate.now().atStartOfDay());
-        cartRepository.save(cart);
+    public Optional<Order> viewOrder(Integer orderId) {
+        return orderRepository.findById(orderId);
+    }
 
-        return savedOrder;
+    public List<OrderDetail> viewOrderDetails(Integer orderId) {
+        return orderDetailRepository.findByOrderId(orderId);
     }
 }
