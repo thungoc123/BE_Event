@@ -1,41 +1,17 @@
-package EventManagement.Event.entity;
+package EventManagement.Event.DTO;
 
-import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.math.BigDecimal;
 
-@Entity
-@Table(name = "order")
-public class Order {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "OrderId")
+public class OrderDTO {
     private Integer orderId;
-
-    @Column(name = "OrderTime")
     private LocalTime orderTime;
-
-    @Column(name = "OrderDate")
     private LocalDate orderDate;
-
-    @Column(name = "Quantity")
     private Integer quantity;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "OrderState")
-    private OrderState orderState;
-
-    @Column(name = "Total")
+    private String orderState;
     private BigDecimal total;
-
-    @Column(name = "CartId")
     private Integer cartId;
-
-    // Enum for OrderState
-    public enum OrderState {
-        CANCELLED, PENDING, PAID
-    }
 
     // Getters and Setters
     public Integer getOrderId() {
@@ -70,11 +46,12 @@ public class Order {
         this.quantity = quantity;
     }
 
-    public OrderState getOrderState() {
+
+    public String getOrderState() {
         return orderState;
     }
 
-    public void setOrderState(OrderState orderState) {
+    public void setOrderState(String orderState) {
         this.orderState = orderState;
     }
 
