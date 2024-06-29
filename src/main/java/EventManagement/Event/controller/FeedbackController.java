@@ -35,10 +35,15 @@ public class FeedbackController {
     }
 
 
-    @PostMapping("/create")
-    public ResponseEntity<Feedback> createFeedback(@RequestBody FeedbackDTO feedbackDTO) {
-        Feedback createdFeedback = feedbackService.createFeedback(feedbackDTO, feedbackDTO.getAccountId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdFeedback);
+    @PostMapping("/events/{eventId}")
+    public ResponseEntity<Feedback> createFeedback(@PathVariable("eventId") int eventId,
+                                                   @RequestBody FeedbackDTO feedbackDTO) {
+        try {
+            Feedback createdFeedback = feedbackService.createFeedback(feedbackDTO, eventId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdFeedback);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @PutMapping("/update/{id}")
@@ -50,23 +55,30 @@ public class FeedbackController {
             } else {
                 return ResponseEntity.notFound().build();
             }
-        } catch (IllegalArgumentException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
 
+
     @DeleteMapping("/delete/{feedbackID}")
     public ResponseEntity<Void> deleteFeedback(@PathVariable int feedbackID) {
-        feedbackService.deleteFeedback(feedbackID);
-        return ResponseEntity.noContent().build();
+        try {
+            feedbackService.deleteFeedback(feedbackID);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
-    @GetMapping("/account")
-    public List<Feedback> getAllFeedbackByAccountId(HttpServletRequest request) {
-        String accountid = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return feedbackRepository.findByAccount_Id(Integer.parseInt(accountid));
-    }
+
+//    @GetMapping("/account")
+//    public List<Feedback> getAllFeedbackByAccountId(HttpServletRequest request) {
+//        String accountid = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//
+//        return feedbackRepository.findByAccount_Id(Integer.parseInt(accountid));
+//    }
 
 
 

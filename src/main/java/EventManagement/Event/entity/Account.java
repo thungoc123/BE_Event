@@ -26,10 +26,7 @@ public class Account {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    @JsonIgnore
-    @JsonIgnoreProperties("account") // Ignore the account field in Feedback to prevent recursion
-    private Set<Feedback> feedbacks;
+
 
     @OneToMany(mappedBy = "account")
     @JsonIgnore

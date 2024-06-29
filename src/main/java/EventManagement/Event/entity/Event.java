@@ -58,6 +58,8 @@ public class Event {
     @ManyToMany(mappedBy = "events")
     private Set<SponsorProgram> sponsorPrograms = new HashSet<>();
 
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Feedback> feedbacks;
 
 
 
