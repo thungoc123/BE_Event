@@ -26,14 +26,16 @@ public class Feedback {
     @JoinColumn(name = "state_id")
     private State state;
 
+    // Break infinite recursion by ignoring the feedbackQuestions property during serialization
     @OneToMany(mappedBy = "feedback", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonIgnoreProperties("feedback")
     @JsonIgnore
+    @JsonIgnoreProperties("feedback") // Alternatively, you can use @JsonIgnore here
     private Set<FeedbackQuestion> feedbackQuestions;
 
+    // Break infinite recursion by ignoring the account property during serialization
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id")
-    @JsonIgnoreProperties("feedbacks")
     @JsonIgnore
+    @JsonIgnoreProperties("feedbacks") // Alternatively, you can use @JsonIgnore here
     private Account account;
 }
