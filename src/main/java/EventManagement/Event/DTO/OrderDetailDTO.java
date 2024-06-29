@@ -1,26 +1,12 @@
-package EventManagement.Event.entity;
+package EventManagement.Event.DTO;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "order_detail")
-public class OrderDetail {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "orderDetailId")
+public class OrderDetailDTO {
     private Integer orderDetailId;
-
-    @Column(name = "quantity")
     private Integer quantity;
-
-    @Column(name = "price")
     private BigDecimal price;
-
-    @Column(name = "orderId")
     private Integer orderId;
-
-    @Column(name = "eventId")
     private Integer eventId;
 
     // Getters and Setters
