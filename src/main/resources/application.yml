@@ -31,7 +31,7 @@ jwt:
 #spring:
 #  jpa:
 #    hibernate:
-#      ddl-auto: none
+#      ddl-auto: update
 #  datasource:
 #    url: jdbc:mysql://localhost:3307/EventManagement
 #    username: root
