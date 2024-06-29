@@ -118,17 +118,21 @@ public class EventService implements EventServiceImp {
             }
         }
         @Override
-        public boolean deleteEvent(int eventId) {
+        @Transactional
+    public boolean deleteEvent(int eventId) {
             try {
                 Event eventToDelete  = eventRepository.findById(eventId).orElse(null);
                 if (eventToDelete == null) {
                     throw new RuntimeException("Can't find eventId: " + eventId);
                 }
-                eventRepository.deleteSponsorProgramEventByEventId(eventId);
-//                checkingStaffService.deleteAllCheckingStaff(eventId);
+                checkingStaffService.deleteAllCheckingStaff(eventId);
                 imageService.deleteImagebyEvent(eventId);
-                scheduleService.deleteSchedulebyEvent(eventId);
-                
+                scheduleService.deleteSchedule(eventId);
+//                List<SponsorProgram> sponsorPrograms = sponsorProgramRepository.findByEvents_Id(eventId);
+//                for (SponsorProgram sponsorProgram : sponsorPrograms) {
+//                    sponsorProgram.getEvents().removeIf(event -> event.getId() == eventId);
+//                    sponsorProgramRepository.save(sponsorProgram);
+//                }
 
                 eventRepository.delete(eventToDelete);
 
@@ -138,27 +142,6 @@ public class EventService implements EventServiceImp {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
-            }
-        }
-        @Override
-        public boolean changeStateEvent(int eventId){
-            try {
-                Event eventToChange  = eventRepository.findById(eventId).orElse(null);
-                if (eventToChange == null) {
-                    throw new RuntimeException("Can't find eventId: " + eventId);
-                }
-                StateEvent stateEvent = stateEventRepository.findById(2);
-                eventToChange.setStateEvent(stateEvent);
-                if (eventToChange.getStateEvent().getId() == stateEvent.getId()) {
-                    System.out.println("Event is already published.");
-                    return true;
-                }
-                eventRepository.save(eventToChange);
-                System.out.println("Event state changed to publish successfully.");
-                return true;
-            } catch (Exception e){
-               e.printStackTrace();
-               return false;
             }
         }
     }

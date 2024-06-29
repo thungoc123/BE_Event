@@ -10,7 +10,6 @@ public interface EventServiceImp {
     boolean insertEvent(InsertEventRequest request);
     boolean updateEvent(int EventId,  InsertEventRequest request);
     boolean deleteEvent(int EventId);
-    boolean changeStateEvent(int eventId);
 
 }
 

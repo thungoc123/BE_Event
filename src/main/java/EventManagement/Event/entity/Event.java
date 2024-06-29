@@ -1,6 +1,9 @@
 package EventManagement.Event.entity;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -52,16 +55,11 @@ public class Event {
     @JsonManagedReference
     private List<EventSchedule> eventSchedules;
 
-    @ManyToOne
-    @JoinColumn(name = "checking_staff_id")
-    private CheckingStaff checkingStaff;
-//    @OneToMany(mappedBy = "event")
-//    private List<CheckingStaff> eventCheckingStaffs;
+    @OneToMany(mappedBy = "event")
+    private List<CheckingStaff> eventCheckingStaffs;
     @ManyToMany(mappedBy = "events")
     private Set<SponsorProgram> sponsorPrograms = new HashSet<>();
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Feedback> feedbacks;
 
 
 
