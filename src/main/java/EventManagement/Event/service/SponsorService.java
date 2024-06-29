@@ -29,6 +29,9 @@ public class SponsorService implements SponsorProgramImp {
 
     @Autowired
     private RoleRepository roleRepository;
+    public List<SponsorProgram> getAllSponsorPrograms() {
+        return sponsorProgramRepository.findAll();
+    }
 
     public List<SponsorProgram> getProgramsByAccountId(HttpServletRequest request) {
         String accountId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -221,4 +224,5 @@ public class SponsorService implements SponsorProgramImp {
         }
 
     }
+
 }

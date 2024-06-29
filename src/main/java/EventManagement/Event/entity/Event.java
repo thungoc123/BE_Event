@@ -46,14 +46,16 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "state_event_id")
     private StateEvent stateEvent;
+
     @OneToMany(mappedBy = "event")
     @JsonManagedReference
     private List<EventImage> eventImages;
+
     @OneToMany(mappedBy = "event")
     @JsonManagedReference
     private List<EventSchedule> eventSchedules;
-    @OneToMany(mappedBy = "event")
 
+    @OneToMany(mappedBy = "event")
     private List<CheckingStaff> eventCheckingStaffs;
     @ManyToMany(mappedBy = "events")
     private Set<SponsorProgram> sponsorPrograms = new HashSet<>();

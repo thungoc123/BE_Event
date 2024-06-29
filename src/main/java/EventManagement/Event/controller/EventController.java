@@ -249,6 +249,20 @@ public class EventController {
         }
 
     }
+    @DeleteMapping("/event{eventId}")
+    public ResponseEntity<Map<String, String>> deleteEvent(@PathVariable int eventId){
+        boolean isDeleted = eventService.deleteEvent(eventId);
+        Map<String, String> response = new HashMap<>();
+        if (isDeleted) {
+            response.put("message", "Event deleted successfully");
+            return ResponseEntity.ok(response);
+        } else{
+            response.put("message", "Failed to delete event");
+            return ResponseEntity.status(500).body(response);
+        }
+
+
+    }
 }
 
 

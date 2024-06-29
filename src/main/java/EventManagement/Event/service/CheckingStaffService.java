@@ -13,6 +13,7 @@ import EventManagement.Event.service.imp.CheckingStaffImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -64,6 +65,9 @@ public class CheckingStaffService implements CheckingStaffImp {
         checkingStaff.setAccount(accountSaved);
         checkingStaff.setEvent(event);
         checkingStaffRepository.save(checkingStaff);
+        String subject = "Create CheckingStaff successful";
+        String text = "Hi guy,\n\nYour CheckingStaff account has been successfully created.\n\nEmail: " + email + "\nPassword: " + randomPassword + "\n\nBest regards";
+        emailService.sendEmail(email, subject, text);
 
         return true;
 
@@ -107,6 +111,27 @@ public class CheckingStaffService implements CheckingStaffImp {
             return false;
         }
     }
+    @Override
+    public boolean deleteAllCheckingStaff(int eventId) {
+        try {
+            Event event = eventRepository.findById(eventId).orElse(null);
+            if (event == null) {
+                throw new RuntimeException("Can't find eventId: " + eventId);
+            }
+            List<CheckingStaff> checkingStaffList = checkingStaffRepository.findByEventId(eventId);
+            for (CheckingStaff checkingStaff : checkingStaffList) {
+                Account account = checkingStaff.getAccount();
+                checkingStaffRepository.delete(checkingStaff);
+                accountRepository.delete(account);
+            }
+            return true;
 
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+
+    }
 }

@@ -9,7 +9,10 @@ import EventManagement.Event.service.imp.EventServiceImp;
 //import EventManagement.Event.service.imp.FileServiceImp;
 import EventManagement.Event.utils.JwtHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,14 +25,17 @@ import java.util.NoSuchElementException;
 public class EventService implements EventServiceImp {
 
     @Autowired
-    private JwtHelper jwtHelper;
-    @Autowired
     private EventRepository eventRepository;
     @Autowired
     private StateEventRepository stateEventRepository;
     @Autowired
     private AccountRepository accountRepository;
-
+    @Autowired
+    private CheckingStaffService checkingStaffService;
+    @Autowired
+    private ImageService imageService;
+    @Autowired
+    private ScheduleService scheduleService;
 
 
     //list event
@@ -109,6 +115,33 @@ public class EventService implements EventServiceImp {
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
+            }
+        }
+        @Override
+        @Transactional
+    public boolean deleteEvent(int eventId) {
+            try {
+                Event eventToDelete  = eventRepository.findById(eventId).orElse(null);
+                if (eventToDelete == null) {
+                    throw new RuntimeException("Can't find eventId: " + eventId);
+                }
+                checkingStaffService.deleteAllCheckingStaff(eventId);
+                imageService.deleteImagebyEvent(eventId);
+                scheduleService.deleteSchedule(eventId);
+//                List<SponsorProgram> sponsorPrograms = sponsorProgramRepository.findByEvents_Id(eventId);
+//                for (SponsorProgram sponsorProgram : sponsorPrograms) {
+//                    sponsorProgram.getEvents().removeIf(event -> event.getId() == eventId);
+//                    sponsorProgramRepository.save(sponsorProgram);
+//                }
+
+                eventRepository.delete(eventToDelete);
+
+                System.out.println("Deleting event with ID " + eventId);
+                return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
             }
         }
     }
