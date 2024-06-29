@@ -31,53 +31,33 @@ public class Sponsor {
     private Account account;
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getInformation() {
-        return information;
     }
 
     public void setInformation(String information) {
         this.information = information;
     }
 
-    public String getCompanyName() {
-        return companyName;
-    }
-
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
-    }
-
-    public String getCompanyID() {
-        return companyID;
     }
 
     public void setCompanyID(String companyID) {
         this.companyID = companyID;
     }
 
-    public String getFptStaffEmail() {
-        return fptStaffEmail;
-    }
-
     public void setFptStaffEmail(String fptStaffEmail) {
         this.fptStaffEmail = fptStaffEmail;
     }
 
-    public Account getAccount() {
-        return account;
+    public void setEvents(List<Event> events) {
+        this.events = events;
     }
 
     public void setAccount(Account account) {
         this.account = account;
     }
-
-
 }
