@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,29 +44,35 @@ public class FeedbackAnswerService {
     }
 
 
-    public FeedbackAnswerDTO createFeedbackAnswer(FeedbackAnswerDTO feedbackAnswerDTO) {
-        FeedbackAnswer feedbackAnswer = new FeedbackAnswer();
-        feedbackAnswer.setDeletedAt(feedbackAnswerDTO.getDeletedAt());
-        feedbackAnswer.setAnswer(feedbackAnswerDTO.getAnswer());
-        feedbackAnswer.setModifiedAt(feedbackAnswerDTO.getModifiedAt());
+    public List<FeedbackAnswerDTO> createFeedbackAnswers(List<FeedbackAnswerDTO> feedbackAnswerDTOs) {
+        List<FeedbackAnswerDTO> responseDTOs = new ArrayList<>();
 
-        Optional<FeedbackQuestion> feedbackQuestionOptional = feedBackQuestionRepository.findById(feedbackAnswerDTO.getQuestion_id());
-        if (!feedbackQuestionOptional.isPresent()) {
-            throw new RuntimeException("Không tìm thấy FeedbackQuestion với ID: " + feedbackAnswerDTO.getQuestion_id());
+        for (FeedbackAnswerDTO feedbackAnswerDTO : feedbackAnswerDTOs) {
+            FeedbackAnswer feedbackAnswer = new FeedbackAnswer();
+            feedbackAnswer.setDeletedAt(feedbackAnswerDTO.getDeletedAt());
+            feedbackAnswer.setAnswer(feedbackAnswerDTO.getAnswer());
+            feedbackAnswer.setModifiedAt(feedbackAnswerDTO.getModifiedAt());
+
+            Optional<FeedbackQuestion> feedbackQuestionOptional = feedBackQuestionRepository.findById(feedbackAnswerDTO.getQuestion_id());
+            if (!feedbackQuestionOptional.isPresent()) {
+                throw new RuntimeException("Không tìm thấy FeedbackQuestion với ID: " + feedbackAnswerDTO.getQuestion_id());
+            }
+
+            feedbackAnswer.setFeedbackQuestion(feedbackQuestionOptional.get());
+
+            FeedbackAnswer savedFeedbackAnswer = feedbackAnswerRepository.save(feedbackAnswer);
+
+            FeedbackAnswerDTO responseDTO = new FeedbackAnswerDTO();
+            responseDTO.setFeedbackAnswerID(savedFeedbackAnswer.getFeedbackAnswerID());
+            responseDTO.setAnswer(savedFeedbackAnswer.getAnswer());
+            responseDTO.setDeletedAt(savedFeedbackAnswer.getDeletedAt());
+            responseDTO.setModifiedAt(savedFeedbackAnswer.getModifiedAt());
+            responseDTO.setQuestion_id(savedFeedbackAnswer.getFeedbackQuestion().getFeedbackQuestionID());
+
+            responseDTOs.add(responseDTO);
         }
 
-        feedbackAnswer.setFeedbackQuestion(feedbackQuestionOptional.get());
-
-        FeedbackAnswer savedFeedbackAnswer = feedbackAnswerRepository.save(feedbackAnswer);
-
-        FeedbackAnswerDTO responseDTO = new FeedbackAnswerDTO();
-        responseDTO.setFeedbackAnswerID(savedFeedbackAnswer.getFeedbackAnswerID());
-        responseDTO.setAnswer(savedFeedbackAnswer.getAnswer());
-        responseDTO.setDeletedAt(savedFeedbackAnswer.getDeletedAt());
-        responseDTO.setModifiedAt(savedFeedbackAnswer.getModifiedAt());
-        responseDTO.setQuestion_id(savedFeedbackAnswer.getFeedbackQuestion().getFeedbackQuestionID()); // Sử dụng ID của câu hỏi
-
-        return responseDTO;
+        return responseDTOs;
     }
 
     public FeedbackAnswer updateFeedbackAnswer(int feedbackAnswerID, FeedbackAnswerDTO feedbackAnswerDTO) {

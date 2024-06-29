@@ -28,8 +28,8 @@ public class FeedbackAnswerController {
 
 
     @PostMapping("/create")
-    public FeedbackAnswerDTO createFeedbackAnswer(@RequestBody FeedbackAnswerDTO feedbackAnswerDTO) {
-        return feedbackAnswerService.createFeedbackAnswer(feedbackAnswerDTO);
+    public List<FeedbackAnswerDTO> createFeedbackAnswers(@RequestBody List<FeedbackAnswerDTO> feedbackAnswerDTOs) {
+        return feedbackAnswerService.createFeedbackAnswers(feedbackAnswerDTOs);
     }
 
     @PutMapping("/update/{id}")
