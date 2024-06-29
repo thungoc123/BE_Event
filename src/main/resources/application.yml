@@ -1,44 +1,44 @@
-server:
-  port: 7979
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-spring:
-  jpa:
-    hibernate:
-
-      ddl-auto: update
-
-
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-        format_sql: true
-        show_sql: true
-
-  datasource:
-    url: jdbc:mysql://enventmanagement.mysql.database.azure.com:3306/eventmanagement?useSSL=TRUE
-    username: fptadmin
-    password: 123Khongrotmon
-    driver-class-name: com.mysql.cj.jdbc.Driver
-jwt:
-  private-key: CLp/edt3SGCOs7+ByILRGWPR5N168VSi8TG12KBe2/Y=
 #server:
 #  port: 7979
-#
+#springdoc:
+#  api-docs:
+#    path: /v3/api-docs
+#  swagger-ui:
+#    path: /swagger-ui.html
 #spring:
 #  jpa:
 #    hibernate:
-#      ddl-auto: none
+#
+#      ddl-auto: update
+#
+#
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.MySQLDialect
+#        format_sql: true
+#        show_sql: true
+#
 #  datasource:
-#    url: jdbc:mysql://localhost:3307/EventManagement
-#    username: root
-#    password: admin123
+#    url: jdbc:mysql://enventmanagement.mysql.database.azure.com:3306/eventmanagement?useSSL=TRUE
+#    username: fptadmin
+#    password: 123Khongrotmon
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 #jwt:
 #  private-key: CLp/edt3SGCOs7+ByILRGWPR5N168VSi8TG12KBe2/Y=
+server:
+  port: 7979
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+  datasource:
+    url: jdbc:mysql://localhost:3307/EventManagement
+    username: root
+    password: admin123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+jwt:
+  private-key: CLp/edt3SGCOs7+ByILRGWPR5N168VSi8TG12KBe2/Y=
 
 
 
