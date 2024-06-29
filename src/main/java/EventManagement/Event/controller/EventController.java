@@ -80,7 +80,7 @@ public class EventController {
 
     @PostMapping("/{id}/create-schedule")
     public ResponseEntity<Map<String, String>> insertSchedule(@PathVariable int id,
-                                            InsertScheduleRequest insertScheduleRequest) {
+                                            @RequestBody InsertScheduleRequest insertScheduleRequest) {
 
         Event event = eventService.getEventById(id);
         Map<String, String> response = new HashMap<>();
@@ -139,6 +139,10 @@ public class EventController {
         insertImageRequest.setEventId(id);
         boolean isSuccess = imageService.insertImage(insertImageRequest);
         Map<String, String> response = new HashMap<>();
+        if (event == null) {
+            response.put("message", "Please create an event first");
+            return ResponseEntity.status(400).body(response);
+        }
         if (isSuccess) {
             response.put("message", "Image added successfully.");
             return ResponseEntity.ok(response);
@@ -157,6 +161,10 @@ public class EventController {
         insertSponsorRequest.setEventId(id);
         boolean isSuccess = sponsorService.insertSponsor(insertSponsorRequest);
         Map<String, String> response = new HashMap<>();
+        if (event == null) {
+            response.put("message", "Please create an event first");
+            return ResponseEntity.status(400).body(response);
+        }
         if (isSuccess) {
             response.put("message", "Sponsor added successfully.");
             return ResponseEntity.ok(response);
@@ -165,32 +173,81 @@ public class EventController {
             return ResponseEntity.status(400).body(response);
         }
     }
+    @PutMapping("/{eventId}/schedules/{scheduleId}")
+    public ResponseEntity<Map<String, String>> updateSchedule(@PathVariable int eventId, @PathVariable int scheduleId, @RequestBody InsertScheduleRequest insertScheduleRequest) {
+
+            boolean isUpdated = scheduleService.updateSchedule(eventId, scheduleId, insertScheduleRequest);
+            Map<String, String> response = new HashMap<>();
+            if (isUpdated) {
+                response.put("message", "Schedule updated successfully");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("message", "Failed to update schedule");
+                return ResponseEntity.status(400).body(response);
+            }
+    }
     @PutMapping("/{eventId}")
-    public ResponseEntity<String> updateEvent(@PathVariable int eventId, @RequestBody InsertEventRequest request) {
+    public ResponseEntity<Map<String, String>> updateEvent(@PathVariable int eventId, @RequestBody InsertEventRequest request) {
         boolean isUpdated = eventService.updateEvent(eventId, request);
+        Map<String, String> response = new HashMap<>();
         if (isUpdated) {
-            return new ResponseEntity<>("Event updated successfully", HttpStatus.OK);
+            response.put("message", "Updated event successfully");
+            return ResponseEntity.ok(response);
         } else {
-            return new ResponseEntity<>("Failed to update event", HttpStatus.INTERNAL_SERVER_ERROR);
+            response.put("message", "Failed to update event");
+            return ResponseEntity.status(500).body(response);
         }
     }
     @DeleteMapping("/staff{checkingStaffId}/event{eventId}")
-    public ResponseEntity<String> deleteCheckingStaff(@PathVariable int checkingStaffId,@PathVariable int eventId) {
+    public ResponseEntity<Map<String, String>> deleteCheckingStaff(@PathVariable int checkingStaffId,@PathVariable int eventId) {
         boolean isDeleted = checkingStaffService.deleteCheckingStaff(checkingStaffId, eventId);
+        Map<String, String> response = new HashMap<>();
         if (isDeleted) {
-            return ResponseEntity.ok("CheckingStaff deleted successfully");
+            response.put("message", "Checking staff deleted successfully");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete CheckingStaff");
+            response.put("message", "Failed to delete checking staff");
+            return ResponseEntity.status(500).body(response);
         }
     }
     @DeleteMapping("/{eventId}/sponsor")
-    public ResponseEntity<String> deleteSponsor(@PathVariable int eventId) {
+    public ResponseEntity<Map<String, String>> deleteSponsor(@PathVariable int eventId) {
         boolean isDeleted = sponsorService.deleteSponsor( eventId);
+        Map<String, String> response = new HashMap<>();
         if (isDeleted) {
-            return ResponseEntity.ok("Sponsor deleted successfully");
+            response.put("message", "Sponsor deleted successfully");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete Sponsor");
+            response.put("message", "Failed to delete sponsor");
+            return ResponseEntity.status(500).body(response);
         }
+    }
+    @DeleteMapping("/image{imageId}")
+    public ResponseEntity<Map<String, String>> deleteImage(@PathVariable int imageId) {
+        boolean isDeleted = imageService.deleteImage(imageId);
+        Map<String, String> response = new HashMap<>();
+        if (isDeleted) {
+            response.put("message", "Image deleted successfully");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "Failed to delete image");
+            return ResponseEntity.status(500).body(response);
+        }
+
+    }
+    @DeleteMapping("/schedule{scheduleId}")
+    public ResponseEntity<Map<String, String>> deleteSchedule(@PathVariable int scheduleId) {
+        boolean isDeleted = scheduleService.deleteSchedule(scheduleId);
+        Map<String, String> response = new HashMap<>();
+        if (isDeleted) {
+            response.put("message", "Schedule deleted successfully");
+            return ResponseEntity.ok(response);
+
+        } else{
+            response.put("message", "Failed to delete schedule");
+            return ResponseEntity.status(500).body(response);
+        }
+
     }
 }
 

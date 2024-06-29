@@ -10,6 +10,7 @@ import java.util.Set;
 @Entity
 @Data
 @Table(name = "feedback")
+@JsonIgnoreProperties({"account", "feedbackQuestions"})
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +31,5 @@ public class Feedback {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id")
-    @JsonIgnoreProperties("feedbacks")
     private Account account;
-
-
 }

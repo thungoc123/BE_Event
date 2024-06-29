@@ -102,6 +102,25 @@ public class FeedbackAnswerService {
         // Xóa bản ghi FeedbackAnswer
         feedbackAnswerRepository.delete(feedbackAnswer);
     }
+    public List<FeedbackAnswerDTO> getListFeedbackAnswersByQuestionID(int feedbackQuestionID) {
+        Optional<FeedbackQuestion> feedbackQuestionOptional = feedBackQuestionRepository.findById(feedbackQuestionID);
+        if (!feedbackQuestionOptional.isPresent()) {
+            throw new RuntimeException("Không tìm thấy FeedbackQuestion với ID: " + feedbackQuestionID);
+        }
+
+        FeedbackQuestion feedbackQuestion = feedbackQuestionOptional.get();
+        List<FeedbackAnswer> feedbackAnswers = feedbackAnswerRepository.findByFeedbackQuestion(feedbackQuestion);
+
+        return feedbackAnswers.stream().map(answer -> {
+            FeedbackAnswerDTO dto = new FeedbackAnswerDTO();
+            dto.setFeedbackAnswerID(answer.getFeedbackAnswerID());
+            dto.setAnswer(answer.getAnswer());
+            dto.setDeletedAt(answer.getDeletedAt());
+            dto.setModifiedAt(answer.getModifiedAt());
+            dto.setQuestion_id(feedbackQuestionID);
+            return dto;
+        }).collect(Collectors.toList());
+    }
 }
 
 

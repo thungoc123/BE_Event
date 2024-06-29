@@ -1,5 +1,6 @@
 package EventManagement.Event.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -24,9 +25,11 @@ public class FeedbackQuestion {
 
     @ManyToOne
     @JoinColumn(name = "feedbackID", nullable = false)
+    @JsonIgnoreProperties("feedbackQuestions")
     private Feedback feedback;
 
     @OneToMany(mappedBy = "feedbackQuestion", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("feedbackQuestions")
     private Set<FeedbackAnswer> feedbackAnswers;
 
     public int getFeedbackQuestionID() {

@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class InsertImageRequest {
     private int eventId;
-    private List<String> imagesUrl;
+    private String imagesUrl;
 
 
 }

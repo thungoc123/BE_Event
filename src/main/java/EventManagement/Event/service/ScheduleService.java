@@ -12,23 +12,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ScheduleService implements ScheduleServiceImp{
+public class ScheduleService implements ScheduleServiceImp {
 
-   @Autowired
-   private EventRepository eventRepository;
+    @Autowired
+    private EventRepository eventRepository;
 
-   @Autowired
-   private AccountRepository accountRepository;
-   @Autowired
-   private EventScheduleRepository eventScheduleRepository;
+    @Autowired
+    private AccountRepository accountRepository;
+    @Autowired
+    private EventScheduleRepository eventScheduleRepository;
+
     @Override
     public boolean insertSchedule(InsertScheduleRequest insertScheduleRequest) {
 
         int eventId = insertScheduleRequest.getEventId();
-       Event event = eventRepository.findById(eventId).orElse(null);
+        Event event = eventRepository.findById(eventId).orElse(null);
         System.out.println("Fetching event with ID: " + eventId);
-       if (event == null) {
-           return false; // neu k tim thay eventid tra ve false
+        if (event == null) {
+            return false; // neu k tim thay eventid tra ve false
         }
         EventSchedule eventSchedule = new EventSchedule();
         eventSchedule.setEvent(event);
@@ -56,7 +57,6 @@ public class ScheduleService implements ScheduleServiceImp{
             }
 
 
-
             EventSchedule scheduleToUpdate = eventScheduleRepository.findById(scheduleId).orElse(null);
             if (scheduleToUpdate == null) {
                 throw new RuntimeException("Can't find scheduleId: " + scheduleId);
@@ -79,6 +79,24 @@ public class ScheduleService implements ScheduleServiceImp{
         }
 
     }
-   }
+
+    @Override
+    public boolean deleteSchedule( int scheduleId) {
+        try {
+
+            EventSchedule schedule = eventScheduleRepository.findById(scheduleId).orElse(null);
+            if (schedule == null) {
+                throw new RuntimeException("Can't find scheduleId: " + scheduleId);
+            }
+            eventScheduleRepository.delete(schedule);
+
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+}
 
 
