@@ -1,9 +1,6 @@
 package EventManagement.Event.service;
 
-import EventManagement.Event.DTO.FeedbackAnswerDTO;
-import EventManagement.Event.DTO.FeedbackDTO;
-import EventManagement.Event.DTO.FeedbackDataDTO;
-import EventManagement.Event.DTO.FeedbackQuestionDTO;
+import EventManagement.Event.DTO.*;
 import EventManagement.Event.entity.*;
 import EventManagement.Event.repository.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -117,19 +114,7 @@ public class FeedbackService {
         return accountRepository.findByEmail(email);
     }
 
-//    public List<FeedbackDTO> getAll() {
-//        List<Feedback> feedbacks = feedbackRepository.findAll();
-//
-//        // Initialize lazy-loaded collections
-//        for (Feedback feedback : feedbacks) {
-//            Set<FeedbackQuestion> questions = feedback.getFeedbackQuestions();
-//            questions.forEach(question -> {
-//                question.getFeedbackAnswers().size(); // Initialize answers
-//            });
-//        }
-//
-//        return feedbacks.stream().map(this::convertFeedbackToDTO).collect(Collectors.toList());
-//    }
+
     public FeedbackDataDTO getAllFeedbackData() {
         List<Feedback> feedbacks = feedbackRepository.findAll();
         List<FeedbackQuestion> feedbackQuestions = feedBackQuestionRepository.findAll();
@@ -147,6 +132,7 @@ public class FeedbackService {
 
         return feedbackRepository.findByAccount_Id(Integer.parseInt(accountid));
     }
+
 
 
 
