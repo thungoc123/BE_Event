@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api-orders")
+@RequestMapping("/api/orders")
 public class OrderController {
 
     @Autowired
@@ -27,36 +26,31 @@ public class OrderController {
         return ResponseEntity.ok(order);
     }
 
+    @GetMapping
+    public ResponseEntity<List<OrderDTO>> getAllOrders() {
+        List<OrderDTO> orders = orderService.getAllOrders();
+        return ResponseEntity.ok(orders);
+    }
+
     @GetMapping("/{orderId}")
-    public OrderDTO viewOrder(@PathVariable Integer orderId) {
+    public ResponseEntity<OrderDTO> viewOrder(@PathVariable Integer orderId) {
         Optional<Order> orderOptional = orderService.viewOrder(orderId);
         if (orderOptional.isPresent()) {
             Order order = orderOptional.get();
-            OrderDTO orderDTO = new OrderDTO();
-            orderDTO.setOrderId(order.getOrderId());
-            orderDTO.setOrderTime(order.getOrderTime());
-            orderDTO.setOrderDate(order.getOrderDate());
-            orderDTO.setQuantity(order.getQuantity());
-            orderDTO.setOrderState(order.getOrderState().name());
-            orderDTO.setTotal(order.getTotal());
-            orderDTO.setCartId(order.getCartId());
-            return orderDTO;
+            OrderDTO orderDTO = orderService.toOrderDTO(order);
+            return ResponseEntity.ok(orderDTO);
         } else {
-            throw new RuntimeException("Order not found with id: " + orderId);
+            return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/{orderId}/details")
-    public List<OrderDetailDTO> viewOrderDetails(@PathVariable Integer orderId) {
+    public ResponseEntity<List<OrderDetailDTO>> viewOrderDetails(@PathVariable Integer orderId) {
         List<OrderDetail> orderDetails = orderService.viewOrderDetails(orderId);
-        return orderDetails.stream().map(orderDetail -> {
-            OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
-            orderDetailDTO.setOrderDetailId(orderDetail.getOrderDetailId());
-            orderDetailDTO.setQuantity(orderDetail.getQuantity());
-            orderDetailDTO.setPrice(orderDetail.getPrice());
-            orderDetailDTO.setOrderId(orderDetail.getOrderId());
-            orderDetailDTO.setEventId(orderDetail.getEventId());
-            return orderDetailDTO;
-        }).collect(Collectors.toList());
+        if (orderDetails.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        List<OrderDetailDTO> orderDetailDTOs = orderService.toOrderDetailDTOs(orderDetails);
+        return ResponseEntity.ok(orderDetailDTOs);
     }
 }

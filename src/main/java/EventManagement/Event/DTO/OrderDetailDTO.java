@@ -8,7 +8,6 @@ public class OrderDetailDTO {
     private BigDecimal price;
     private Integer orderId;
     private Integer eventId;
-    private String status;
 
     // Getters and Setters
     public Integer getOrderDetailId() {
@@ -49,13 +48,5 @@ public class OrderDetailDTO {
 
     public void setEventId(Integer eventId) {
         this.eventId = eventId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }
