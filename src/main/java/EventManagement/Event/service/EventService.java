@@ -118,21 +118,17 @@ public class EventService implements EventServiceImp {
             }
         }
         @Override
-        @Transactional
-    public boolean deleteEvent(int eventId) {
+        public boolean deleteEvent(int eventId) {
             try {
                 Event eventToDelete  = eventRepository.findById(eventId).orElse(null);
                 if (eventToDelete == null) {
                     throw new RuntimeException("Can't find eventId: " + eventId);
                 }
+                eventRepository.deleteSponsorProgramEventByEventId(eventId);
                 checkingStaffService.deleteAllCheckingStaff(eventId);
                 imageService.deleteImagebyEvent(eventId);
-                scheduleService.deleteSchedule(eventId);
-//                List<SponsorProgram> sponsorPrograms = sponsorProgramRepository.findByEvents_Id(eventId);
-//                for (SponsorProgram sponsorProgram : sponsorPrograms) {
-//                    sponsorProgram.getEvents().removeIf(event -> event.getId() == eventId);
-//                    sponsorProgramRepository.save(sponsorProgram);
-//                }
+                scheduleService.deleteSchedulebyEvent(eventId);
+                
 
                 eventRepository.delete(eventToDelete);
 
