@@ -83,12 +83,11 @@ public class ImageService implements ImageServiceImp {
 
         try {
 
-            EventImage eventImage = eventImageRepository.findById(eventId).orElse(null);
+            EventImage eventImage = eventImageRepository.findByEventId(eventId);
             if (eventImage == null) {
                 throw new RuntimeException("Can't find image with eventId: " + eventId);
-
-
             }
+
             eventImageRepository.delete(eventImage);
             return true;
 
