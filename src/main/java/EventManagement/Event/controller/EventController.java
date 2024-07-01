@@ -25,14 +25,12 @@ import java.util.Map;
 public class EventController {
     @Autowired
     private SponsorService sponsorService;
-    @Autowired
-    private AccountService accountService;
+
     @Autowired
     private EventService eventService;
     @Autowired
     private ScheduleService scheduleService;
-    @Autowired
-    private AccountRepository accountRepository;
+
     @Autowired
     private CheckingStaffService checkingStaffService;
     @Autowired
@@ -108,17 +106,12 @@ public class EventController {
 
                                          ){
         Event event = eventService.getEventById(id);
-        String email = insertCheckingStaffRequest.getEmail();
+
         insertCheckingStaffRequest.setEventId(id);
 
         Map<String, String> response = new HashMap<>();
         if (event == null) {
             response.put("message", "Please create an event first");
-            return ResponseEntity.status(400).body(response);
-        }
-        Account account = accountService.getAccountByEmail(email);
-        if (account != null) {
-            response.put("message", "Please check email");
             return ResponseEntity.status(400).body(response);
         }
 
