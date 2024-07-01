@@ -44,7 +44,7 @@ public class EventController {
     private StateEventRepository stateEventRepository;
 
     @PatchMapping("/event/{eventId}/publish")
-    public ResponseEntity<Map<String, String>> publishEvent(@PathVariable int eventId){
+    public ResponseEntity<Map<String, String>> publishEvent(@PathVariable int eventId{
 
         Map<String, String> response = new HashMap<>();
         boolean isChanged = eventService.changeStateEvent(eventId);
