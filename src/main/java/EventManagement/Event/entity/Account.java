@@ -30,6 +30,7 @@ public class Account {
 
 
 
+
     @OneToMany(mappedBy = "account")
     @JsonIgnore
     @JsonIgnoreProperties("account")
@@ -62,4 +63,7 @@ public class Account {
     @JsonIgnore
     @JsonIgnoreProperties("account")
     private List<Event> events;
+
+
+
 }

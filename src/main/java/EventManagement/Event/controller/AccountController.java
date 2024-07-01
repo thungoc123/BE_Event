@@ -3,9 +3,8 @@ package EventManagement.Event.controller;
 import EventManagement.Event.entity.Account;
 import EventManagement.Event.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,4 +23,10 @@ public class AccountController {
     public List<Account> getAllAccounts() {
         return accountService.getAllAccounts();
     }
+
+//    @PutMapping("/{id}/disable")
+//    public ResponseEntity<?> disableAccount(@PathVariable Long id) {
+//        accountService.disableAccount(id);
+//        return ResponseEntity.ok().build();
+//    }
 }
