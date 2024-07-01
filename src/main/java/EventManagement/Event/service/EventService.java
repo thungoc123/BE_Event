@@ -140,6 +140,27 @@ public class EventService implements EventServiceImp {
             return false;
             }
         }
+        @Override
+        public boolean changeStateEvent(int eventId){
+            try {
+                Event eventToChange  = eventRepository.findById(eventId).orElse(null);
+                if (eventToChange == null) {
+                    throw new RuntimeException("Can't find eventId: " + eventId);
+                }
+                StateEvent stateEvent = stateEventRepository.findById(2);
+                eventToChange.setStateEvent(stateEvent);
+                if (eventToChange.getStateEvent().getId() == stateEvent.getId()) {
+                    System.out.println("Event is already published.");
+                    return true;
+                }
+                eventRepository.save(eventToChange);
+                System.out.println("Event state changed to publish successfully.");
+                return true;
+            } catch (Exception e){
+               e.printStackTrace();
+               return false;
+            }
+        }
     }
 
 

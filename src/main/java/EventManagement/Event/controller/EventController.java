@@ -2,9 +2,12 @@ package EventManagement.Event.controller;
 
 import EventManagement.Event.entity.Account;
 import EventManagement.Event.entity.Event;
+import EventManagement.Event.entity.StateEvent;
 import EventManagement.Event.payload.Request.*;
 import EventManagement.Event.repository.AccountRepository;
+import EventManagement.Event.repository.EventRepository;
 import EventManagement.Event.repository.SponsorRepository;
+import EventManagement.Event.repository.StateEventRepository;
 import EventManagement.Event.service.*;
 
 import EventManagement.Event.service.imp.EventServiceImp;
@@ -35,6 +38,24 @@ public class EventController {
     private CheckingStaffService checkingStaffService;
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private EventRepository eventRepository;
+    @Autowired
+    private StateEventRepository stateEventRepository;
+
+    @PatchMapping("/event/{eventId}/publish")
+    public ResponseEntity<Map<String, String>> publishEvent(@PathVariable int eventId{
+
+        Map<String, String> response = new HashMap<>();
+        boolean isChanged = eventService.changeStateEvent(eventId);
+        if (isChanged) {
+            response.put("message", "Event has been changed.");
+            return ResponseEntity.ok(response);
+        } else{
+            response.put("message", "Event has not been published.");
+            return ResponseEntity.ok(response);
+        }
+    }
 
     @GetMapping("/account")
     public ResponseEntity<List<Event>> getEventsByAccount(HttpServletRequest request) {
