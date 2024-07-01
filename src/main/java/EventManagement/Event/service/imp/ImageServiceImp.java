@@ -6,4 +6,5 @@ public interface ImageServiceImp {
 
     boolean insertImage(InsertImageRequest insertImageRequest);
     boolean deleteImage(int imageId);
+    boolean deleteImagebyEvent(int eventId);
 }

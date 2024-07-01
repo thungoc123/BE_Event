@@ -18,5 +18,4 @@ public class StateEvent {
     @OneToMany(mappedBy = "stateEvent", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Event> events;
-
 }

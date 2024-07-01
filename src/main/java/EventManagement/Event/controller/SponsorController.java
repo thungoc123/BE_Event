@@ -3,6 +3,7 @@ package EventManagement.Event.controller;
 import EventManagement.Event.entity.Event;
 import EventManagement.Event.entity.SponsorProgram;
 import EventManagement.Event.payload.Request.InsertSponsorProgramRequest;
+import EventManagement.Event.repository.SponsorProgramRepository;
 import EventManagement.Event.service.SponsorService;
 import EventManagement.Event.DTO.SponsorDTO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,11 +25,19 @@ import java.util.Optional;
 public class SponsorController {
     @Autowired
     private SponsorService sponsorService;
+    @Autowired
+    private SponsorProgramRepository sponsorProgramRepository;
 
-    @GetMapping("/program")
+    @GetMapping("/account/program")
     public ResponseEntity<List<SponsorProgram>> getProgramsByAccount(HttpServletRequest request) {
         List<SponsorProgram> sponsorPrograms = sponsorService.getProgramsByAccountId(request);
         return ResponseEntity.ok(sponsorPrograms);
+    }
+    @GetMapping("/program")
+
+    public  ResponseEntity<List<SponsorProgram>> getAllSponsorPrograms() {
+        List<SponsorProgram> programs = sponsorService.getAllSponsorPrograms();
+        return ResponseEntity.ok(programs);
     }
     @GetMapping
     public ResponseEntity<List<SponsorDTO>> getAllSponsors() {

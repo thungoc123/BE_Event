@@ -1,6 +1,7 @@
 package EventManagement.Event.service;
 
 import EventManagement.Event.entity.Account;
+import EventManagement.Event.entity.CheckingStaff;
 import EventManagement.Event.entity.Event;
 import EventManagement.Event.entity.EventSchedule;
 import EventManagement.Event.payload.Request.InsertScheduleRequest;
@@ -10,6 +11,8 @@ import EventManagement.Event.repository.EventScheduleRepository;
 import EventManagement.Event.service.imp.ScheduleServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ScheduleService implements ScheduleServiceImp {
@@ -96,6 +99,24 @@ public class ScheduleService implements ScheduleServiceImp {
             e.printStackTrace();
             return false;
         }
+    }
+    @Override
+    public boolean deleteSchedulebyEvent(int eventId){
+        try {
+            Event event = eventRepository.findById(eventId).orElse(null);
+            if (event == null) {
+                throw new RuntimeException("Can't find eventId: " + eventId);
+            }
+            List<EventSchedule> eventScheduleList = eventScheduleRepository.findByEventId(eventId);
+            for (EventSchedule eventSchedule : eventScheduleList) {
+                eventScheduleRepository.deleteAll(eventScheduleList);
+            }
+            return true;
+    } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
     }
 }
 
