@@ -21,5 +21,19 @@ public class AccountService {
         return accountRepository.findAll();
     }
 
+    public void disableAccount(int id) {
+        Account account = accountRepository.findById(id);
+        if (account != null) {
+            account.setEnabled(false);
+            accountRepository.save(account);
+        }
+    }
+    public void enableAccount(int id) {
+        Account account = accountRepository.findById(id);
+        if (account != null) {
+            account.setEnabled(true);
+            accountRepository.save(account);
+        }
+    }
 
 }

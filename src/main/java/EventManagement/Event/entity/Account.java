@@ -28,8 +28,8 @@ public class Account {
     @Column(nullable = false)
     private String password;
 
-
-
+    @Column(nullable = false)
+    private boolean enabled = true; // Thêm trường này
 
     @OneToMany(mappedBy = "account")
     @JsonIgnore
@@ -63,7 +63,4 @@ public class Account {
     @JsonIgnore
     @JsonIgnoreProperties("account")
     private List<Event> events;
-
-
-
 }
