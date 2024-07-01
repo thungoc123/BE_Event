@@ -125,7 +125,7 @@ public class EventService implements EventServiceImp {
                     throw new RuntimeException("Can't find eventId: " + eventId);
                 }
                 eventRepository.deleteSponsorProgramEventByEventId(eventId);
-                checkingStaffService.deleteAllCheckingStaff(eventId);
+//                checkingStaffService.deleteAllCheckingStaff(eventId);
                 imageService.deleteImagebyEvent(eventId);
                 scheduleService.deleteSchedulebyEvent(eventId);
                 
