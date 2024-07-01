@@ -5,12 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 import java.util.Set;
 
 @Entity(name = "account")
 @Data
+@EqualsAndHashCode(of = "id")
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +46,7 @@ public class Account {
     @JsonIgnoreProperties("account")
     private Set<Sponsor> sponsors;
 
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "account",fetch = FetchType.EAGER)
     @JsonIgnore
     @JsonIgnoreProperties("account")
     private Set<CheckingStaff> checkingStaffs;
