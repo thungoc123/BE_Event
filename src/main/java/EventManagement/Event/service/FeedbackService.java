@@ -180,7 +180,12 @@ public class FeedbackService {
 
         return feedbackAnswerDTO;
     }
-
+    public List<Feedback> getFeedbacksByEventID(int eventID) {
+        return feedbackRepository.findByEvent_Id(eventID);
+    }
+    public List<Feedback> getFeedbacksByAccountID(int accountID) {
+        return feedbackRepository.findByEvent_Account_Id(accountID);
+    }
 
 
 
