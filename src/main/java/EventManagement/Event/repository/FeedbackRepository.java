@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface FeedbackRepository extends JpaRepository<Feedback,Integer> {
     void deleteByFeedbackID(int feedbackID);
+    List<Feedback> findByEvent_Id(int eventID);
+    List<Feedback> findByEvent_Account_Id(int accountID);
 }
 

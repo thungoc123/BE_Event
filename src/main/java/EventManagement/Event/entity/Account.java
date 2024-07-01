@@ -30,36 +30,40 @@ public class Account {
 
 
 
+
     @OneToMany(mappedBy = "account")
     @JsonIgnore
-    @JsonIgnoreProperties("account") // Ignore the account field in Visitor to prevent recursion
+    @JsonIgnoreProperties("account")
     private Set<Visitor> visitors;
 
     @OneToMany(mappedBy = "account")
     @JsonIgnore
-    @JsonIgnoreProperties("account") // Ignore the account field in EventOperator to prevent recursion
+    @JsonIgnoreProperties("account")
     private Set<EventOperator> eventOperators;
 
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     @JsonManagedReference
     @JsonIgnore
-    @JsonIgnoreProperties("account") // Ignore the account field in Sponsor to prevent recursion
+    @JsonIgnoreProperties("account")
     private Set<Sponsor> sponsors;
 
     @OneToMany(mappedBy = "account",fetch = FetchType.EAGER)
     @JsonIgnore
-    @JsonIgnoreProperties("account") // Ignore the account field in CheckingStaff to prevent recursion
+    @JsonIgnoreProperties("account")
     private Set<CheckingStaff> checkingStaffs;
 
     @OneToMany(mappedBy = "account")
     @JsonManagedReference
     @JsonIgnore
-    @JsonIgnoreProperties("account") // Ignore the account field in SponsorProgram to prevent recursion
+    @JsonIgnoreProperties("account")
     private List<SponsorProgram> sponsorPrograms;
 
     @OneToMany(mappedBy = "account")
     @JsonManagedReference
     @JsonIgnore
-    @JsonIgnoreProperties("account") // Ignore the account field in Event to prevent recursion
+    @JsonIgnoreProperties("account")
     private List<Event> events;
+
+
+
 }
