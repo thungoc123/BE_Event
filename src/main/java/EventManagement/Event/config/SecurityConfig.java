@@ -50,6 +50,7 @@ public class SecurityConfig {
                     author.requestMatchers("/api-orders/**").permitAll();
                     author.requestMatchers("/api-accounts/**").permitAll();
                     author.requestMatchers("/api-event-operators/**").permitAll();
+                    author.requestMatchers(HttpMethod.POST,"/api-tickets/**").permitAll();
 
                     author.anyRequest().authenticated();
                 })

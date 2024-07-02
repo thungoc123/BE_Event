@@ -16,28 +16,8 @@ public class Visitor {
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
+    @OneToOne(mappedBy = "visitor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Cart cart;
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getInformation() {
-        return information;
-    }
-
-    public void setInformation(String information) {
-        this.information = information;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
 }

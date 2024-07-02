@@ -31,7 +31,7 @@ public class Feedback {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
-    @JsonBackReference // Sử dụng @JsonBackReference để ngăn chặn vòng lặp khi serialize
+   @JsonBackReference // Sử dụng @JsonBackReference để ngăn chặn vòng lặp khi serialize
     private Event event;
 
     // constructors, getters, setters, etc.

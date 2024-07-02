@@ -90,6 +90,7 @@ public class FeedbackService {
         Optional<Event> optionalEvent = eventRepository.findById(eventid);
         if (optionalEvent.isPresent()) {
             feedback.setEvent(optionalEvent.get());
+
         } else {
             throw new IllegalArgumentException("Event not found with id: " + eventid);
         }
@@ -183,9 +184,12 @@ public class FeedbackService {
     public List<Feedback> getFeedbacksByEventID(int eventID) {
         return feedbackRepository.findByEvent_Id(eventID);
     }
-    public List<Feedback> getFeedbacksByAccountID(int accountID) {
-        return feedbackRepository.findByEvent_Account_Id(accountID);
-    }
+
+public List<FeedbackEventDTO> getFeedbacksByAccountID(int accountID) {
+    return feedbackRepository.findFeedbacksWithEventNameAndStateByAccountID(accountID);
+}
+
+
 
 
 

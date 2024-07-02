@@ -11,7 +11,7 @@ public class FeedbackDTO {
     private LocalDateTime deletedAt;
     private LocalDateTime modifiedAt;
     private int stateID;
-   private int eventid;
+    private int eventid;
 
 
     private List<FeedbackQuestionDTO> feedbackQuestions;
