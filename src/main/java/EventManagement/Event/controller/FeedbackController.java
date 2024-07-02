@@ -38,7 +38,7 @@ public class FeedbackController {
 
 
     @PostMapping("/events/{eventId}")
-    public ResponseEntity<Feedback> createFeedback(@PathVariable("eventId") int eventId,
+    public ResponseEntity<Feedback> createFeedback(@PathVariable Integer eventId,
                                                    @RequestBody FeedbackDTO feedbackDTO) {
         try {
             Feedback createdFeedback = feedbackService.createFeedback(feedbackDTO, eventId);
@@ -47,6 +47,7 @@ public class FeedbackController {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Feedback> updateFeedback(@PathVariable int id, @RequestBody FeedbackDTO feedbackDTO) {

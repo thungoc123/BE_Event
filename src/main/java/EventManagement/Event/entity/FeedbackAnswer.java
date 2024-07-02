@@ -1,5 +1,9 @@
 package EventManagement.Event.entity;
 
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -9,6 +13,7 @@ import java.util.Set;
 @Entity
 @Data
 @Table(name = "feedback_answer")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "feedbackAnswerID")
 public class FeedbackAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,56 +27,12 @@ public class FeedbackAnswer {
 
     @ManyToOne
     @JoinColumn(name = "feedbackQuestionID", nullable = false)
+    @JsonIgnoreProperties("feedbackAnswers") // Ignore feedbackAnswers property in FeedbackQuestion
     private FeedbackQuestion feedbackQuestion;
 
     @OneToMany(mappedBy = "feedbackAnswer")
+    @JsonIgnoreProperties("feedbackAnswer") // Assuming VisitorAnswer entity needs to be handled similarly
     private Set<VisitorAnswer> visitorAnswers;
 
-    public int getFeedbackAnswerID() {
-        return feedbackAnswerID;
-    }
-
-    public void setFeedbackAnswerID(int feedbackAnswerID) {
-        this.feedbackAnswerID = feedbackAnswerID;
-    }
-
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
-    public LocalDateTime getDeletedAt() {
-        return deletedAt;
-    }
-
-    public void setDeletedAt(LocalDateTime deletedAt) {
-        this.deletedAt = deletedAt;
-    }
-
-    public LocalDateTime getModifiedAt() {
-        return modifiedAt;
-    }
-
-    public void setModifiedAt(LocalDateTime modifiedAt) {
-        this.modifiedAt = modifiedAt;
-    }
-
-    public FeedbackQuestion getFeedbackQuestion() {
-        return feedbackQuestion;
-    }
-
-    public void setFeedbackQuestion(FeedbackQuestion feedbackQuestion) {
-        this.feedbackQuestion = feedbackQuestion;
-    }
-
-    public Set<VisitorAnswer> getVisitorAnswers() {
-        return visitorAnswers;
-    }
-
-    public void setVisitorAnswers(Set<VisitorAnswer> visitorAnswers) {
-        this.visitorAnswers = visitorAnswers;
-    }
+    // constructors, getters, setters, etc.
 }

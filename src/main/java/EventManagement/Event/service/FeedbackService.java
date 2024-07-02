@@ -72,30 +72,40 @@ public class FeedbackService {
 
     @Transactional
     public Feedback createFeedback(FeedbackDTO feedbackDTO, int eventid) {
-        Feedback feedback = new Feedback();
-        feedback.setTitle(feedbackDTO.getTitle());
-        feedback.setModifiedAt(feedbackDTO.getModifiedAt());
-        feedback.setDeleteAt(feedbackDTO.getDeletedAt());
+        try {
+            Feedback feedback = new Feedback();
+            feedback.setTitle(feedbackDTO.getTitle());
+            feedback.setModifiedAt(feedbackDTO.getModifiedAt());
+            feedback.setDeleteAt(feedbackDTO.getDeletedAt());
 
-        // Set default stateId to 2
-        int stateId = 2;
-        Optional<State> optionalState = stateRepository.findById(stateId);
-        if (optionalState.isPresent()) {
-            feedback.setState(optionalState.get());
-        } else {
-            throw new IllegalArgumentException("Invalid predefined stateID: " + stateId);
+            // Set default stateId to 2
+            int stateId = 2;
+            Optional<State> optionalState = stateRepository.findById(stateId);
+            if (optionalState.isPresent()) {
+                feedback.setState(optionalState.get());
+            } else {
+                throw new IllegalArgumentException("Invalid predefined stateID: " + stateId);
+            }
+
+            // Set eventId
+            Optional<Event> optionalEvent = eventRepository.findById(eventid);
+            if (optionalEvent.isPresent()) {
+                feedback.setEvent(optionalEvent.get());
+            } else {
+                throw new IllegalArgumentException("Event not found with id: " + eventid);
+            }
+
+            return feedbackRepository.save(feedback);
+        } catch (IllegalArgumentException e) {
+            // Handle specific exceptions like invalid stateID or event not found
+            e.printStackTrace(); // Replace with proper logging
+        } catch (Exception e) {
+            // Handle general exceptions
+            e.printStackTrace(); // Replace with proper logging
         }
 
-        // Set accountId
-        Optional<Event> optionalEvent = eventRepository.findById(eventid);
-        if (optionalEvent.isPresent()) {
-            feedback.setEvent(optionalEvent.get());
-
-        } else {
-            throw new IllegalArgumentException("Event not found with id: " + eventid);
-        }
-
-        return feedbackRepository.save(feedback);
+// Return null or handle the case where feedback couldn't be saved
+        return null;
     }
 
 
@@ -104,7 +114,7 @@ public class FeedbackService {
 
 
 
-    @Transactional
+        @Transactional
     public void deleteFeedback(int feedbackID) {
         feedbackRepository.deleteByFeedbackID(feedbackID);
     }
