@@ -23,7 +23,7 @@ public class VNPayController {
     @GetMapping("/pay")
     public ResponseEntity<?> pay() {
         try {
-            long amount = 2000000000;
+            long amount = 20000;
             PaymentRestDTO paymentResponse = vnPayService.processPayment(amount);
             return ResponseEntity.status(HttpStatus.OK).body(paymentResponse);
         } catch (Exception e) {
