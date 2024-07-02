@@ -1,5 +1,7 @@
 package EventManagement.Event.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,6 +21,7 @@ public class Role {
     private String roleName;
 
     @OneToMany(mappedBy = "role",fetch = FetchType.LAZY)
+    @JsonBackReference
     private Set<Account> accounts;
 
     public int getId() {

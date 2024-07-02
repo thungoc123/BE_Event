@@ -141,7 +141,7 @@ public class EventController {
             response.put("message", "Checking staff added successfully.");
             return ResponseEntity.ok(response);
         } else {
-            response.put("message", "Event not found or role not found.");
+            response.put("message", "Event not found or account has been registered.");
             return ResponseEntity.status(400).body(response);
         }
     }

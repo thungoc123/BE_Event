@@ -52,13 +52,13 @@ public class Event {
     @JsonManagedReference
     private List<EventSchedule> eventSchedules;
 
-    @ManyToOne
-    @JoinColumn(name = "checking_staff_id")
-    private CheckingStaff checkingStaff;
-//    @OneToMany(mappedBy = "event")
-//    private List<CheckingStaff> eventCheckingStaffs;
-    @ManyToMany(mappedBy = "events")
-    private Set<SponsorProgram> sponsorPrograms = new HashSet<>();
+//    @ManyToOne
+//    @JoinColumn(name = "checking_staff_id")
+//    private CheckingStaff checkingStaff;
+      @OneToMany(mappedBy = "event")
+      private List<CheckingStaff> eventCheckingStaffs;
+      @ManyToMany(mappedBy = "events")
+      private Set<SponsorProgram> sponsorPrograms = new HashSet<>();
 
 
 

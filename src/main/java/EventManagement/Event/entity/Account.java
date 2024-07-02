@@ -1,5 +1,6 @@
 package EventManagement.Event.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -19,6 +20,7 @@ public class Account {
     private int id;
 
     @ManyToOne
+    @JsonManagedReference
     @JoinColumn(name = "role_id")
     private Role role;
 
@@ -43,13 +45,12 @@ public class Account {
 
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     @JsonManagedReference
-    @JsonIgnore
     @JsonIgnoreProperties("account")
     private Set<Sponsor> sponsors;
 
     @OneToMany(mappedBy = "account",fetch = FetchType.EAGER)
-    @JsonIgnore
-    @JsonIgnoreProperties("account")
+    @JsonBackReference
+//    @JsonIgnoreProperties("account")
     private Set<CheckingStaff> checkingStaffs;
 
     @OneToMany(mappedBy = "account")
