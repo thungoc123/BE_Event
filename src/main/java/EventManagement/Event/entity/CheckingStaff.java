@@ -22,7 +22,7 @@ public class CheckingStaff {
     private Account account;
 
 
-    @OneToMany(mappedBy = "checkingStaff", fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Event> events;
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    private Event event;
 }

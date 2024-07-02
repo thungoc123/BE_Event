@@ -14,8 +14,7 @@ import java.util.List;
 public interface EventRepository extends JpaRepository<Event, Integer> {
     List<Event> findByAccountId(int accountId);
     List<Event> findByStateEventId(int stateEventId);
-    @Query("SELECT e FROM event e WHERE e.checkingStaff.id = :checkingStaffId")
-    List<Event> findByCheckingStaff(@Param("checkingStaffId") Long checkingStaffId);
+
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM sponsor_program_event WHERE event_id = :eventId", nativeQuery = true)
