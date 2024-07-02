@@ -75,16 +75,14 @@ public class TicketService {
                 ticket.setQuantity(quantity);
                 ticket.setCreatedDate(LocalDateTime.now());
                 ticket.setExpiredDate(event.getTimeend());
-                ticket.setStatus(Ticket.Status.PENDING); // Set initial status to PENDING
+                ticket.setStatus(Ticket.Status.PENDING);
 
                 return Optional.of(ticketRepository.save(ticket));
             } else {
-                // Log or handle the case where cart or event is not found
                 System.err.println("Cart or Event not found for given IDs.");
                 return Optional.empty();
             }
         } catch (Exception e) {
-            // Log the exception and handle it as needed
             System.err.println("Error occurred while creating the ticket: " + e.getMessage());
             e.printStackTrace();
             return Optional.empty();
