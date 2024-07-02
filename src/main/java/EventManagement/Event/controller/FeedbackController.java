@@ -2,7 +2,9 @@ package EventManagement.Event.controller;
 
 import EventManagement.Event.DTO.FeedbackDTO;
 import EventManagement.Event.DTO.FeedbackDataDTO;
+import EventManagement.Event.DTO.FeedbackEventDTO;
 import EventManagement.Event.entity.Feedback;
+import EventManagement.Event.payload.DeleteResponse;
 import EventManagement.Event.repository.FeedbackRepository;
 import EventManagement.Event.service.FeedbackService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,10 +65,10 @@ public class FeedbackController {
 
 
     @DeleteMapping("/delete/{feedbackID}")
-    public ResponseEntity<Void> deleteFeedback(@PathVariable int feedbackID) {
+    public ResponseEntity<Object> deleteFeedback(@PathVariable int feedbackID) {
         try {
             feedbackService.deleteFeedback(feedbackID);
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok(new DeleteResponse("delete feedback successfully"));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
@@ -79,12 +81,12 @@ public class FeedbackController {
 //
 //        return feedbackRepository.findByAccount_Id(Integer.parseInt(accountid));
 //    }
-@GetMapping("/list-feedback/{eventID}")
-public List<Feedback> getFeedbacksByEventID(@PathVariable int eventID) {
+    @GetMapping("/list-feedback/{eventID}")
+    public List<Feedback> getFeedbacksByEventID(@PathVariable int eventID) {
     return feedbackService.getFeedbacksByEventID(eventID);
 }
     @GetMapping("/list-feedback-account/{accountID}")
-    public List<Feedback> getFeedbacksByAccountID(@PathVariable int accountID) {
+    public List<FeedbackEventDTO> getFeedbacksByAccountID(@PathVariable int accountID) {
         return feedbackService.getFeedbacksByAccountID(accountID);
     }
 

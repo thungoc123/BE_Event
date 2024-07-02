@@ -3,6 +3,7 @@ package EventManagement.Event.controller;
 import EventManagement.Event.DTO.FeedbackAnswerDTO;
 import EventManagement.Event.DTO.FeedbackAnswerDetailsDTO;
 import EventManagement.Event.entity.FeedbackAnswer;
+import EventManagement.Event.payload.DeleteResponse;
 import EventManagement.Event.service.FeedbackAnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,10 +50,10 @@ public class FeedbackAnswerController {
         }
     }
     @DeleteMapping("/{feedbackAnswerID}")
-    public ResponseEntity<Void> deleteFeedbackAnswer(@PathVariable int feedbackAnswerID) {
+    public ResponseEntity<Object> deleteFeedbackAnswer(@PathVariable int feedbackAnswerID) {
         try {
             feedbackAnswerService.deleteFeedbackAnswer(feedbackAnswerID);
-            return ResponseEntity.noContent().build();  // HTTP 204 No Content nếu xóa thành công
+            return ResponseEntity.ok(new DeleteResponse("delete feedbackanswer successfully"));  // HTTP 204 No Content nếu xóa thành công
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();  // HTTP 404 Not Found nếu không tìm thấy FeedbackAnswer
         }
