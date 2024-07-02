@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class EventService implements EventServiceImp {
@@ -160,6 +161,10 @@ public class EventService implements EventServiceImp {
                e.printStackTrace();
                return false;
             }
+        }
+
+        public Optional<Event> findById(int id) {
+            return eventRepository.findById(id);
         }
     }
 
