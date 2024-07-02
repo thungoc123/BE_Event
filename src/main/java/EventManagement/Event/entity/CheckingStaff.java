@@ -1,9 +1,6 @@
 package EventManagement.Event.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,13 +17,12 @@ public class CheckingStaff {
     private Long id;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
 
-    @OneToMany(mappedBy = "checkingStaff", fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Event> events;
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    private Event event;
 }
