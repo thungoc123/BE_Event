@@ -53,7 +53,6 @@ public class SecurityConfig {
                     author.requestMatchers("/api-accounts/**").permitAll();
                     author.requestMatchers("/api-event-operators/**").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/api-tickets/**").permitAll();
-
                     author.anyRequest().authenticated();
                 })
                 .addFilterBefore(customFilterSecurity, UsernamePasswordAuthenticationFilter.class)
