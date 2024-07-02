@@ -13,7 +13,9 @@ import EventManagement.Event.service.imp.CheckingStaffImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 @Service
 public class CheckingStaffService implements CheckingStaffImp {
@@ -52,23 +54,40 @@ public class CheckingStaffService implements CheckingStaffImp {
         else {
             System.out.println("Role found: " + role.getRoleName());
         }
-        String email = insertCheckingStaffRequest.getEmail();
-        Account account =  new Account();
-        account.setEmail(email);
-        account.setPassword(randomPassword);
-        account.setRole(role);
-        Account accountSaved = accountRepository.save(account);
-        System.out.println("Account created with ID: " + accountSaved.getId());
 
-        CheckingStaff checkingStaff = new CheckingStaff();
-        checkingStaff.setAccount(accountSaved);
-        checkingStaff.setEvent(event);
-        checkingStaffRepository.save(checkingStaff);
+        String email = insertCheckingStaffRequest.getEmail();
+        Account accountCheck = accountRepository.findByEmail(email);
+        if (accountCheck != null) {
+            System.out.println("Account is already registered, please enter another email." );
+            return false;
+        }
+
+
+
+            Account account = new Account();
+            account.setEmail(email);
+            account.setPassword(randomPassword);
+            account.setRole(role);
+            Account accountSaved = accountRepository.save(account);
+            System.out.println("Account created with ID: " + accountSaved.getId());
+
+            CheckingStaff checkingStaff = new CheckingStaff();
+            checkingStaff.setAccount(accountSaved);
+            checkingStaff.setEvent(event);
+            checkingStaffRepository.save(checkingStaff);
+
+
+            String subject = "Create CheckingStaff successful";
+            String text = "Hi guy,\n\nYour CheckingStaff account has been successfully created.\n\nEmail: " + email + "\nPassword: " + randomPassword + "\n\nBest regards";
+            text += "\n\nCongratulations! You are now a staff member for the following events:\n";
+            text += "- " + event.getName() + "\n";
+            emailService.sendEmail(email, subject, text);
+
 
         return true;
 
+}
 
-    }
     private String generateRandomPassword(int length) {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         Random random = new Random();
@@ -96,6 +115,8 @@ public class CheckingStaffService implements CheckingStaffImp {
                 System.out.println("CheckingStaff with ID " + checkingStaffId + " does not belong to event with ID " + eventId);
                 return false;
             }
+
+
             Account account = checkingStaff.getAccount();
             checkingStaffRepository.delete(checkingStaff);
             accountRepository.delete(account);
@@ -107,6 +128,27 @@ public class CheckingStaffService implements CheckingStaffImp {
             return false;
         }
     }
+    @Override
+    public boolean deleteAllCheckingStaff(int eventId) {
+        try {
+            Event event = eventRepository.findById(eventId).orElse(null);
+            if (event == null) {
+                throw new RuntimeException("Can't find eventId: " + eventId);
+           }
+            List<CheckingStaff> checkingStaffList = checkingStaffRepository.findByEventId(eventId);
+            for (CheckingStaff checkingStaff : checkingStaffList) {
+                Account account = checkingStaff.getAccount();
+                checkingStaffRepository.delete(checkingStaff);
+                accountRepository.delete(account);
+            }
+            return true;
 
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+
+   }
 }

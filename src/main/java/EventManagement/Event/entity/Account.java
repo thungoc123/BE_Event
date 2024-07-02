@@ -1,22 +1,26 @@
 package EventManagement.Event.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 import java.util.Set;
 
 @Entity(name = "account")
 @Data
+@EqualsAndHashCode(of = "id")
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne
+    @JsonManagedReference
     @JoinColumn(name = "role_id")
     private Role role;
 
@@ -26,41 +30,38 @@ public class Account {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    @JsonIgnore
-    @JsonIgnoreProperties("account") // Ignore the account field in Feedback to prevent recursion
-    private Set<Feedback> feedbacks;
+    @Column(nullable = false)
+    private boolean enabled = true; // Thêm trường này
 
     @OneToMany(mappedBy = "account")
     @JsonIgnore
-    @JsonIgnoreProperties("account") // Ignore the account field in Visitor to prevent recursion
+    @JsonIgnoreProperties("account")
     private Set<Visitor> visitors;
 
     @OneToMany(mappedBy = "account")
     @JsonIgnore
-    @JsonIgnoreProperties("account") // Ignore the account field in EventOperator to prevent recursion
+    @JsonIgnoreProperties("account")
     private Set<EventOperator> eventOperators;
 
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     @JsonManagedReference
-    @JsonIgnore
-    @JsonIgnoreProperties("account") // Ignore the account field in Sponsor to prevent recursion
+    @JsonIgnoreProperties("account")
     private Set<Sponsor> sponsors;
 
-    @OneToMany(mappedBy = "account")
-    @JsonIgnore
-    @JsonIgnoreProperties("account") // Ignore the account field in CheckingStaff to prevent recursion
+    @OneToMany(mappedBy = "account",fetch = FetchType.EAGER)
+    @JsonBackReference
+//    @JsonIgnoreProperties("account")
     private Set<CheckingStaff> checkingStaffs;
 
     @OneToMany(mappedBy = "account")
     @JsonManagedReference
     @JsonIgnore
-    @JsonIgnoreProperties("account") // Ignore the account field in SponsorProgram to prevent recursion
+    @JsonIgnoreProperties("account")
     private List<SponsorProgram> sponsorPrograms;
 
     @OneToMany(mappedBy = "account")
     @JsonManagedReference
     @JsonIgnore
-    @JsonIgnoreProperties("account") // Ignore the account field in Event to prevent recursion
+    @JsonIgnoreProperties("account")
     private List<Event> events;
 }

@@ -2,9 +2,12 @@ package EventManagement.Event.controller;
 
 import EventManagement.Event.entity.Account;
 import EventManagement.Event.entity.Event;
+import EventManagement.Event.entity.StateEvent;
 import EventManagement.Event.payload.Request.*;
 import EventManagement.Event.repository.AccountRepository;
+import EventManagement.Event.repository.EventRepository;
 import EventManagement.Event.repository.SponsorRepository;
+import EventManagement.Event.repository.StateEventRepository;
 import EventManagement.Event.service.*;
 
 import EventManagement.Event.service.imp.EventServiceImp;
@@ -25,18 +28,34 @@ import java.util.Map;
 public class EventController {
     @Autowired
     private SponsorService sponsorService;
-    @Autowired
-    private AccountService accountService;
+
     @Autowired
     private EventService eventService;
     @Autowired
     private ScheduleService scheduleService;
-    @Autowired
-    private AccountRepository accountRepository;
+
     @Autowired
     private CheckingStaffService checkingStaffService;
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private EventRepository eventRepository;
+    @Autowired
+    private StateEventRepository stateEventRepository;
+
+    @PatchMapping("/event/{eventId}/publish")
+    public ResponseEntity<Map<String, String>> publishEvent(@PathVariable int eventId){
+
+        Map<String, String> response = new HashMap<>();
+        boolean isChanged = eventService.changeStateEvent(eventId);
+        if (isChanged) {
+            response.put("message", "Event has been changed.");
+            return ResponseEntity.ok(response);
+        } else{
+            response.put("message", "Event has not been published.");
+            return ResponseEntity.ok(response);
+        }
+    }
 
     @GetMapping("/account")
     public ResponseEntity<List<Event>> getEventsByAccount(HttpServletRequest request) {
@@ -108,17 +127,12 @@ public class EventController {
 
                                          ){
         Event event = eventService.getEventById(id);
-        String email = insertCheckingStaffRequest.getEmail();
+
         insertCheckingStaffRequest.setEventId(id);
 
         Map<String, String> response = new HashMap<>();
         if (event == null) {
             response.put("message", "Please create an event first");
-            return ResponseEntity.status(400).body(response);
-        }
-        Account account = accountService.getAccountByEmail(email);
-        if (account != null) {
-            response.put("message", "Please check email");
             return ResponseEntity.status(400).body(response);
         }
 
@@ -127,7 +141,7 @@ public class EventController {
             response.put("message", "Checking staff added successfully.");
             return ResponseEntity.ok(response);
         } else {
-            response.put("message", "Event not found or role not found.");
+            response.put("message", "Event not found or account has been registered.");
             return ResponseEntity.status(400).body(response);
         }
     }
@@ -247,6 +261,20 @@ public class EventController {
             response.put("message", "Failed to delete schedule");
             return ResponseEntity.status(500).body(response);
         }
+
+    }
+    @DeleteMapping("/event{eventId}")
+    public ResponseEntity<Map<String, String>> deleteEvent(@PathVariable int eventId){
+        boolean isDeleted = eventService.deleteEvent(eventId);
+        Map<String, String> response = new HashMap<>();
+        if (isDeleted) {
+            response.put("message", "Event deleted successfully");
+            return ResponseEntity.ok(response);
+        } else{
+            response.put("message", "Failed to delete event");
+            return ResponseEntity.status(500).body(response);
+        }
+
 
     }
 }
