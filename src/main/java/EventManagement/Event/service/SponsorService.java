@@ -29,6 +29,9 @@ public class SponsorService implements SponsorProgramImp {
 
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private SponsorEventRepository sponsorEventRepository;
+
     public List<SponsorProgram> getAllSponsorPrograms() {
         return sponsorProgramRepository.findAll();
     }
@@ -173,56 +176,67 @@ public class SponsorService implements SponsorProgramImp {
 
         try {
             int eventId = insertSponsorRequest.getEventId();
-            Event event = eventRepository.findById(eventId)
-                    .orElseThrow(() -> new NoSuchElementException("Event not found for ID: " + eventId));
-
-            String email = insertSponsorRequest.getEmail();
-            Sponsor sponsor = sponsorRepository.findByfptStaffEmail(email);
-            if (sponsor == null) {
-                throw new RuntimeException("Account not found");
-            }
-            if (event.getSponsor() != null) {
-                throw new RuntimeException("Event already has a sponsor");
-            }
-
-            event.setSponsor(sponsor);
-            eventRepository.save(event);
-
-            return true;
-        } catch (NoSuchElementException e) {
-            System.out.println("Exception occurred: " + e.getMessage());
-            return false;
-        } catch (Exception e) {
-            System.out.println("Unexpected error occurred: " + e.getMessage());
-            return false;
-        }
-    }
-    @Override
-    public boolean deleteSponsor(int eventId){
-        try {
             Event event = eventRepository.findById(eventId).orElse(null);
             if (event == null) {
-                throw new RuntimeException("Can't find eventId: " + eventId);
+                throw new RuntimeException("Event not found");
             }
 
-
-
-            if (event.getSponsor() == null) {
-                throw new RuntimeException("Event does not have a sponsor");
+            Long sponsorId = insertSponsorRequest.getSponsorId();
+            Sponsor sponsor = sponsorRepository.findById(sponsorId).orElse(null);
+            if (sponsor == null) {
+                throw new RuntimeException("Sponsor not found");
             }
-            event.setSponsor(null);
-            eventRepository.save(event);
 
-            System.out.println("Sponsor removed successfully from event with ID " + eventId);
+            if (sponsor.getId() == null) {
+                throw new RuntimeException("Sponsor id is null");
+            }
+            // Check sponsor id before accessing its properties
+
+
+            // Ensure sponsor is not null before creating SponsorEvent
+
+                SponsorEvent sponsorEvent = new SponsorEvent();
+                sponsorEvent.setSponsor(sponsor);
+                sponsorEvent.setEvent(event);
+                sponsorEvent.setProfitPercent(insertSponsorRequest.getProfitPercentage());
+                sponsorEventRepository.save(sponsorEvent);
+
+
             return true;
-        } catch (NoSuchElementException e) {
+        } catch (RuntimeException e) {
             System.out.println("Exception occurred: " + e.getMessage());
             return false;
         } catch (Exception e) {
             System.out.println("Unexpected error occurred: " + e.getMessage());
             return false;
         }
-
     }
+//    @Override
+//    public boolean deleteSponsor(int eventId){
+//        try {
+//            Event event = eventRepository.findById(eventId).orElse(null);
+//            if (event == null) {
+//                throw new RuntimeException("Can't find eventId: " + eventId);
+//            }
+//
+//
+//
+//            if (event.getSponsor() == null) {
+//                throw new RuntimeException("Event does not have a sponsor");
+//            }
+//            event.setSponsor(null);
+//            eventRepository.save(event);
+//
+//            System.out.println("Sponsor removed successfully from event with ID " + eventId);
+//            return true;
+//        } catch (NoSuchElementException e) {
+//            System.out.println("Exception occurred: " + e.getMessage());
+//            return false;
+//        } catch (Exception e) {
+//            System.out.println("Unexpected error occurred: " + e.getMessage());
+//            return false;
+//        }
+//
+//    }
 
 }

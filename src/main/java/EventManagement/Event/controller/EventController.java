@@ -224,18 +224,18 @@ public class EventController {
             return ResponseEntity.status(500).body(response);
         }
     }
-    @DeleteMapping("/{eventId}/sponsor")
-    public ResponseEntity<Map<String, String>> deleteSponsor(@PathVariable int eventId) {
-        boolean isDeleted = sponsorService.deleteSponsor( eventId);
-        Map<String, String> response = new HashMap<>();
-        if (isDeleted) {
-            response.put("message", "Sponsor deleted successfully");
-            return ResponseEntity.ok(response);
-        } else {
-            response.put("message", "Failed to delete sponsor");
-            return ResponseEntity.status(500).body(response);
-        }
-    }
+//    @DeleteMapping("/{eventId}/sponsor")
+//    public ResponseEntity<Map<String, String>> deleteSponsor(@PathVariable int eventId) {
+//        boolean isDeleted = sponsorService.deleteSponsor( eventId);
+//        Map<String, String> response = new HashMap<>();
+//        if (isDeleted) {
+//            response.put("message", "Sponsor deleted successfully");
+//            return ResponseEntity.ok(response);
+//        } else {
+//            response.put("message", "Failed to delete sponsor");
+//            return ResponseEntity.status(500).body(response);
+//        }
+//    }
     @DeleteMapping("/image{imageId}")
     public ResponseEntity<Map<String, String>> deleteImage(@PathVariable int imageId) {
         boolean isDeleted = imageService.deleteImage(imageId);
