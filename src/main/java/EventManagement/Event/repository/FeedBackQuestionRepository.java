@@ -14,4 +14,5 @@ public interface FeedBackQuestionRepository extends JpaRepository<FeedbackQuesti
     List<FeedbackQuestion> findByFeedback(Feedback feedback);
     List<FeedbackQuestion> findByFeedback_FeedbackID(int feedbackId);
 
+
 }
