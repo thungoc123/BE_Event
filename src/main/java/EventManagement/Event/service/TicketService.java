@@ -106,7 +106,7 @@ public class TicketService {
         Optional<Event> eventOptional = eventService.findById(eventId);
         Map<String, Object> response = new HashMap<>();
         if (eventOptional.isPresent()) {
-            response.put("At that event the amount of visitor by that ticket is: ", count);
+            response.put("Amount: ", count);
         } else {
             response.put("error", "Event not found");
         }
@@ -119,5 +119,30 @@ public class TicketService {
             return Collections.singletonList("Data is null"); // Return a list with a message
         }
         return Collections.singletonList(visitors);
+    }
+
+    public Optional<Map<String, Object>> viewTicketsByEventAndDate(int eventId, LocalDateTime startDate, LocalDateTime endDate) {
+        List<Ticket> tickets = ticketRepository.findByEvent_IdAndCreatedDateBetween(eventId, startDate, endDate);
+        Optional<Event> eventOptional = eventService.findById(eventId);
+
+        if (!eventOptional.isPresent()) {
+            return Optional.empty();
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("startDate", startDate);
+        response.put("endDate", endDate);
+        response.put("amount", tickets.size());
+
+        List<Map<String, Object>> visitorList = new ArrayList<>();
+        for (Ticket ticket : tickets) {
+            Map<String, Object> visitorInfo = new HashMap<>();
+            Visitor visitor = ticket.getCart().getVisitor();
+            visitorInfo.put("visitorId", visitor.getId());
+            visitorList.add(visitorInfo);
+        }
+        response.put("visitorList", visitorList);
+
+        return Optional.of(response);
     }
 }
