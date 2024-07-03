@@ -2,28 +2,23 @@ package EventManagement.Event.service;
 
 import EventManagement.Event.entity.*;
 import EventManagement.Event.payload.Request.InsertEventRequest;
-import EventManagement.Event.payload.Request.InsertScheduleRequest;
-import EventManagement.Event.payload.Request.InsertSponsorRequest;
 import EventManagement.Event.repository.*;
 import EventManagement.Event.service.imp.EventServiceImp;
 //import EventManagement.Event.service.imp.FileServiceImp;
 import EventManagement.Event.utils.JwtHelper;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService implements EventServiceImp {
+
+    @Autowired
+    private FeedbackRepository feedbackRepository;
 
     @Autowired
     private EventRepository eventRepository;
@@ -34,9 +29,15 @@ public class EventService implements EventServiceImp {
     @Autowired
     private CheckingStaffService checkingStaffService;
     @Autowired
-    private ImageService imageService;
+    private EventImageRepository eventImageRepository;
     @Autowired
     private ScheduleService scheduleService;
+    @Autowired
+    private SponsorRepository sponsorRepository;
+    @Autowired
+    private JwtHelper jwtHelper;
+    @Autowired
+    private SponsorEventRepository sponsorEventRepository;
 
 
     //list event
@@ -46,6 +47,36 @@ public class EventService implements EventServiceImp {
 
     public Event getEventById(int id) {
         return eventRepository.findById(id).orElse(null);
+    }
+    //// list event cua sponsorId
+    private List<Long> getSponsorIdsByAccountId(int accountId) {
+        List<Sponsor> accountSponsors = sponsorRepository.findByAccountId(accountId);
+        return accountSponsors.stream()
+                .map(Sponsor::getId)
+                .collect(Collectors.toList());
+    }
+
+    public List<Event> getEventsBySponsorId(HttpServletRequest request) {
+        try {
+
+
+            String accountId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            List<Long> sponsorIds = getSponsorIdsByAccountId(Integer.parseInt(accountId));
+
+            List<Event> events = new ArrayList<>();
+            for (Long sponsorId : sponsorIds) {
+                List<SponsorEvent> sponsorEvents = sponsorEventRepository.findBySponsorId(sponsorId);
+                for (SponsorEvent sponsorEvent : sponsorEvents) {
+                    events.add(eventRepository.findById(sponsorEvent.getEventId())
+                            .orElseThrow(() -> new NoSuchElementException("Event not found for ID: " + sponsorEvent.getEventId())));
+                }
+            }
+            return events;
+        } catch (Exception e) {
+            System.out.println("Unexpected error occurred: " + e.getMessage());
+            return Collections.emptyList();
+        }
     }
 
 
@@ -125,9 +156,14 @@ public class EventService implements EventServiceImp {
                 if (eventToDelete == null) {
                     throw new RuntimeException("Can't find eventId: " + eventId);
                 }
+
+                eventRepository.deleteBySponsorByEventId(eventId);
                 eventRepository.deleteSponsorProgramEventByEventId(eventId);
                 checkingStaffService.deleteAllCheckingStaff(eventId);
-                imageService.deleteImagebyEvent(eventId);
+                List<EventImage> eventImages = eventImageRepository.findByEventId(eventId);
+                for (EventImage eventImage : eventImages) {
+                    eventImageRepository.delete(eventImage);
+                }
                 scheduleService.deleteSchedulebyEvent(eventId);
                 
 

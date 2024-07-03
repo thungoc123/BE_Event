@@ -14,5 +14,6 @@ public interface FeedbackRepository extends JpaRepository<Feedback,Integer> {
     @Query("SELECT new EventManagement.Event.DTO.FeedbackEventDTO(f.feedbackID, f.title, e.name, f.state, f.modifiedAt) " +
             "FROM Feedback f JOIN f.event e WHERE e.account.id = :accountID")
     List<FeedbackEventDTO> findFeedbacksWithEventNameAndStateByAccountID(int accountID);
+
 }
 

@@ -15,6 +15,23 @@ import java.util.List;
 public interface EventRepository extends JpaRepository<Event, Integer> {
     List<Event> findByAccountId(int accountId);
     List<Event> findByStateEventId(int stateEventId);
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM sponsor_event WHERE event_id = :eventId"
+            , nativeQuery = true)
+    void deleteBySponsorByEventId(int eventId);
+//    @Modifying
+//    @Transactional
+//    @Query(value = "DELETE FROM feedback WHERE event_id = :eventId; " +
+//            "DELETE FROM feedback_question WHERE feedbackid IN " +
+//            "(SELECT feedbackid FROM feedback WHERE event_id = :eventId); " +
+//            "DELETE FROM visitor_answer WHERE feedback_question_id IN " +
+//            "(SELECT fq.feedback_question_id FROM feedback_question fq " +
+//            "INNER JOIN feedback f ON fq.feedbackid = f.feedbackid " +
+//            "WHERE f.event_id = :eventId)",
+//            nativeQuery = true)
+//    void deleteFeedbackByEventId(int eventId);
+
 
 
     @Modifying

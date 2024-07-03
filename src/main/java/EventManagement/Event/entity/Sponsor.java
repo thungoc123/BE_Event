@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 @Data
 @Entity(name = "sponsor")
@@ -22,7 +23,7 @@ public class Sponsor {
     private String fptStaffEmail;
 
     @OneToMany(mappedBy = "sponsor")
-    private List<Event> events;
+    private List<SponsorEvent> sponsorEvents;
 
 
 
@@ -53,9 +54,6 @@ public class Sponsor {
         this.fptStaffEmail = fptStaffEmail;
     }
 
-    public void setEvents(List<Event> events) {
-        this.events = events;
-    }
 
     public void setAccount(Account account) {
         this.account = account;

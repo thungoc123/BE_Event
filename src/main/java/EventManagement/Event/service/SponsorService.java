@@ -9,6 +9,7 @@ import EventManagement.Event.payload.Request.InsertSponsorRequest;
 import EventManagement.Event.repository.*;
 import EventManagement.Event.service.imp.SponsorProgramImp;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,9 @@ public class SponsorService implements SponsorProgramImp {
 
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private SponsorEventRepository sponsorEventRepository;
+
     public List<SponsorProgram> getAllSponsorPrograms() {
         return sponsorProgramRepository.findAll();
     }
@@ -147,17 +151,17 @@ public class SponsorService implements SponsorProgramImp {
             } catch (IllegalArgumentException e) {
                 throw new RuntimeException("Invalid state value: " + insertSponsorProgramRequest.getState());
             }
-            List<Event> events = new ArrayList<>();
-            for (Integer eventId : insertSponsorProgramRequest.getEventIds()) {
-                Event event = eventRepository.findById(eventId).orElse(null);
-                if (event == null) {
-                    throw new RuntimeException("Event not found");
-                }
-                events.add(event);
-
-
-            }
-            sponsorProgram.setEvents(new HashSet<>(events));
+//            List<Event> events = new ArrayList<>();
+//            for (Integer eventId : insertSponsorProgramRequest.getEventIds()) {
+//                Event event = eventRepository.findById(eventId).orElse(null);
+//                if (event == null) {
+//                    throw new RuntimeException("Event not found");
+//                }
+//                events.add(event);
+//
+//
+//            }
+//            sponsorProgram.setEvents(new HashSet<>(events));
             SponsorProgram programSave = sponsorProgramRepository.save(sponsorProgram);
             return programSave != null;
 
@@ -166,7 +170,29 @@ public class SponsorService implements SponsorProgramImp {
                 return false;
         }
     }
+    @Override
+    public boolean addEventsToSponsorProgram(int sponsorProgramId, List<Integer> eventIds) {
+        try {
+            SponsorProgram sponsorProgram = sponsorProgramRepository.findById(sponsorProgramId)
+                    .orElseThrow(() -> new RuntimeException("Sponsor program not found"));
 
+            List<Event> events = new ArrayList<>();
+            for (Integer eventId : eventIds) {
+                Event event = eventRepository.findById(eventId).orElse(null);
+                if (event == null) {
+                    throw new RuntimeException("Event not found");
+                }
+                events.add(event);
+            }
+
+            sponsorProgram.setEvents(new HashSet<>(events));
+            sponsorProgramRepository.save(sponsorProgram);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     @Override
     public boolean insertSponsor(InsertSponsorRequest insertSponsorRequest) {
@@ -176,53 +202,23 @@ public class SponsorService implements SponsorProgramImp {
             Event event = eventRepository.findById(eventId)
                     .orElseThrow(() -> new NoSuchElementException("Event not found for ID: " + eventId));
 
-            String email = insertSponsorRequest.getEmail();
-            Sponsor sponsor = sponsorRepository.findByfptStaffEmail(email);
+            Long sponsorId = insertSponsorRequest.getSponsorId();
+            Sponsor sponsor = sponsorRepository.findById(sponsorId).orElse(null);
             if (sponsor == null) {
                 throw new RuntimeException("Account not found");
             }
-            if (event.getSponsor() != null) {
-                throw new RuntimeException("Event already has a sponsor");
-            }
-
-            event.setSponsor(sponsor);
-            eventRepository.save(event);
+            SponsorEvent sponsorEvent = new SponsorEvent();
+            sponsorEvent.setEvent(event);
+            sponsorEvent.setSponsor(sponsor);
+            sponsorEvent.setProfitPercent(insertSponsorRequest.getProfitPercentage());
+            sponsorEventRepository.save(sponsorEvent);
 
             return true;
-        } catch (NoSuchElementException e) {
-            System.out.println("Exception occurred: " + e.getMessage());
-            return false;
         } catch (Exception e) {
             System.out.println("Unexpected error occurred: " + e.getMessage());
             return false;
         }
     }
-    @Override
-    public boolean deleteSponsor(int eventId){
-        try {
-            Event event = eventRepository.findById(eventId).orElse(null);
-            if (event == null) {
-                throw new RuntimeException("Can't find eventId: " + eventId);
-            }
 
-
-
-            if (event.getSponsor() == null) {
-                throw new RuntimeException("Event does not have a sponsor");
-            }
-            event.setSponsor(null);
-            eventRepository.save(event);
-
-            System.out.println("Sponsor removed successfully from event with ID " + eventId);
-            return true;
-        } catch (NoSuchElementException e) {
-            System.out.println("Exception occurred: " + e.getMessage());
-            return false;
-        } catch (Exception e) {
-            System.out.println("Unexpected error occurred: " + e.getMessage());
-            return false;
-        }
-
-    }
 
 }

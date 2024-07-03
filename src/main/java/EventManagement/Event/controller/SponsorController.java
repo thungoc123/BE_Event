@@ -2,8 +2,10 @@ package EventManagement.Event.controller;
 
 import EventManagement.Event.entity.Event;
 import EventManagement.Event.entity.SponsorProgram;
+import EventManagement.Event.payload.Request.AddEventsToSponsorProgramRequest;
 import EventManagement.Event.payload.Request.InsertSponsorProgramRequest;
 import EventManagement.Event.repository.SponsorProgramRepository;
+import EventManagement.Event.service.EventService;
 import EventManagement.Event.service.SponsorService;
 import EventManagement.Event.DTO.SponsorDTO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,9 +26,33 @@ import java.util.Optional;
 @RequestMapping("/api-sponsor")
 public class SponsorController {
     @Autowired
+    private EventService  eventService;
+    @Autowired
     private SponsorService sponsorService;
     @Autowired
     private SponsorProgramRepository sponsorProgramRepository;
+
+    @PostMapping("/sponsorProgram/{sponsorProgramId}/events")
+    public ResponseEntity<Map<String, String>> addEventsToSponsorProgram(@PathVariable int sponsorProgramId, @RequestBody AddEventsToSponsorProgramRequest request) {
+        boolean isSuccess = sponsorService.addEventsToSponsorProgram(sponsorProgramId, request.getEventIds());
+        Map<String, String> response = new HashMap<>();
+        if (isSuccess) {
+            response.put("message", "add event into program successfully");
+            return ResponseEntity.ok(response);
+
+        } else{
+            response.put("message", "add event failed");
+            return ResponseEntity.ok(response);
+        }
+
+
+    }
+
+    @GetMapping("/account/event")
+    public ResponseEntity<List<Event>> getEventsByAccount(HttpServletRequest request) {
+        List<Event> events = eventService.getEventsBySponsorId(request);
+        return ResponseEntity.ok(events);
+    }
 
     @GetMapping("/account/program")
     public ResponseEntity<List<SponsorProgram>> getProgramsByAccount(HttpServletRequest request) {

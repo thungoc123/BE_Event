@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,9 +37,7 @@ public class Event {
     @JoinColumn(name = "account_id")
     @JsonBackReference
     private Account account;
-    @ManyToOne
-    @JoinColumn(name = "sponsor_id")
-    private Sponsor sponsor;
+
 
     @ManyToOne
     @JoinColumn(name = "state_event_id")
@@ -55,6 +54,8 @@ public class Event {
     @OneToMany(mappedBy = "event")
     @JsonManagedReference
     private List<EventSchedule> eventSchedules;
+    @OneToMany(mappedBy = "event")
+    private List<SponsorEvent> sponsorEvents;
 
 //    @ManyToOne
 //    @JoinColumn(name = "checking_staff_id")

@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class InsertSponsorRequest {
-      private String email;
+      private Long sponsorId;
       private int eventId;
+      private double profitPercentage;
 }

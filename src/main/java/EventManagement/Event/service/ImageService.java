@@ -82,13 +82,15 @@ public class ImageService implements ImageServiceImp {
     public boolean deleteImagebyEvent(int eventId){
 
         try {
+            List<EventImage> eventImages = eventImageRepository.findByEventId(eventId);
 
-            EventImage eventImage = eventImageRepository.findByEventId(eventId);
-            if (eventImage == null) {
-                throw new RuntimeException("Can't find image with eventId: " + eventId);
+            if (eventImages.isEmpty()) {
+                throw new RuntimeException("Can't find any images with eventId: " + eventId);
             }
 
-            eventImageRepository.delete(eventImage);
+            for (EventImage eventImage : eventImages) {
+                eventImageRepository.delete(eventImage);
+            };
             return true;
 
         } catch (Exception e) {
