@@ -9,8 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class TicketService {
@@ -40,6 +39,20 @@ public class TicketService {
         ticketRepository.deleteById(id);
     }
 
+    public Map<String, String> deleteTicket(int id) {
+        Map<String, String> response = new HashMap<>();
+        Optional<Ticket> ticketOptional = findById(id);
+
+        if (ticketOptional.isPresent()) {
+            deleteById(id);
+            response.put("message", "Successfully deleted the ticket!");
+        } else {
+            response.put("message", "The ticket maybe not exist?");
+        }
+
+        return response;
+    }
+
     public Optional<Ticket> updateTicketStatusAndQuantity(int id, int quantity, Ticket.Status status) {
         try {
             Optional<Ticket> ticketOptional = findById(id);
@@ -53,7 +66,6 @@ public class TicketService {
                 return Optional.empty();
             }
         } catch (Exception e) {
-            // Log the exception and handle it as needed
             System.err.println("Error occurred while updating the ticket: " + e.getMessage());
             e.printStackTrace();
             return Optional.empty();
@@ -89,11 +101,23 @@ public class TicketService {
         }
     }
 
-    public long countPaidTicketsByEventId(int eventId) {
-        return ticketRepository.countPaidTicketsByEventId(eventId);
+    public Optional<Map<String, Object>> countPaidTicketsByEventId(int eventId) {
+        long count = ticketRepository.countPaidTicketsByEventId(eventId);
+        Optional<Event> eventOptional = eventService.findById(eventId);
+        Map<String, Object> response = new HashMap<>();
+        if (eventOptional.isPresent()) {
+            response.put("At that event the amount of visitor by that ticket is: ", count);
+        } else {
+            response.put("error", "Event not found");
+        }
+        return Optional.of(response);
     }
 
-    public List<Visitor> findVisitorsByEventIdAndStatusPaid(int eventId) {
-        return ticketRepository.findVisitorsByEventIdAndStatusPaid(eventId);
+    public List<Object> findVisitorsByEventIdAndStatusPaid(int eventId) {
+        List<Visitor> visitors = ticketRepository.findVisitorsByEventIdAndStatusPaid(eventId);
+        if (visitors == null || visitors.isEmpty()) {
+            return Collections.singletonList("Data is null"); // Return a list with a message
+        }
+        return Collections.singletonList(visitors);
     }
 }

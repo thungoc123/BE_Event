@@ -32,14 +32,12 @@ public class TicketController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTicket(@PathVariable int id) {
-        Optional<Ticket> ticketOptional = ticketService.findById(id);
-
-        if (ticketOptional.isPresent()) {
-            ticketService.deleteById(id);
-            return ResponseEntity.noContent().build();
+    public ResponseEntity<Map<String, String>> deleteTicket(@PathVariable int id) {
+        Map<String, String> response = ticketService.deleteTicket(id);
+        if (response.containsKey("message") && response.get("message").equals("Successfully deleted the ticket!")) {
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(response);
         }
     }
 
@@ -56,16 +54,14 @@ public class TicketController {
     }
 
     @GetMapping("/count/paid/{eventId}")
-    public ResponseEntity<Map<String, Long>> countPaidTicketsByEventId(@PathVariable int eventId) {
-        long count = ticketService.countPaidTicketsByEventId(eventId);
-        Map<String, Long> response = new HashMap<>();
-        response.put("At that event the amount of visitor by that ticket is:  ", count);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Map<String, Object>> countPaidTicketsByEventId(@PathVariable int eventId) {
+        Optional<Map<String, Object>> result = ticketService.countPaidTicketsByEventId(eventId);
+        return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     @GetMapping("/visitors/paid/{eventId}")
-    public ResponseEntity<List<Visitor>> findVisitorsByEventIdAndStatusPaid(@PathVariable int eventId) {
-        List<Visitor> visitors = ticketService.findVisitorsByEventIdAndStatusPaid(eventId);
+    public ResponseEntity<List<Object>> findVisitorsByEventIdAndStatusPaid(@PathVariable int eventId) {
+        List<Object> visitors = ticketService.findVisitorsByEventIdAndStatusPaid(eventId);
         return ResponseEntity.ok(visitors);
     }
 }
