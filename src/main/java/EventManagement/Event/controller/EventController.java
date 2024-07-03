@@ -3,6 +3,7 @@ package EventManagement.Event.controller;
 import EventManagement.Event.entity.Account;
 import EventManagement.Event.entity.Event;
 import EventManagement.Event.entity.StateEvent;
+import EventManagement.Event.payload.DeleteResponse;
 import EventManagement.Event.payload.Request.*;
 import EventManagement.Event.repository.AccountRepository;
 import EventManagement.Event.repository.EventRepository;
@@ -276,6 +277,15 @@ public class EventController {
         }
 
 
+    }
+    @DeleteMapping("/delete/{eventId}")
+    public ResponseEntity<Object> deleteEvent2(@PathVariable int eventId) {
+        try {
+            eventService.deleteEventById(eventId);
+            return ResponseEntity.ok(new DeleteResponse("delete feedback successfully"));
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to delete event with ID " + eventId + ": " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
 
