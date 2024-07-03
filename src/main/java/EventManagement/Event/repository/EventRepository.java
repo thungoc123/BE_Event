@@ -1,6 +1,7 @@
 package EventManagement.Event.repository;
 
 import EventManagement.Event.entity.Event;
+import EventManagement.Event.entity.Feedback;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,8 +16,12 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
     List<Event> findByAccountId(int accountId);
     List<Event> findByStateEventId(int stateEventId);
 
+
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM sponsor_program_event WHERE event_id = :eventId", nativeQuery = true)
     void deleteSponsorProgramEventByEventId(int eventId);
+//    @Query("SELECT DISTINCT e FROM Event e JOIN e.feedbacks f WHERE f = :feedback")
+//    List<Event> findByFeedback(@Param("feedback") Feedback feedback);
+
 }

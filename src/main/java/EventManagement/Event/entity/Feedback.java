@@ -27,13 +27,15 @@ public class Feedback {
     private State state;
 
     @OneToMany(mappedBy = "feedback", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonIgnoreProperties("feedback") // Ignore feedback property in FeedbackQuestion
+    @JsonIgnore // Ignore feedback property in FeedbackQuestion
     private Set<FeedbackQuestion> feedbackQuestions;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
     @JsonBackReference // Prevent recursion
     private Event event;
+
+
 
     // constructors, getters, setters, etc.
 }

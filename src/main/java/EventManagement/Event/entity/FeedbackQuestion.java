@@ -16,7 +16,7 @@ public class FeedbackQuestion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int feedbackQuestionID;
 
-    private String typeQuestion;
+
 
     private String textQuestion;
 
@@ -26,12 +26,18 @@ public class FeedbackQuestion {
 
     @ManyToOne
     @JoinColumn(name = "feedbackID", nullable = false)
-    @JsonIgnoreProperties("feedbackQuestions") // Ignore feedbackQuestions property in Feedback
+    @JsonIgnoreProperties("feedbackQuestions")
     private Feedback feedback;
 
-    @OneToMany(mappedBy = "feedbackQuestion", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonIgnoreProperties("feedbackQuestion") // Ignore feedbackQuestion property in FeedbackAnswer
-    private Set<FeedbackAnswer> feedbackAnswers;
+    @OneToMany(mappedBy = "feedbackQuestion", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("feedbackQuestion")
+    private Set<VisitorAnswer> visitorAnswers;
 
-    // constructors, getters, setters, etc.
+
+
+
+
+
+
+
 }

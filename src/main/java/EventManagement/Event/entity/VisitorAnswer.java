@@ -1,5 +1,6 @@
 package EventManagement.Event.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,11 +16,14 @@ public class VisitorAnswer {
     @JoinColumn(name = "visitor_id", nullable = false)
     private Visitor visitor;
 
-    @ManyToOne
-    @JoinColumn(name = "feedback_answer_id", nullable = false)
-    private FeedbackAnswer feedbackAnswer;
+
 
     private String visitorAnswerFeedback;
 
-    private int visitorCount;
+    @ManyToOne
+    @JoinColumn(name = "feedback_question_id", nullable = false)
+    @JsonIgnoreProperties("visitorAnswers")
+    private FeedbackQuestion feedbackQuestion;
+
+
 }
