@@ -1,36 +1,9 @@
-package EventManagement.Event.DTO;
+package EventManagement.Event.payload.Request;
 
-import lombok.Data;
-
-import java.time.LocalDateTime;
-
-@Data
-public class VisitorAnswerDTO {
-    private int id;
+public class CreateVisitorAnswerRequest {
     private int visitorId;
     private int feedbackQuestionId;
     private String visitorAnswerFeedback;
-
-
-    // Constructors, getters, and setters
-    public VisitorAnswerDTO() {
-    }
-
-    public VisitorAnswerDTO(int id, int visitorId, int feedbackQuestionId, String visitorAnswerFeedback) {
-        this.id = id;
-        this.visitorId = visitorId;
-        this.feedbackQuestionId = feedbackQuestionId;
-        this.visitorAnswerFeedback = visitorAnswerFeedback;
-
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public int getVisitorId() {
         return visitorId;
@@ -55,6 +28,4 @@ public class VisitorAnswerDTO {
     public void setVisitorAnswerFeedback(String visitorAnswerFeedback) {
         this.visitorAnswerFeedback = visitorAnswerFeedback;
     }
-
-
 }

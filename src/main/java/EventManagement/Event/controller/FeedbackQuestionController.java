@@ -1,11 +1,12 @@
 package EventManagement.Event.controller;
 
 import EventManagement.Event.DTO.FeedbackQuestionDTO;
+import EventManagement.Event.DTO.FeedbackQuestionEventDTO;
 import EventManagement.Event.DTO.FeedbackVisitorQuestionDTO;
 import EventManagement.Event.entity.FeedbackQuestion;
 import EventManagement.Event.payload.DeleteResponse;
 import EventManagement.Event.service.FeedbackQuestionService;
-import EventManagement.Event.service.FeedbackQuestionService2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,24 +18,30 @@ import java.util.List;
 @RequestMapping("/feedbackQuestions")
 public class FeedbackQuestionController {
 
-    @Autowired
-    private FeedbackQuestionService2 feedbackQuestionService2;
+//    @Autowired
+//    private FeedbackQuestionService2 feedbackQuestionService2;
     @Autowired
     private FeedbackQuestionService feedbackQuestionService;
 
 
-    @PostMapping("/create")
-    public FeedbackQuestionDTO createFeedbackQuestion(@RequestBody FeedbackQuestionDTO feedbackQuestionDTO) {
-        return feedbackQuestionService.createFeedbackQuestion(feedbackQuestionDTO);
+    @PostMapping("/questions/{feedbackId}")
+    public ResponseEntity<FeedbackQuestionDTO> createFeedbackQuestion(@PathVariable int feedbackId,
+                                                                      @RequestBody FeedbackQuestionDTO questionDTO) {
+        try {
+            FeedbackQuestionDTO createdQuestion = feedbackQuestionService.createFeedbackQuestion(questionDTO, feedbackId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdQuestion);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
 
 
-    @GetMapping("/all")
-    public ResponseEntity<List<FeedbackVisitorQuestionDTO>> getAllFeedbackQuestions() {
-        List<FeedbackVisitorQuestionDTO> feedbackQuestions = feedbackQuestionService2.getAll();
-        return new ResponseEntity<>(feedbackQuestions, HttpStatus.OK);
-    }
+//    @GetMapping("/all")
+//    public ResponseEntity<List<FeedbackVisitorQuestionDTO>> getAllFeedbackQuestions() {
+//        List<FeedbackVisitorQuestionDTO> feedbackQuestions = feedbackQuestionService2.getAll();
+//        return new ResponseEntity<>(feedbackQuestions, HttpStatus.OK);
+//    }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<FeedbackQuestionDTO> updateFeedbackQuestion(
@@ -43,7 +50,7 @@ public class FeedbackQuestionController {
         try {
             FeedbackQuestion updatedQuestion = feedbackQuestionService.updateFeedbackQuestion(id, questionDTO);
             FeedbackQuestionDTO responseDTO = new FeedbackQuestionDTO();
-            responseDTO.setTypeQuestion(updatedQuestion.getTypeQuestion());
+//            responseDTO.setTypeQuestion(updatedQuestion.getTypeQuestion());
             responseDTO.setTextQuestion(updatedQuestion.getTextQuestion());
             responseDTO.setDeletedAt(updatedQuestion.getDeletedAt());
             responseDTO.setModifiedAt(updatedQuestion.getModifiedAt());
@@ -62,9 +69,7 @@ public class FeedbackQuestionController {
             return ResponseEntity.notFound().build();  // HTTP 404 Not Found nếu không tìm thấy FeedbackQuestion
         }
     }
-    @GetMapping("/feedback/{feedbackID}")
-    public ResponseEntity<List<FeedbackQuestionDTO>> getFeedbackQuestionsByFeedbackID(@PathVariable int feedbackID) {
-        List<FeedbackQuestionDTO> feedbackQuestions = feedbackQuestionService.getListFeedbackQuestionsByFeedbackID(feedbackID);
-        return ResponseEntity.ok(feedbackQuestions);
-    }
+
+
+
 }

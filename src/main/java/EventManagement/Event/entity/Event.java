@@ -46,6 +46,10 @@ public class Event {
 
     @OneToMany(mappedBy = "event")
     @JsonManagedReference
+    private List<Feedback> feedbacks;
+
+    @OneToMany(mappedBy = "event")
+    @JsonManagedReference
     private List<EventImage> eventImages;
 
     @OneToMany(mappedBy = "event")

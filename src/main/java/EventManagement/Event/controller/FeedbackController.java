@@ -13,9 +13,11 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api-feedbacks")
@@ -31,14 +33,14 @@ public class FeedbackController {
         return new ResponseEntity<>("FeedBack", HttpStatus.OK);
     }
 
-    @GetMapping("/getall")
-    public FeedbackDataDTO getAllFeedbackData() {
-        return feedbackService.getAllFeedbackData();
-    }
+//    @GetMapping("/getall")
+//    public FeedbackDataDTO getAllFeedbackData() {
+//        return feedbackService.getAllFeedbackData();
+//    }
 
 
     @PostMapping("/events/{eventId}")
-    public ResponseEntity<Feedback> createFeedback(@PathVariable("eventId") int eventId,
+    public ResponseEntity<Feedback> createFeedback(@PathVariable Integer eventId,
                                                    @RequestBody FeedbackDTO feedbackDTO) {
         try {
             Feedback createdFeedback = feedbackService.createFeedback(feedbackDTO, eventId);
@@ -47,6 +49,7 @@ public class FeedbackController {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Feedback> updateFeedback(@PathVariable int id, @RequestBody FeedbackDTO feedbackDTO) {
@@ -64,15 +67,15 @@ public class FeedbackController {
 
 
 
-    @DeleteMapping("/delete/{feedbackID}")
-    public ResponseEntity<Object> deleteFeedback(@PathVariable int feedbackID) {
-        try {
-            feedbackService.deleteFeedback(feedbackID);
-            return ResponseEntity.ok(new DeleteResponse("delete feedback successfully"));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+//    @DeleteMapping("/delete/{feedbackID}")
+//    public ResponseEntity<Object> deleteFeedback(@PathVariable int feedbackID) {
+//        try {
+//            feedbackService.deleteFeedback(feedbackID);
+//            return ResponseEntity.ok(new DeleteResponse("delete feedback successfully"));
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 
 
 //    @GetMapping("/account")
@@ -88,9 +91,29 @@ public class FeedbackController {
     @GetMapping("/list-feedback-account/{accountID}")
     public List<FeedbackEventDTO> getFeedbacksByAccountID(@PathVariable int accountID) {
         return feedbackService.getFeedbacksByAccountID(accountID);
+
     }
+//    @DeleteMapping("/{feedbackId}")
+//    public ResponseEntity<Void> deleteFeedbackById(@PathVariable int feedbackId) {
+//        try {
+//            feedbackService.deleteFeedbackById(feedbackId);
+//            return ResponseEntity.noContent().build();
+//        } catch (Exception e) {
+//            // Log lỗi nếu cần
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
+//    }
 
-
+    @DeleteMapping("/{feedbackId}")
+    public ResponseEntity<Object> deleteFeedback(@PathVariable int feedbackId) {
+        try {
+            feedbackService.deleteFeedbackById(feedbackId); // Thay đổi tên phương thức gọi từ service
+            return ResponseEntity.ok(new DeleteResponse("delete feedback successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to delete feedback with id: " + feedbackId);
+        }
+    }
 
 }
 

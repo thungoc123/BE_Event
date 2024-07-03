@@ -1,6 +1,7 @@
 package EventManagement.Event.controller;
 
 import EventManagement.Event.entity.Account;
+import EventManagement.Event.payload.DeleteResponse;
 import EventManagement.Event.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +27,13 @@ public class AccountController {
     @PutMapping("/{id}/disable")
     public ResponseEntity<?> disableAccount(@PathVariable int id) {
         accountService.disableAccount(id);
-        return ResponseEntity.ok("Tài khoản đã bị vô hiệu hóa.");
+        return ResponseEntity.ok(new DeleteResponse(" đã ban account"));
     }
 
     @PutMapping("/{id}/enable")
     public ResponseEntity<?> enableAccount(@PathVariable int id) {
         accountService.enableAccount(id);
-        return ResponseEntity.ok("Tài khoản đã được kích hoạt.");
+        return ResponseEntity.ok(new DeleteResponse(" đã mở account"));
     }
 
 //    @PutMapping("/{id}/disable")

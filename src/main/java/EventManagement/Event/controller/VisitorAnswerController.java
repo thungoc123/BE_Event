@@ -1,11 +1,15 @@
 package EventManagement.Event.controller;
 
+import EventManagement.Event.DTO.CreateVisitorAnswerDTO;
 import EventManagement.Event.DTO.FeedbackAnswerDetailsDTO;
 import EventManagement.Event.DTO.VisitorAnswerDTO;
 import EventManagement.Event.entity.VisitorAnswer;
-import EventManagement.Event.service.FeedbackAnswerService;
-import EventManagement.Event.service.FeedbackQuestionService2;
+
+import EventManagement.Event.payload.Request.CreateVisitorAnswerRequest;
+import EventManagement.Event.service.VisitorAnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,17 +18,28 @@ import java.util.List;
 @RequestMapping("/api-visitor-answer")
 public class VisitorAnswerController {
 
-    @Autowired
-    private FeedbackQuestionService2 visitorAnswerService;
-    @Autowired
-    private FeedbackAnswerService feedbackAnswerService;
+    private final VisitorAnswerService visitorAnswerService;
 
-    @PostMapping("/visitor-answer")
-    public VisitorAnswerDTO createVisitorAnswer(@RequestBody VisitorAnswerDTO visitorAnswerDTO) {
-        return visitorAnswerService.createVisitorAnswer(visitorAnswerDTO);
+    @Autowired
+    public VisitorAnswerController(VisitorAnswerService visitorAnswerService) {
+        this.visitorAnswerService = visitorAnswerService;
     }
-    @GetMapping("/feedback-answer-details")
-    public List<FeedbackAnswerDetailsDTO> getAllFeedbackAnswerDetails() {
-        return feedbackAnswerService.getAllFeedbackAnswerDetails();
+
+    @PostMapping("/create")
+    public ResponseEntity<VisitorAnswerDTO> createVisitorAnswer(@RequestBody CreateVisitorAnswerRequest request) {
+        VisitorAnswerDTO visitorAnswerDTO = visitorAnswerService.createVisitorAnswer(
+                request.getVisitorId(),
+                request.getFeedbackQuestionId(),
+                request.getVisitorAnswerFeedback()
+        );
+        return ResponseEntity.ok(visitorAnswerDTO);
     }
-}
+    @GetMapping("/{id}")
+    public ResponseEntity<VisitorAnswerDTO> getVisitorAnswer(@PathVariable int id) {
+        VisitorAnswerDTO visitorAnswerDTO = visitorAnswerService.getVisitorAnswer(id);
+        return ResponseEntity.ok(visitorAnswerDTO);
+    }
+
+
+
+    }

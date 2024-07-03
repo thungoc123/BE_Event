@@ -3,6 +3,7 @@ package EventManagement.Event.service;
 import EventManagement.Event.DTO.*;
 import EventManagement.Event.entity.*;
 import EventManagement.Event.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,8 +20,8 @@ import java.util.stream.Collectors;
 public class FeedbackService {
     @Autowired
     private FeedbackRepository feedbackRepository;
-    @Autowired
-    private FeedBackAwserRepository feedBackAwserRepository;
+    //    @Autowired
+//    private FeedBackAwserRepository feedBackAwserRepository;
     @Autowired
     private FeedBackQuestionRepository feedBackQuestionRepository;
     @Autowired
@@ -29,6 +30,12 @@ public class FeedbackService {
     private StateRepository stateRepository;
     @Autowired
     private EventRepository eventRepository;
+
+    @Autowired
+    private VisitorAnswerRepository visitorAnswerRepository;
+
+    @Autowired
+    private FeedBackQuestionRepository feedbackQuestionRepository;
 
     @Transactional
     public Feedback updateFeedback(int feedbackID, FeedbackDTO feedbackDTO) {
@@ -68,69 +75,68 @@ public class FeedbackService {
     }
 
 
-
-
     @Transactional
     public Feedback createFeedback(FeedbackDTO feedbackDTO, int eventid) {
-        Feedback feedback = new Feedback();
-        feedback.setTitle(feedbackDTO.getTitle());
-        feedback.setModifiedAt(feedbackDTO.getModifiedAt());
-        feedback.setDeleteAt(feedbackDTO.getDeletedAt());
+        try {
+            Feedback feedback = new Feedback();
+            feedback.setTitle(feedbackDTO.getTitle());
+            feedback.setModifiedAt(feedbackDTO.getModifiedAt());
+            feedback.setDeleteAt(feedbackDTO.getDeletedAt());
 
-        // Set default stateId to 2
-        int stateId = 2;
-        Optional<State> optionalState = stateRepository.findById(stateId);
-        if (optionalState.isPresent()) {
-            feedback.setState(optionalState.get());
-        } else {
-            throw new IllegalArgumentException("Invalid predefined stateID: " + stateId);
+            // Set default stateId to 2
+            int stateId = 2;
+            Optional<State> optionalState = stateRepository.findById(stateId);
+            if (optionalState.isPresent()) {
+                feedback.setState(optionalState.get());
+            } else {
+                throw new IllegalArgumentException("Invalid predefined stateID: " + stateId);
+            }
+
+            // Set eventId
+            Optional<Event> optionalEvent = eventRepository.findById(eventid);
+            if (optionalEvent.isPresent()) {
+                feedback.setEvent(optionalEvent.get());
+            } else {
+                throw new IllegalArgumentException("Event not found with id: " + eventid);
+            }
+
+            return feedbackRepository.save(feedback);
+        } catch (IllegalArgumentException e) {
+            // Handle specific exceptions like invalid stateID or event not found
+            e.printStackTrace(); // Replace with proper logging
+        } catch (Exception e) {
+            // Handle general exceptions
+            e.printStackTrace(); // Replace with proper logging
         }
 
-        // Set accountId
-        Optional<Event> optionalEvent = eventRepository.findById(eventid);
-        if (optionalEvent.isPresent()) {
-            feedback.setEvent(optionalEvent.get());
-
-        } else {
-            throw new IllegalArgumentException("Event not found with id: " + eventid);
-        }
-
-        return feedbackRepository.save(feedback);
+// Return null or handle the case where feedback couldn't be saved
+        return null;
     }
 
 
-
-
-
-
-
-    @Transactional
-    public void deleteFeedback(int feedbackID) {
-        feedbackRepository.deleteByFeedbackID(feedbackID);
-    }
-
-
-
-
+//    @Transactional
+//    public void deleteFeedback(int feedbackID) {
+//        feedbackRepository.deleteByFeedbackID(feedbackID);
+//    }
 
 
     public Account findByEmail(String email) {
         return accountRepository.findByEmail(email);
     }
 
-
-    public FeedbackDataDTO getAllFeedbackData() {
-        List<Feedback> feedbacks = feedbackRepository.findAll();
-        List<FeedbackQuestion> feedbackQuestions = feedBackQuestionRepository.findAll();
-        List<FeedbackAnswer> feedbackAnswers = feedBackAwserRepository.findAll();
-
-        FeedbackDataDTO feedbackDataDTO = new FeedbackDataDTO();
-        feedbackDataDTO.setFeedbacks(feedbacks);
-        feedbackDataDTO.setFeedbackQuestions(feedbackQuestions);
-        feedbackDataDTO.setFeedbackAnswers(feedbackAnswers);
-
-        return feedbackDataDTO;
-    }
+//
+//    public FeedbackDataDTO getAllFeedbackData() {
+//        List<Feedback> feedbacks = feedbackRepository.findAll();
+//        List<FeedbackQuestion> feedbackQuestions = feedBackQuestionRepository.findAll();
+//        List<FeedbackAnswer> feedbackAnswers = feedBackAwserRepository.findAll();
+//
+//        FeedbackDataDTO feedbackDataDTO = new FeedbackDataDTO();
+//        feedbackDataDTO.setFeedbacks(feedbacks);
+//        feedbackDataDTO.setFeedbackQuestions(feedbackQuestions);
+//        feedbackDataDTO.setFeedbackAnswers(feedbackAnswers);
+//
+//        return feedbackDataDTO;
+//    }
 //    public List<Feedback> getAllFeedbackByAccountId(HttpServletRequest request) {
 //        String accountid = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 //
@@ -138,55 +144,85 @@ public class FeedbackService {
 //    }
 
 
+//    private FeedbackDTO convertFeedbackToDTO(Feedback feedback) {
+//        FeedbackDTO feedbackDTO = new FeedbackDTO();
+//        feedbackDTO.setFeedbackID(feedback.getFeedbackID());
+//        feedbackDTO.setTitle(feedback.getTitle());
+//        feedbackDTO.setDeletedAt(feedback.getDeleteAt());
+//        feedbackDTO.setModifiedAt(feedback.getModifiedAt());
+//        feedbackDTO.setStateID(feedback.getState().getStateId());
+//
+//        List<FeedbackQuestionDTO> feedbackQuestionDTOs = feedback.getFeedbackQuestions().stream()
+//                .map(this::convertFeedbackQuestionToDTO)
+//                .collect(Collectors.toList());
+//        feedbackDTO.setFeedbackQuestions(feedbackQuestionDTOs);
+//
+//        return feedbackDTO;
+//    }
 
+//    private FeedbackQuestionDTO convertFeedbackQuestionToDTO(FeedbackQuestion feedbackQuestion) {
+//        FeedbackQuestionDTO feedbackQuestionDTO = new FeedbackQuestionDTO();
+//        feedbackQuestionDTO.setFeedbackQuestionID(feedbackQuestion.getFeedbackQuestionID());
+//        feedbackQuestionDTO.setTypeQuestion(feedbackQuestion.getTypeQuestion());
+//        feedbackQuestionDTO.setTextQuestion(feedbackQuestion.getTextQuestion());
+//        feedbackQuestionDTO.setDeletedAt(feedbackQuestion.getDeletedAt());
+//        feedbackQuestionDTO.setModifiedAt(feedbackQuestion.getModifiedAt());
+//
+//        List<FeedbackAnswerDTO> feedbackAnswerDTOs = feedbackQuestion.getFeedbackAnswers().stream()
+//                .map(this::convertFeedbackAnswerToDTO)
+//                .collect(Collectors.toList());
+//        feedbackQuestionDTO.setAnswers(feedbackAnswerDTOs);
+//
+//        return feedbackQuestionDTO;
+//    }
 
-    private FeedbackDTO convertFeedbackToDTO(Feedback feedback) {
-        FeedbackDTO feedbackDTO = new FeedbackDTO();
-        feedbackDTO.setFeedbackID(feedback.getFeedbackID());
-        feedbackDTO.setTitle(feedback.getTitle());
-        feedbackDTO.setDeletedAt(feedback.getDeleteAt());
-        feedbackDTO.setModifiedAt(feedback.getModifiedAt());
-        feedbackDTO.setStateID(feedback.getState().getStateId());
-
-        List<FeedbackQuestionDTO> feedbackQuestionDTOs = feedback.getFeedbackQuestions().stream()
-                .map(this::convertFeedbackQuestionToDTO)
-                .collect(Collectors.toList());
-        feedbackDTO.setFeedbackQuestions(feedbackQuestionDTOs);
-
-        return feedbackDTO;
-    }
-
-    private FeedbackQuestionDTO convertFeedbackQuestionToDTO(FeedbackQuestion feedbackQuestion) {
-        FeedbackQuestionDTO feedbackQuestionDTO = new FeedbackQuestionDTO();
-        feedbackQuestionDTO.setFeedbackQuestionID(feedbackQuestion.getFeedbackQuestionID());
-        feedbackQuestionDTO.setTypeQuestion(feedbackQuestion.getTypeQuestion());
-        feedbackQuestionDTO.setTextQuestion(feedbackQuestion.getTextQuestion());
-        feedbackQuestionDTO.setDeletedAt(feedbackQuestion.getDeletedAt());
-        feedbackQuestionDTO.setModifiedAt(feedbackQuestion.getModifiedAt());
-
-        List<FeedbackAnswerDTO> feedbackAnswerDTOs = feedbackQuestion.getFeedbackAnswers().stream()
-                .map(this::convertFeedbackAnswerToDTO)
-                .collect(Collectors.toList());
-        feedbackQuestionDTO.setAnswers(feedbackAnswerDTOs);
-
-        return feedbackQuestionDTO;
-    }
-
-    private FeedbackAnswerDTO convertFeedbackAnswerToDTO(FeedbackAnswer feedbackAnswer) {
-        FeedbackAnswerDTO feedbackAnswerDTO = new FeedbackAnswerDTO();
-        feedbackAnswerDTO.setFeedbackAnswerID(feedbackAnswer.getFeedbackAnswerID());
-        feedbackAnswerDTO.setAnswer(feedbackAnswer.getAnswer());
-        feedbackAnswerDTO.setDeletedAt(feedbackAnswer.getDeletedAt());
-        feedbackAnswerDTO.setModifiedAt(feedbackAnswer.getModifiedAt());
-
-        return feedbackAnswerDTO;
-    }
+    //    private FeedbackAnswerDTO convertFeedbackAnswerToDTO(FeedbackAnswer feedbackAnswer) {
+//        FeedbackAnswerDTO feedbackAnswerDTO = new FeedbackAnswerDTO();
+//        feedbackAnswerDTO.setFeedbackAnswerID(feedbackAnswer.getFeedbackAnswerID());
+//        feedbackAnswerDTO.setAnswer(feedbackAnswer.getAnswer());
+//        feedbackAnswerDTO.setDeletedAt(feedbackAnswer.getDeletedAt());
+//        feedbackAnswerDTO.setModifiedAt(feedbackAnswer.getModifiedAt());
+//
+//        return feedbackAnswerDTO;
+//    }
     public List<Feedback> getFeedbacksByEventID(int eventID) {
         return feedbackRepository.findByEvent_Id(eventID);
     }
 
-public List<FeedbackEventDTO> getFeedbacksByAccountID(int accountID) {
-    return feedbackRepository.findFeedbacksWithEventNameAndStateByAccountID(accountID);
+    public List<FeedbackEventDTO> getFeedbacksByAccountID(int accountID) {
+        return feedbackRepository.findFeedbacksWithEventNameAndStateByAccountID(accountID);
+    }
+
+
+    @Transactional
+    public void deleteFeedbackById(int feedbackId) {
+        // Xóa tất cả VisitorAnswer liên quan đến Feedback
+        List<VisitorAnswer> visitorAnswers = visitorAnswerRepository.findByFeedbackQuestion_Feedback_FeedbackID(feedbackId);
+        visitorAnswerRepository.deleteInBatch(visitorAnswers);
+
+        // Xóa tất cả FeedbackQuestion liên quan đến Feedback
+        List<FeedbackQuestion> feedbackQuestions = feedbackQuestionRepository.findByFeedback_FeedbackID(feedbackId);
+        feedbackQuestionRepository.deleteInBatch(feedbackQuestions);
+
+        // Xóa Feedback
+        feedbackRepository.deleteById(feedbackId);
+    }
+
+//    @Transactional
+//    public void deleteFeedbackById(int feedbackId) {
+//        // Xóa tất cả VisitorAnswer liên quan đến Feedback
+//        entityManager.createQuery("DELETE FROM VisitorAnswer va WHERE va.feedbackQuestion.feedback.feedbackID = :feedbackId")
+//                .setParameter("feedbackId", feedbackId)
+//                .executeUpdate();
+//
+//        // Xóa tất cả FeedbackQuestion liên quan đến Feedback
+//        entityManager.createQuery("DELETE FROM FeedbackQuestion fq WHERE fq.feedback.feedbackID = :feedbackId")
+//                .setParameter("feedbackId", feedbackId)
+//                .executeUpdate();
+//
+//        // Xóa Feedback
+//        feedbackRepository.deleteById(feedbackId);
+//    }
 }
 
 
@@ -196,7 +232,6 @@ public List<FeedbackEventDTO> getFeedbacksByAccountID(int accountID) {
 
 
 
-}
 
 
 

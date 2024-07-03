@@ -1,6 +1,6 @@
 package EventManagement.Event.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,6 +10,7 @@ import java.util.Set;
 @Entity
 @Data
 @Table(name = "feedback")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "feedbackID")
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,13 +27,15 @@ public class Feedback {
     private State state;
 
     @OneToMany(mappedBy = "feedback", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonBackReference
+    @JsonIgnore // Ignore feedback property in FeedbackQuestion
     private Set<FeedbackQuestion> feedbackQuestions;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
-   @JsonBackReference // Sử dụng @JsonBackReference để ngăn chặn vòng lặp khi serialize
+    @JsonBackReference // Prevent recursion
     private Event event;
+
+
 
     // constructors, getters, setters, etc.
 }

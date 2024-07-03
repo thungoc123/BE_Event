@@ -9,4 +9,5 @@ import java.util.List;
 public interface FeedBackQuestionRepository extends JpaRepository<FeedbackQuestion, Integer> {
     void deleteById(int feedbackQuestionID);
     List<FeedbackQuestion> findByFeedback(Feedback feedback);
+    List<FeedbackQuestion> findByFeedback_FeedbackID(int feedbackId);
 }
