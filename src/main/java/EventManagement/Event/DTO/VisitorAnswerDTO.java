@@ -11,50 +11,15 @@ public class VisitorAnswerDTO {
     private int feedbackQuestionId;
     private String visitorAnswerFeedback;
 
+    private VisitorDTO visitorDTO;
 
-    // Constructors, getters, and setters
-    public VisitorAnswerDTO() {
-    }
+    private FeedbackQuestionDTO feedbackQuestionDTO;
 
-    public VisitorAnswerDTO(int id, int visitorId, int feedbackQuestionId, String visitorAnswerFeedback) {
-        this.id = id;
-        this.visitorId = visitorId;
-        this.feedbackQuestionId = feedbackQuestionId;
-        this.visitorAnswerFeedback = visitorAnswerFeedback;
+    private int questionId;
+    private String questionText;
+    private int answerId;
+    private String answerText;
 
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getVisitorId() {
-        return visitorId;
-    }
-
-    public void setVisitorId(int visitorId) {
-        this.visitorId = visitorId;
-    }
-
-    public int getFeedbackQuestionId() {
-        return feedbackQuestionId;
-    }
-
-    public void setFeedbackQuestionId(int feedbackQuestionId) {
-        this.feedbackQuestionId = feedbackQuestionId;
-    }
-
-    public String getVisitorAnswerFeedback() {
-        return visitorAnswerFeedback;
-    }
-
-    public void setVisitorAnswerFeedback(String visitorAnswerFeedback) {
-        this.visitorAnswerFeedback = visitorAnswerFeedback;
-    }
 
 
 }
