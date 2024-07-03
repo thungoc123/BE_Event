@@ -1,8 +1,6 @@
 package EventManagement.Event.controller;
 
-import EventManagement.Event.DTO.CreateVisitorAnswerDTO;
-import EventManagement.Event.DTO.FeedbackAnswerDetailsDTO;
-import EventManagement.Event.DTO.VisitorAnswerDTO;
+import EventManagement.Event.DTO.*;
 import EventManagement.Event.entity.VisitorAnswer;
 
 import EventManagement.Event.payload.Request.CreateVisitorAnswerRequest;
@@ -39,7 +37,22 @@ public class VisitorAnswerController {
         VisitorAnswerDTO visitorAnswerDTO = visitorAnswerService.getVisitorAnswer(id);
         return ResponseEntity.ok(visitorAnswerDTO);
     }
+    @GetMapping("/all")
+    public ResponseEntity<List<VisitorAnswerDTO>> getListVisitorAnswer() {
+        List<VisitorAnswerDTO> visitorAnswers = visitorAnswerService.getListVisitorAnswer();
+        return ResponseEntity.ok(visitorAnswers);
+    }
 
+    @GetMapping("/by-feedback/{feedbackId}")
+    public ResponseEntity<List<VisitorFeedbackDTO>> getVisitorsByFeedbackId(@PathVariable int feedbackId) {
+        List<VisitorFeedbackDTO> visitorFeedbackDTOs = visitorAnswerService.getVisitorsByFeedbackId(feedbackId);
+        return ResponseEntity.ok(visitorFeedbackDTOs);
+    }
+    @GetMapping("/by-feedback/{feedbackId}/visitor/{visitorId}")
+    public ResponseEntity<List<FeedbackVisitorDTO>> getVisitorAnswersByFeedbackIdAndVisitorId(@PathVariable int feedbackId, @PathVariable int visitorId) {
+        List<FeedbackVisitorDTO> visitorAnswerDTOs = visitorAnswerService.getVisitorAnswersByFeedbackIdAndVisitorId(feedbackId, visitorId);
+        return ResponseEntity.ok(visitorAnswerDTOs);
+    }
 
 
     }
