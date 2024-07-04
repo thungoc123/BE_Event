@@ -99,6 +99,9 @@ public class Account {
     @Column(nullable = false)
     private boolean enabled = true; // Thêm trường này
 
+    @Column(name = "reset_token")
+    private String resetToken;
+
     @OneToMany(mappedBy = "account")
     @JsonIgnore
     @JsonIgnoreProperties("account")
