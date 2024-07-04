@@ -8,7 +8,9 @@ import EventManagement.Event.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 @Service
@@ -72,7 +74,8 @@ public class TicketService {
         }
     }
 
-    public Optional<Ticket> createOrderTicket(int cartId, int eventId, int quantity) {
+    public Optional<Map<String, String>> createOrderTicket(int cartId, int eventId, int quantity) {
+        Map<String, String> response = new HashMap<>();
         try {
             Optional<Cart> cartOptional = cartService.findById(cartId);
             Optional<Event> eventOptional = eventService.findById(eventId);
@@ -81,23 +84,31 @@ public class TicketService {
                 Cart cart = cartOptional.get();
                 Event event = eventOptional.get();
 
-                Ticket ticket = new Ticket();
-                ticket.setCart(cart);
-                ticket.setEvent(event);
-                ticket.setQuantity(quantity);
-                ticket.setCreatedDate(LocalDateTime.now());
-                ticket.setExpiredDate(event.getTimeend());
-                ticket.setStatus(Ticket.Status.PENDING);
+                // Check if the current date is before the event's timeclosesale
+                if (LocalDateTime.now().isBefore(event.getTimeclosesale())) {
+                    Ticket ticket = new Ticket();
+                    ticket.setCart(cart);
+                    ticket.setEvent(event);
+                    ticket.setQuantity(quantity);
+                    ticket.setCreatedDate(LocalDateTime.now());
+                    ticket.setExpiredDate(event.getTimeclosesale()); // Set expiredDate to timeclosesale
+                    ticket.setStatus(Ticket.Status.PENDING);
 
-                return Optional.of(ticketRepository.save(ticket));
+                    ticketRepository.save(ticket);
+                    response.put("message", "Ticket created successfully");
+                    return Optional.of(response);
+                } else {
+                    response.put("message", "Cannot create ticket for expired event.");
+                    return Optional.of(response);
+                }
             } else {
-                System.err.println("Cart or Event not found for given IDs.");
-                return Optional.empty();
+                response.put("message", "Cart or Event not found for given IDs.");
+                return Optional.of(response);
             }
         } catch (Exception e) {
-            System.err.println("Error occurred while creating the ticket: " + e.getMessage());
+            response.put("message", "Error occurred while creating the ticket: " + e.getMessage());
             e.printStackTrace();
-            return Optional.empty();
+            return Optional.of(response);
         }
     }
 
@@ -144,5 +155,24 @@ public class TicketService {
         response.put("visitorList", visitorList);
 
         return Optional.of(response);
+    }
+
+    public Optional<Map<String, Object>> countTicketsByEventIdAndDate(int eventId, LocalDate date) {
+        Optional<Event> eventOptional = eventService.findById(eventId);
+
+        if (eventOptional.isPresent()) {
+            Event event = eventOptional.get();
+            if (date.isAfter(event.getTimeopensale().toLocalDate()) && date.isBefore(event.getTimeclosesale().toLocalDate())) {
+                long count = ticketRepository.countTicketsByEventIdAndDate(eventId, date);
+                Map<String, Object> response = new HashMap<>();
+                response.put("Date", date);
+                response.put("Amount Ticket on Date", count);
+                return Optional.of(response);
+            } else {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
     }
 }

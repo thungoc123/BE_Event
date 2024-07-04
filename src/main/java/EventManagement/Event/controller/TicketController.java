@@ -1,12 +1,15 @@
 package EventManagement.Event.controller;
 
+import EventManagement.Event.DTO.TicketCountRequestDTO;
 import EventManagement.Event.DTO.TicketRequestDTO;
 import EventManagement.Event.entity.Ticket;
 import EventManagement.Event.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
@@ -82,9 +85,9 @@ public class TicketController {
     @PostMapping("/create_ticket_order")
     public ResponseEntity<Map<String, String>> createOrderTicket(@RequestBody TicketRequestDTO ticketRequest) {
         try {
-            Optional<Ticket> ticketOptional = ticketService.createOrderTicket(ticketRequest.getCartId(), ticketRequest.getEventId(), ticketRequest.getQuantity());
-            if (ticketOptional.isPresent()) {
-                return ResponseEntity.ok(Collections.singletonMap("message", "Ticket created successfully"));
+            Optional<Map<String, String>> result = ticketService.createOrderTicket(ticketRequest.getCartId(), ticketRequest.getEventId(), ticketRequest.getQuantity());
+            if (result.isPresent()) {
+                return ResponseEntity.ok(result.get());
             } else {
                 return ResponseEntity.status(404).body(Collections.singletonMap("message", "Can't create, the cart or event does not exist!"));
             }
@@ -132,6 +135,22 @@ public class TicketController {
                 return ResponseEntity.ok(result.get());
             } else {
                 return ResponseEntity.status(404).body(Collections.singletonMap("message", "Event not found or no tickets found within the date range"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Collections.singletonMap("message", "An unknown error occurred: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/count-tickets")
+    public ResponseEntity<?> countTicketsByEventIdAndDate(
+            @RequestParam("eventId") int eventId,
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        try {
+            Optional<Map<String, Object>> result = ticketService.countTicketsByEventIdAndDate(eventId, date);
+            if (result.isPresent()) {
+                return ResponseEntity.ok(result.get());
+            } else {
+                return ResponseEntity.status(404).body(Collections.singletonMap("message", "Event not found or date out of range"));
             }
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Collections.singletonMap("message", "An unknown error occurred: " + e.getMessage()));
