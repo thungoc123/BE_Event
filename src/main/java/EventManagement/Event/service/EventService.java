@@ -163,6 +163,22 @@ public class EventService implements EventServiceImp {
                 if (eventToDelete == null) {
                     throw new RuntimeException("Can't find eventId: " + eventId);
                 }
+                List<Feedback> feedbacks = feedbackRepository.findByEvent_Id(eventId);
+
+                for (Feedback feedback : feedbacks) {
+                    int feedbackId = feedback.getFeedbackID();
+
+                    // Xóa tất cả VisitorAnswer liên quan đến Feedback
+                    List<VisitorAnswer> visitorAnswers = visitorAnswerRepository.findByFeedbackQuestion_Feedback_FeedbackID(feedbackId);
+                    visitorAnswerRepository.deleteInBatch(visitorAnswers);
+
+                    // Xóa tất cả FeedbackQuestion liên quan đến Feedback
+                    List<FeedbackQuestion> feedbackQuestions = feedbackQuestionRepository.findByFeedback_FeedbackID(feedbackId);
+                    feedbackQuestionRepository.deleteInBatch(feedbackQuestions);
+
+                    // Xóa Feedback
+                    feedbackRepository.deleteById(feedbackId);
+                }
 
                 eventRepository.deleteBySponsorByEventId(eventId);
                 eventRepository.deleteSponsorProgramEventByEventId(eventId);
@@ -185,29 +201,29 @@ public class EventService implements EventServiceImp {
             }
 
         }
-    @Transactional
-    public void deleteEventById(int eventId) {
-        // Lấy tất cả Feedback liên quan đến Event
-        List<Feedback> feedbacks = feedbackRepository.findByEvent_Id(eventId);
-
-        for (Feedback feedback : feedbacks) {
-            int feedbackId = feedback.getFeedbackID();
-
-            // Xóa tất cả VisitorAnswer liên quan đến Feedback
-            List<VisitorAnswer> visitorAnswers = visitorAnswerRepository.findByFeedbackQuestion_Feedback_FeedbackID(feedbackId);
-            visitorAnswerRepository.deleteInBatch(visitorAnswers);
-
-            // Xóa tất cả FeedbackQuestion liên quan đến Feedback
-            List<FeedbackQuestion> feedbackQuestions = feedbackQuestionRepository.findByFeedback_FeedbackID(feedbackId);
-            feedbackQuestionRepository.deleteInBatch(feedbackQuestions);
-
-            // Xóa Feedback
-            feedbackRepository.deleteById(feedbackId);
-        }
-
-        // Xóa Event
-        eventRepository.deleteById(eventId);
-    }
+//    @Transactional
+//    public void deleteEventById(int eventId) {
+//        // Lấy tất cả Feedback liên quan đến Event
+//        List<Feedback> feedbacks = feedbackRepository.findByEvent_Id(eventId);
+//
+//        for (Feedback feedback : feedbacks) {
+//            int feedbackId = feedback.getFeedbackID();
+//
+//            // Xóa tất cả VisitorAnswer liên quan đến Feedback
+//            List<VisitorAnswer> visitorAnswers = visitorAnswerRepository.findByFeedbackQuestion_Feedback_FeedbackID(feedbackId);
+//            visitorAnswerRepository.deleteInBatch(visitorAnswers);
+//
+//            // Xóa tất cả FeedbackQuestion liên quan đến Feedback
+//            List<FeedbackQuestion> feedbackQuestions = feedbackQuestionRepository.findByFeedback_FeedbackID(feedbackId);
+//            feedbackQuestionRepository.deleteInBatch(feedbackQuestions);
+//
+//            // Xóa Feedback
+//            feedbackRepository.deleteById(feedbackId);
+//        }
+//
+//        // Xóa Event
+//        eventRepository.deleteById(eventId);
+//    }
         @Override
         public boolean changeStateEvent(int eventId){
             try {

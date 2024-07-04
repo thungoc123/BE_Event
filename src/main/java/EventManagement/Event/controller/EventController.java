@@ -278,15 +278,15 @@ public class EventController {
 
 
     }
-    @DeleteMapping("/delete/{eventId}")
-    public ResponseEntity<Object> deleteEvent2(@PathVariable int eventId) {
-        try {
-            eventService.deleteEventById(eventId);
-            return ResponseEntity.ok(new DeleteResponse("delete feedback successfully"));
-        } catch (Exception e) {
-            return new ResponseEntity<>("Failed to delete event with ID " + eventId + ": " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @DeleteMapping("/delete/{eventId}")
+//    public ResponseEntity<Object> deleteEvent2(@PathVariable int eventId) {
+//        try {
+//            eventService.deleteEventById(eventId);
+//            return ResponseEntity.ok(new DeleteResponse("delete feedback successfully"));
+//        } catch (Exception e) {
+//            return new ResponseEntity<>("Failed to delete event with ID " + eventId + ": " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 }
 
 
