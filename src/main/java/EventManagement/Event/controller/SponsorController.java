@@ -48,6 +48,27 @@ public class SponsorController {
 
     }
 
+    @PutMapping("/program/{sponsorProgramid}")
+        public ResponseEntity<Map<String, String>> updateProgram(@PathVariable int sponsorProgramid,
+                                                                @RequestBody InsertSponsorProgramRequest insertSponsorProgramRequest){
+        boolean isUpdate = sponsorService.updateProgram(sponsorProgramid, insertSponsorProgramRequest);
+        Map<String, String> response = new HashMap<>();
+
+        if (isUpdate) {
+            response.put("message", "update program successfully");
+            return ResponseEntity.ok(response);
+        } else{
+            response.put("message", "update program failed");
+            return ResponseEntity.ok(response);
+        }
+
+
+        }
+
+
+
+
+
     @GetMapping("/account/event")
     public ResponseEntity<List<Event>> getEventsByAccount(HttpServletRequest request) {
         List<Event> events = eventService.getEventsBySponsorId(request);
@@ -87,6 +108,31 @@ public class SponsorController {
             return ResponseEntity.ok(response);
         } else {
             response.put("message", "Failed to create program");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    @DeleteMapping("/program/{sponsorProgramId}/event/{eventID}")
+    public ResponseEntity<Map<String, String>> removeEventFromSponsorProgram(@PathVariable int sponsorProgramId, @PathVariable int eventID){
+        boolean isDelete = sponsorService.removeEventFromSponsorProgram(sponsorProgramId, eventID);
+        Map<String, String> response = new HashMap<>();
+        if (isDelete) {
+            response.put("message", "event deleted successfully");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "Failed to remove event from the program");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    @DeleteMapping("/program/{sponsorProgramId}")
+    public ResponseEntity<Map<String, String>> deleteProgram(@PathVariable int sponsorProgramId){
+        boolean isDelete = sponsorService.deleteProgram(sponsorProgramId);
+        Map<String, String> response = new HashMap<>();
+        if (isDelete) {
+            response.put("message", "program deleted successfully");
+            return ResponseEntity.ok(response);
+        } else {
+
+            response.put("message", "Failed to delete program");
             return ResponseEntity.status(500).body(response);
         }
     }

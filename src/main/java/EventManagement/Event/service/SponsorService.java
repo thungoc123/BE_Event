@@ -151,17 +151,6 @@ public class SponsorService implements SponsorProgramImp {
             } catch (IllegalArgumentException e) {
                 throw new RuntimeException("Invalid state value: " + insertSponsorProgramRequest.getState());
             }
-//            List<Event> events = new ArrayList<>();
-//            for (Integer eventId : insertSponsorProgramRequest.getEventIds()) {
-//                Event event = eventRepository.findById(eventId).orElse(null);
-//                if (event == null) {
-//                    throw new RuntimeException("Event not found");
-//                }
-//                events.add(event);
-//
-//
-//            }
-//            sponsorProgram.setEvents(new HashSet<>(events));
             SponsorProgram programSave = sponsorProgramRepository.save(sponsorProgram);
             return programSave != null;
 
@@ -218,6 +207,60 @@ public class SponsorService implements SponsorProgramImp {
             System.out.println("Unexpected error occurred: " + e.getMessage());
             return false;
         }
+    }
+    @Override
+    public boolean updateProgram(int sponsorProgramId, InsertSponsorProgramRequest insertSponsorProgramRequest){
+        try{
+            SponsorProgram sponsorProgram = sponsorProgramRepository.findById(sponsorProgramId).orElse(null);
+            if(sponsorProgram == null){
+                throw new RuntimeException("Sponsor program not found");
+            }
+            sponsorProgram.setTitle(insertSponsorProgramRequest.getTitle());
+            sponsorProgram.setDescription(insertSponsorProgramRequest.getDescription());
+            sponsorProgram.setThumbnail(insertSponsorProgramRequest.getThumbnail());
+            sponsorProgram.setLocation(insertSponsorProgramRequest.getLocation());
+            sponsorProgram.setLink(insertSponsorProgramRequest.getWebsiteLink());
+            sponsorProgramRepository.save(sponsorProgram);
+            return true;
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+    @Override
+    public boolean removeEventFromSponsorProgram(int sponsorProgramId, int eventId){
+        try{
+            SponsorProgram sponsorProgram = sponsorProgramRepository.findById(sponsorProgramId).orElse(null);
+            if(sponsorProgram == null){
+                throw new RuntimeException("Sponsor program not found");
+            }
+            Event event = eventRepository.findById(eventId).orElse(null);
+            if(event == null){
+                throw new RuntimeException("Event not found");
+            }
+            eventRepository.deleteSponsorProgramEventByEventId(eventId);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    @Override
+    public boolean deleteProgram(int sponsorProgramId){
+        try{
+            SponsorProgram sponsorProgram = sponsorProgramRepository.findById(sponsorProgramId).orElse(null);
+            if(sponsorProgram == null){
+                throw new RuntimeException("Sponsor program not found");
+            }
+            sponsorProgramRepository.deleteSponsorProgramEventBySponsorProgramId(sponsorProgramId);
+            sponsorProgramRepository.delete(sponsorProgram);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
 

@@ -10,5 +10,7 @@ public interface SponsorProgramImp {
     boolean insertSponsorProgram(InsertSponsorProgramRequest insertSponsorProgramRequest);
     boolean insertSponsor(InsertSponsorRequest insertSponsorRequest);
     boolean addEventsToSponsorProgram(int sponsorProgramId, List<Integer> eventIds);
-//    boolean deleteSponsor(int eventId);
+    boolean updateProgram(int sponsorProgramId, InsertSponsorProgramRequest insertSponsorProgramRequest);
+    boolean removeEventFromSponsorProgram(int sponsorProgramId, int eventId);
+    boolean deleteProgram(int sponsorProgramId);
 }

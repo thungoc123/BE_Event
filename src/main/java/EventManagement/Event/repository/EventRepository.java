@@ -20,25 +20,10 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
     @Query(value = "DELETE FROM sponsor_event WHERE event_id = :eventId"
             , nativeQuery = true)
     void deleteBySponsorByEventId(int eventId);
-//    @Modifying
-//    @Transactional
-//    @Query(value = "DELETE FROM feedback WHERE event_id = :eventId; " +
-//            "DELETE FROM feedback_question WHERE feedbackid IN " +
-//            "(SELECT feedbackid FROM feedback WHERE event_id = :eventId); " +
-//            "DELETE FROM visitor_answer WHERE feedback_question_id IN " +
-//            "(SELECT fq.feedback_question_id FROM feedback_question fq " +
-//            "INNER JOIN feedback f ON fq.feedbackid = f.feedbackid " +
-//            "WHERE f.event_id = :eventId)",
-//            nativeQuery = true)
-//    void deleteFeedbackByEventId(int eventId);
-
-
-
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM sponsor_program_event WHERE event_id = :eventId", nativeQuery = true)
     void deleteSponsorProgramEventByEventId(int eventId);
-//    @Query("SELECT DISTINCT e FROM Event e JOIN e.feedbacks f WHERE f = :feedback")
-//    List<Event> findByFeedback(@Param("feedback") Feedback feedback);
+
 
 }
