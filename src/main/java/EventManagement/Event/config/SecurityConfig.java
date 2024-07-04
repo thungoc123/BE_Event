@@ -42,7 +42,7 @@ public class SecurityConfig {
                     author.requestMatchers(HttpMethod.GET,"/api/v1/vnpay/**").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/api-sponsor/**").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/api-sponsor/{id}").permitAll();
-                    author.requestMatchers(HttpMethod.POST,"/api-sponsor/sponsorProgram/{sponsorProgramId}/events").permitAll();
+                    author.requestMatchers(HttpMethod.GET,"/api-sponsor/**").permitAll();
                     author.requestMatchers("/api-feedbacks/**").hasRole("EO");
                     author.requestMatchers("/api-feedbackanswer/**").hasRole("EO");
                     author.requestMatchers("/feedbackQuestions/**").hasRole("EO");

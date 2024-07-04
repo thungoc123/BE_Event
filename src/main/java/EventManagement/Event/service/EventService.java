@@ -48,7 +48,7 @@ public class EventService implements EventServiceImp {
     public Event getEventById(int id) {
         return eventRepository.findById(id).orElse(null);
     }
-    //// list event cua sponsorId
+
     private List<Long> getSponsorIdsByAccountId(int accountId) {
         List<Sponsor> accountSponsors = sponsorRepository.findByAccountId(accountId);
         return accountSponsors.stream()
@@ -131,10 +131,6 @@ public class EventService implements EventServiceImp {
                 if (event == null) {
                     throw new RuntimeException("Can't find eventId: " + eventId);
                 }
-
-
-
-
                 event.setDescription(request.getDescription());
                 event.setName(request.getEventName());
                 event.setTimestart(request.getTimeStart());
@@ -165,7 +161,7 @@ public class EventService implements EventServiceImp {
                     eventImageRepository.delete(eventImage);
                 }
                 scheduleService.deleteSchedulebyEvent(eventId);
-                
+
 
                 eventRepository.delete(eventToDelete);
 
