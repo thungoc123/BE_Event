@@ -1,10 +1,12 @@
 package EventManagement.Event.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -23,6 +25,10 @@ public class Ticket {
     @JoinColumn(name = "cart_id")
     @JsonBackReference(value = "cart-ticket")
     private Cart cart;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Attendance> attendances;
 
     @Column(name = "quantity")
     private int quantity;

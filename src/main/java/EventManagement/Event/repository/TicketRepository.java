@@ -4,8 +4,10 @@ import EventManagement.Event.entity.Ticket;
 import EventManagement.Event.entity.Visitor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -23,4 +25,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
     List<Visitor> findVisitorsByEventIdAndStatusPaid(int eventId);
 
     List<Ticket> findByEvent_IdAndCreatedDateBetween(int eventId, LocalDateTime startDate, LocalDateTime endDate);
+
+    @Query("SELECT COUNT(t) FROM Ticket t WHERE t.event.id = :eventId AND DATE(t.createdDate) = :date")
+    long countTicketsByEventIdAndDate(@Param("eventId") int eventId, @Param("date") LocalDate date);
 }
