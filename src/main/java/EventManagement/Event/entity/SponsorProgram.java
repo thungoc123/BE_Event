@@ -1,15 +1,17 @@
 package EventManagement.Event.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
 @Entity(name = "sponsor_program")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
    public class SponsorProgram {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,14 +33,11 @@ import java.util.Set;
     PUBLISH,
     UNPUBLISH
  }
- @ManyToOne
- @JoinColumn(name = "account_id")
- @JsonIgnore
- private Account account;
-    @ManyToMany
-    @JoinTable(
-         name = "sponsor_program_event",
-         joinColumns = @JoinColumn(name = "sponsor_program_id"),
-         inverseJoinColumns = @JoinColumn(name = "event_id"))
-    private Set<Event> events = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    @JsonIgnore
+    private Account account;
+    @OneToMany(mappedBy = "sponsorProgram", fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<SponsorProgramEvent> sponsorProgramEvents;
 }

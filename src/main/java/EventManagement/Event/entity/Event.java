@@ -55,15 +55,14 @@ public class Event {
     @JsonManagedReference
     private List<EventSchedule> eventSchedules;
     @OneToMany(mappedBy = "event")
-    private List<SponsorEvent> sponsorEvents;
 
-//    @ManyToOne
-//    @JoinColumn(name = "checking_staff_id")
-//    private CheckingStaff checkingStaff;
-      @OneToMany(mappedBy = "event")
-      private List<CheckingStaff> eventCheckingStaffs;
-      @ManyToMany(mappedBy = "events")
-      private Set<SponsorProgram> sponsorPrograms = new HashSet<>();
+    private List<SponsorEvent> sponsorEvents;
+    @OneToMany(mappedBy = "event")
+    private List<CheckingStaff> eventCheckingStaffs;
+
+    @OneToMany(mappedBy = "event", fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<SponsorProgramEvent> sponsorProgramEvents;
 
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)

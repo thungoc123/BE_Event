@@ -3,7 +3,9 @@ package EventManagement.Event.service;
 import EventManagement.Event.DTO.SponsorDTO;
 import EventManagement.Event.DTO.SponsorRegistrationDto;
 import EventManagement.Event.entity.*;
+import EventManagement.Event.entity.SponsorProgramEvent;
 import EventManagement.Event.mapper.SponsorMapper;
+import EventManagement.Event.payload.Request.AddEventsToSponsorProgramRequest;
 import EventManagement.Event.payload.Request.InsertSponsorProgramRequest;
 import EventManagement.Event.payload.Request.InsertSponsorRequest;
 import EventManagement.Event.repository.*;
@@ -32,9 +34,13 @@ public class SponsorService implements SponsorProgramImp {
     private RoleRepository roleRepository;
     @Autowired
     private SponsorEventRepository sponsorEventRepository;
+    @Autowired SponsorProgramEventRepository sponsorProgramEventRepository;
+
 
     public List<SponsorProgram> getAllSponsorPrograms() {
-        return sponsorProgramRepository.findAll();
+        List<SponsorProgram> sponsorPrograms = sponsorProgramRepository.findAll();
+        return sponsorPrograms;
+//        return sponsorProgramRepository.findAll();
     }
 
     public List<SponsorProgram> getProgramsByAccountId(HttpServletRequest request) {
@@ -111,39 +117,13 @@ public class SponsorService implements SponsorProgramImp {
                 throw new RuntimeException("Can't find accountId: " + insertSponsorProgramRequest.getAccountId());
             }
             SponsorProgram sponsorProgram = new SponsorProgram();
-            try {
+
                 sponsorProgram.setAccount(account);
-            } catch (Exception e) {
-                System.out.println("Error setting account: " + e.getMessage());
-            }
-
-            try {
                 sponsorProgram.setTitle(insertSponsorProgramRequest.getTitle());
-            } catch (Exception e) {
-                System.out.println("Error setting title: " + e.getMessage());
-            }
-
-            try {
                 sponsorProgram.setLink(insertSponsorProgramRequest.getWebsiteLink());
-            } catch (Exception e) {
-                System.out.println("Error setting link: " + e.getMessage());
-            }
-            try {
                 sponsorProgram.setDescription(insertSponsorProgramRequest.getDescription());
-            } catch (Exception e) {
-                System.out.println("Error setting description: " + e.getMessage());
-            }
-            try {
                 sponsorProgram.setThumbnail(insertSponsorProgramRequest.getThumbnail());
-            } catch (Exception e) {
-                System.out.println("Error setting thumbnail: " + e.getMessage());
-            }
-            try {
                 sponsorProgram.setLocation(insertSponsorProgramRequest.getLocation());
-            } catch (Exception e) {
-                System.out.println("Error setting location: " + e.getMessage());
-            }
-
 
             try {
                 SponsorProgram.State state = SponsorProgram.State.valueOf(insertSponsorProgramRequest.getState().toUpperCase());
@@ -151,8 +131,8 @@ public class SponsorService implements SponsorProgramImp {
             } catch (IllegalArgumentException e) {
                 throw new RuntimeException("Invalid state value: " + insertSponsorProgramRequest.getState());
             }
-            SponsorProgram programSave = sponsorProgramRepository.save(sponsorProgram);
-            return programSave != null;
+            sponsorProgramRepository.save(sponsorProgram);
+            return true;
 
         }  catch(Exception e){
                 e.printStackTrace();
@@ -160,22 +140,31 @@ public class SponsorService implements SponsorProgramImp {
         }
     }
     @Override
-    public boolean addEventsToSponsorProgram(int sponsorProgramId, List<Integer> eventIds) {
+    public boolean addEventsToSponsorProgram(AddEventsToSponsorProgramRequest addEventsToSponsorProgramRequest) {
         try {
+            int sponsorProgramId = addEventsToSponsorProgramRequest.getSponsorProgramId();
             SponsorProgram sponsorProgram = sponsorProgramRepository.findById(sponsorProgramId)
                     .orElseThrow(() -> new RuntimeException("Sponsor program not found"));
 
-            List<Event> events = new ArrayList<>();
-            for (Integer eventId : eventIds) {
-                Event event = eventRepository.findById(eventId).orElse(null);
-                if (event == null) {
-                    throw new RuntimeException("Event not found");
-                }
-                events.add(event);
+            List<Integer> eventIds = addEventsToSponsorProgramRequest.getEventIds();
+            List<Event> events = eventRepository.findAllById(eventIds);
+
+            if (events.size() != eventIds.size()) {
+                throw new RuntimeException("One or more events not found");
             }
 
-            sponsorProgram.setEvents(new HashSet<>(events));
-            sponsorProgramRepository.save(sponsorProgram);
+            for (Event event : events) {
+                SponsorProgramEvent sponsorProgramEvent = new SponsorProgramEvent();
+
+                sponsorProgramEvent.setEvent(event);
+                sponsorProgramEvent.setSponsorProgram(sponsorProgram);
+
+                sponsorProgramEventRepository.save(sponsorProgramEvent);
+
+            }
+
+
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();

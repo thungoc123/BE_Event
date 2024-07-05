@@ -29,12 +29,12 @@ public class SponsorController {
     private EventService  eventService;
     @Autowired
     private SponsorService sponsorService;
-    @Autowired
-    private SponsorProgramRepository sponsorProgramRepository;
+
 
     @PostMapping("/sponsorProgram/{sponsorProgramId}/events")
     public ResponseEntity<Map<String, String>> addEventsToSponsorProgram(@PathVariable int sponsorProgramId, @RequestBody AddEventsToSponsorProgramRequest request) {
-        boolean isSuccess = sponsorService.addEventsToSponsorProgram(sponsorProgramId, request.getEventIds());
+
+        boolean isSuccess = sponsorService.addEventsToSponsorProgram(request );
         Map<String, String> response = new HashMap<>();
         if (isSuccess) {
             response.put("message", "add event into program successfully");

@@ -14,7 +14,6 @@ import java.util.List;
 public interface SponsorProgramRepository extends JpaRepository<SponsorProgram, Integer> {
     boolean existsByTitle(String title);
     List<SponsorProgram> findByAccountId(int accountId);
-    List<SponsorProgram> findByEvents_Id(int eventId);
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM sponsor_program_event WHERE sponsor_program_id = :sponsorProgramId", nativeQuery = true)
