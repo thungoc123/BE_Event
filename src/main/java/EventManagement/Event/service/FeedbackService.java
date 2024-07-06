@@ -224,6 +224,22 @@ public class FeedbackService {
 //        // Xóa Feedback
 //        feedbackRepository.deleteById(feedbackId);
 //    }
+
+    public Feedback updateState(int feedbackID, int stateID) {
+        Optional<Feedback> optionalFeedback = feedbackRepository.findById(feedbackID);
+        if (optionalFeedback.isPresent()) {
+            Feedback feedback = optionalFeedback.get();
+            Optional<State> optionalState = stateRepository.findById(stateID);
+            if (optionalState.isPresent()) {
+                feedback.setState(optionalState.get());
+                return feedbackRepository.save(feedback);
+            } else {
+                throw new RuntimeException("State not found with ID: " + stateID);
+            }
+        } else {
+            throw new RuntimeException("Feedback not found with ID: " + feedbackID);
+        }
+    }
 }
 
 
