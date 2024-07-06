@@ -7,6 +7,7 @@ import EventManagement.Event.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -69,7 +70,7 @@ public class TicketController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Map<String, String>> updateTicketStatusAndQuantity(@PathVariable int id, @RequestBody Ticket ticketDetails) {
+    public ResponseEntity<Map<String, String>> updateTicketStatusAndQuantity(@PathVariable int id, @RequestBody TicketRequestDTO ticketDetails) {
         try {
             Optional<Ticket> updatedTicket = ticketService.updateTicketStatusAndQuantity(id, ticketDetails.getQuantity(), ticketDetails.getStatus());
             if (updatedTicket.isPresent()) {
