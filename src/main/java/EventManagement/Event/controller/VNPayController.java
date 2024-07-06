@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,10 +22,9 @@ public class VNPayController {
     }
 
     @GetMapping("/pay")
-    public ResponseEntity<?> pay() {
+    public ResponseEntity<?> pay(@RequestParam long amount, @RequestParam String email) {
         try {
-            long amount = 20000;
-            PaymentRestDTO paymentResponse = vnPayService.processPayment(amount);
+            PaymentRestDTO paymentResponse = vnPayService.processPayment(amount, email);
             return ResponseEntity.status(HttpStatus.OK).body(paymentResponse);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
