@@ -37,8 +37,9 @@ public class SecurityConfig {
                     author.requestMatchers("/api-visitor/**").permitAll();
 
                     author.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll();
-                    author.requestMatchers(HttpMethod.GET,"/api-events").permitAll();
+                    author.requestMatchers(HttpMethod.GET,"/api-events/**").permitAll();
                     author.requestMatchers(HttpMethod.GET,"/api-events/account").hasRole("EO");
+
                     author.requestMatchers(HttpMethod.DELETE,"/api-events/**").hasRole("EO");
 
 
