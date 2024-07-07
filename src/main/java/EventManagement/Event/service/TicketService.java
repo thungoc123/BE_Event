@@ -127,7 +127,7 @@ public class TicketService {
         if (visitors == null || visitors.isEmpty()) {
             return Collections.singletonList("Data is null");
         }
-        return Collections.singletonList(visitors);
+        return new ArrayList<>(visitors);
     }
 
     public Optional<Map<String, Object>> viewTicketsByEventAndDate(int eventId, LocalDateTime startDate, LocalDateTime endDate) {

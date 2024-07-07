@@ -58,6 +58,7 @@ public class SecurityConfig {
                     author.requestMatchers("/api-cart/**").permitAll();
                     author.requestMatchers("/api-accounts/**").hasRole("ADMIN");
                     author.requestMatchers("/api-event-operators/**").permitAll();
+                    author.requestMatchers(HttpMethod.POST, "/api-attendance/createListByEvent/**").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/api-tickets/**").permitAll();
                     author.requestMatchers("/api-feedback-questions-event/**").permitAll();
                     author.requestMatchers("/api-auth-resetpassword/**").permitAll();
