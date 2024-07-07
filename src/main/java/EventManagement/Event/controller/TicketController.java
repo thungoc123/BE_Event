@@ -115,7 +115,7 @@ public class TicketController {
     public ResponseEntity<?> findVisitorsByEventIdAndStatusPaid(@PathVariable int eventId) {
         try {
             List<Object> visitors = ticketService.findVisitorsByEventIdAndStatusPaid(eventId);
-            if (visitors.isEmpty() || (visitors.size() == 1 && "Data is null".equals(visitors.get(0)))) {
+            if (visitors.size() == 1 && "Data is null".equals(visitors.get(0))) {
                 return ResponseEntity.status(404).body(Collections.singletonMap("message", "No visitors found with status PAID for the given event"));
             }
             return ResponseEntity.ok(visitors);
