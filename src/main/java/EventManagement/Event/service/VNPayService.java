@@ -5,6 +5,7 @@ import EventManagement.Event.config.VnPayConfig;
 import EventManagement.Event.service.imp.VNPayServiceImp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.URLEncoder;
@@ -17,8 +18,16 @@ public class VNPayService implements VNPayServiceImp {
     private static final Logger logger = LoggerFactory.getLogger(VNPayService.class);
     private static final long MAX_AMOUNT = 1000000000L; // Maximum allowed amount
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
     public PaymentRestDTO processPayment(long amount) {
+        return processPayment(amount, null);
+    }
+
+    @Override
+    public PaymentRestDTO processPayment(long amount, String email) {
         if (amount > MAX_AMOUNT) {
             PaymentRestDTO restDTO = new PaymentRestDTO();
             restDTO.setStatus("error");
@@ -35,7 +44,7 @@ public class VNPayService implements VNPayServiceImp {
             String vnp_TxnRef = VnPayConfig.getRandomNumber(8);
             String vnp_IpAddr = "127.0.0.1";  // Replace this with actual IP retrieval logic
             String vnp_TmnCode = VnPayConfig.vnp_TmnCode;
-            String returnUrl = "https://yourdomain.com/return_url"; // Replace with your actual return URL
+            String returnUrl = "http://localhost:5173/"; // Replace with your actual return URL
 
             Map<String, String> vnp_Params = new HashMap<>();
             vnp_Params.put("vnp_Version", VnPayConfig.vnp_Version);
@@ -108,6 +117,15 @@ public class VNPayService implements VNPayServiceImp {
             restDTO.setExpirationTime(expirationTime); // Set the expiration time in the DTO
             restDTO.setExpirationDate(formattedExpireDate); // Set the formatted expiration date
             restDTO.setTimeZone(timeZone.getID());  // Set the time zone in the DTO
+
+            if (email != null) {
+                // Send email notification
+                emailService.sendEmail(
+                        email,  // Use the email from the request parameter
+                        "Payment Successful",
+                        "Your payment of " + amount + " VND was successful. Visit the following URL to complete your payment: " + paymentUrl
+                );
+            }
 
             return restDTO;
         } catch (Exception e) {

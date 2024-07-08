@@ -19,7 +19,7 @@ import lombok.Data;
             @Column(name = "sponsor_id")
             private Long sponsorId;
 
-            @ManyToOne(fetch = FetchType.LAZY)
+            @ManyToOne(fetch = FetchType.EAGER)
             @MapsId("eventId")
             @JsonBackReference
             @JoinColumn(name = "event_id", referencedColumnName = "id")

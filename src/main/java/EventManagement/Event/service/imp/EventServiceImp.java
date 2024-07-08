@@ -12,5 +12,6 @@ public interface EventServiceImp {
     boolean deleteEvent(int EventId);
     boolean changeStateEvent(int eventId);
 
+
 }
 

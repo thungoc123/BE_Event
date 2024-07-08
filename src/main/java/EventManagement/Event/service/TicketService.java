@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 
 @Service
@@ -84,14 +83,13 @@ public class TicketService {
                 Cart cart = cartOptional.get();
                 Event event = eventOptional.get();
 
-                // Check if the current date is before the event's timeclosesale
                 if (LocalDateTime.now().isBefore(event.getTimeclosesale())) {
                     Ticket ticket = new Ticket();
                     ticket.setCart(cart);
                     ticket.setEvent(event);
                     ticket.setQuantity(quantity);
                     ticket.setCreatedDate(LocalDateTime.now());
-                    ticket.setExpiredDate(event.getTimeclosesale()); // Set expiredDate to timeclosesale
+                    ticket.setExpiredDate(event.getTimeclosesale());
                     ticket.setStatus(Ticket.Status.PENDING);
 
                     ticketRepository.save(ticket);
@@ -117,7 +115,7 @@ public class TicketService {
         Optional<Event> eventOptional = eventService.findById(eventId);
         Map<String, Object> response = new HashMap<>();
         if (eventOptional.isPresent()) {
-            response.put("Amount: ", count);
+            response.put("Amount", count);
         } else {
             response.put("error", "Event not found");
         }
@@ -127,9 +125,9 @@ public class TicketService {
     public List<Object> findVisitorsByEventIdAndStatusPaid(int eventId) {
         List<Visitor> visitors = ticketRepository.findVisitorsByEventIdAndStatusPaid(eventId);
         if (visitors == null || visitors.isEmpty()) {
-            return Collections.singletonList("Data is null"); // Return a list with a message
+            return Collections.singletonList("Data is null");
         }
-        return Collections.singletonList(visitors);
+        return new ArrayList<>(visitors);
     }
 
     public Optional<Map<String, Object>> viewTicketsByEventAndDate(int eventId, LocalDateTime startDate, LocalDateTime endDate) {
