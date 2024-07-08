@@ -21,6 +21,9 @@ public class Attendance {
     @JoinColumn(name = "ticket_id", nullable = false)
     private Ticket ticket;
 
+    @Column(name = "event_id", nullable = false)
+    private int eventId;
+
     public enum AttendanceStatus {
         ATTENDANCE,
         ABSENT
