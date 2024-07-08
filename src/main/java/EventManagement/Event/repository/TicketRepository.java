@@ -28,4 +28,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
 
     @Query("SELECT COUNT(t) FROM Ticket t WHERE t.event.id = :eventId AND DATE(t.createdDate) = :date")
     long countTicketsByEventIdAndDate(@Param("eventId") int eventId, @Param("date") LocalDate date);
+
+    List<Ticket> findByEvent_Id(int eventId);
 }
