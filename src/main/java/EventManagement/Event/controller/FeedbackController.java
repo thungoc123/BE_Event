@@ -114,6 +114,11 @@ public class FeedbackController {
                     .body("Failed to delete feedback with id: " + feedbackId);
         }
     }
+    @PutMapping("/{feedbackID}/state/{stateID}")
+    public ResponseEntity<Feedback> updateState(@PathVariable int feedbackID, @PathVariable int stateID) {
+        Feedback updatedFeedback = feedbackService.updateState(feedbackID, stateID);
+        return ResponseEntity.ok(updatedFeedback);
+    }
 
 }
 
