@@ -14,9 +14,8 @@ public class VisitorAnswer {
 
     @ManyToOne
     @JoinColumn(name = "visitor_id", nullable = false)
+    @JsonIgnoreProperties("visitorAnswers")
     private Visitor visitor;
-
-
 
     private String visitorAnswerFeedback;
 
@@ -24,6 +23,4 @@ public class VisitorAnswer {
     @JoinColumn(name = "feedback_question_id", nullable = false)
     @JsonIgnoreProperties("visitorAnswers")
     private FeedbackQuestion feedbackQuestion;
-
-
 }

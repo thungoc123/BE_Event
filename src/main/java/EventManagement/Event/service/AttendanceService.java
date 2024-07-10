@@ -1,7 +1,15 @@
 package EventManagement.Event.service;
 
+
+import EventManagement.Event.DTO.AttendanceDTO;
+import EventManagement.Event.DTO.CartDTO;
+import EventManagement.Event.DTO.TicketDTO;
+import EventManagement.Event.DTO.VisitorDTO;
+
 import EventManagement.Event.entity.Attendance;
+import EventManagement.Event.entity.Cart;
 import EventManagement.Event.entity.Ticket;
+import EventManagement.Event.entity.Visitor;
 import EventManagement.Event.repository.AttendanceRepository;
 import EventManagement.Event.repository.TicketRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -63,6 +71,7 @@ public class AttendanceService {
         }
     }
 
+
     public List<Attendance> getAllAttendances() {
         try {
             return attendanceRepository.findAll();
@@ -80,4 +89,67 @@ public class AttendanceService {
             throw new RuntimeException("Error fetching attendances for event ID: " + eventId);
         }
     }
+
+    public List<AttendanceDTO> getAttendancesByEventId2(int eventId) {
+        try {
+            List<Attendance> attendances = attendanceRepository.findByEventId(eventId);
+
+            return attendances.stream().map(attendance -> {
+                AttendanceDTO dto = new AttendanceDTO();
+                dto.setId(attendance.getId());
+                dto.setStatus(attendance.getStatus().name());
+                dto.setEventId(attendance.getEventId());
+                dto.setEventName(attendance.getEventName());
+                dto.setPrice(attendance.getPrice());
+                dto.setEventEndDate(attendance.getEventEndDate());
+                dto.setDescription(attendance.getDescription());
+
+                TicketDTO ticketDTO = new TicketDTO();
+                ticketDTO.setId(attendance.getTicket().getId());
+                ticketDTO.setQuantity(attendance.getTicket().getQuantity());
+                ticketDTO.setCreatedDate(attendance.getTicket().getCreatedDate());
+                ticketDTO.setExpiredDate(attendance.getTicket().getExpiredDate());
+                ticketDTO.setStatus(attendance.getTicket().getStatus().name());
+                ticketDTO.setEventName(attendance.getTicket().getEventName());
+                ticketDTO.setPrice(attendance.getTicket().getPrice());
+                ticketDTO.setDescription(attendance.getTicket().getDescription());
+                ticketDTO.setEventEndDate(attendance.getTicket().getEventEndDate());
+
+                CartDTO cartDTO = new CartDTO();
+                cartDTO.setCartId(attendance.getTicket().getCart().getCartId());
+
+                VisitorDTO visitorDTO = new VisitorDTO();
+                visitorDTO.setId(attendance.getTicket().getCart().getVisitor().getId());
+                visitorDTO.setInformation(attendance.getTicket().getCart().getVisitor().getInformation());
+                visitorDTO.setAccount_id(attendance.getTicket().getCart().getVisitor().getAccount().getId());
+
+                cartDTO.setVisitor(visitorDTO);
+                ticketDTO.setCart(cartDTO);
+                ticketDTO.setVisitor(visitorDTO);
+
+                dto.setTicket(ticketDTO);
+
+                return dto;
+            }).collect(Collectors.toList());
+
+
+    public List<Attendance> getAllAttendances() {
+        try {
+            return attendanceRepository.findAll();
+        } catch (Exception e) {
+            log.error("Error fetching all attendances", e);
+            throw new RuntimeException("Error fetching all attendances");
+        }
+    }
+
+    public List<Attendance> getAttendancesByEventId(int eventId) {
+        try {
+            return attendanceRepository.findByEventId(eventId);
+
+        } catch (Exception e) {
+            log.error("Error fetching attendances for event ID: {}", eventId, e);
+            throw new RuntimeException("Error fetching attendances for event ID: " + eventId);
+        }
+    }
+
 }

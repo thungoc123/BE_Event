@@ -32,4 +32,9 @@ public class FeedbackQuestionEventController {
         List<FeedbackQuestionDTO> feedbackQuestions = feedbackQuestionService.getListFeedbackQuestionsByFeedbackID(feedbackID);
         return ResponseEntity.ok(feedbackQuestions);
     }
+
+    @GetMapping("feedback-question/feedback/{feedbackID}")
+    public List<FeedbackQuestion> getFeedbackQuestionsByFeedbackID2(@PathVariable int feedbackID) {
+        return feedbackQuestionService.getFeedbackQuestionsByFeedbackID(feedbackID);
+    }
 }
