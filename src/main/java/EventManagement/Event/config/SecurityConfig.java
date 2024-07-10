@@ -53,19 +53,10 @@ public class SecurityConfig {
                     author.requestMatchers("/api-cart/**").permitAll();
                     author.requestMatchers("/api-accounts/**").hasRole("ADMIN");
                     author.requestMatchers("/api-event-operators/**").permitAll();
-
-
-                    author.requestMatchers("/api-attendance/**").permitAll();
-                    author.requestMatchers(HttpMethod.POST, "/api-attendance/create/**").permitAll();
-                    author.requestMatchers(HttpMethod.PUT, "api-attendance/update").permitAll();
-
                     author.requestMatchers(HttpMethod.POST,"/api-tickets/**").permitAll();
                     author.requestMatchers("/api-feedback-questions-event/**").permitAll();
                     author.requestMatchers("/api-auth-resetpassword/**").permitAll();
-                    author.requestMatchers("/api-attendance/**").permitAll();
                     author.requestMatchers("/api-attendances-2/**").permitAll();
-
-
                     author.anyRequest().authenticated();
                 })
                 .addFilterBefore(customFilterSecurity, UsernamePasswordAuthenticationFilter.class)

@@ -131,25 +131,12 @@ public class AttendanceService {
 
                 return dto;
             }).collect(Collectors.toList());
-
-
-    public List<Attendance> getAllAttendances() {
-        try {
-            return attendanceRepository.findAll();
-        } catch (Exception e) {
-            log.error("Error fetching all attendances", e);
-            throw new RuntimeException("Error fetching all attendances");
-        }
-    }
-
-    public List<Attendance> getAttendancesByEventId(int eventId) {
-        try {
-            return attendanceRepository.findByEventId(eventId);
-
         } catch (Exception e) {
             log.error("Error fetching attendances for event ID: {}", eventId, e);
             throw new RuntimeException("Error fetching attendances for event ID: " + eventId);
         }
     }
+
+
 
 }
