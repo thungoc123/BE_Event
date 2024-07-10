@@ -1,21 +1,16 @@
 package EventManagement.Event.service;
 
-import EventManagement.Event.entity.Account;
-import EventManagement.Event.entity.CheckingStaff;
-import EventManagement.Event.entity.Event;
-import EventManagement.Event.entity.Role;
+import EventManagement.Event.entity.*;
 import EventManagement.Event.payload.Request.InsertCheckingStaffRequest;
-import EventManagement.Event.repository.AccountRepository;
-import EventManagement.Event.repository.CheckingStaffRepository;
-import EventManagement.Event.repository.EventRepository;
-import EventManagement.Event.repository.RoleRepository;
+import EventManagement.Event.repository.*;
 import EventManagement.Event.service.imp.CheckingStaffImp;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CheckingStaffService implements CheckingStaffImp {
@@ -31,6 +26,16 @@ public class CheckingStaffService implements CheckingStaffImp {
     private AccountRepository accountRepository;
     @Autowired
     private RoleRepository roleRepository;
+
+
+
+    public List<CheckingStaff> getEventsByAccountId(HttpServletRequest request) {
+        String accountId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return checkingStaffRepository.findByAccountId(Integer.parseInt(accountId));
+
+
+    }
 
     @Override
     public boolean insertCheckingStaff(InsertCheckingStaffRequest insertCheckingStaffRequest) {

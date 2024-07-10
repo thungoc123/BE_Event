@@ -6,11 +6,9 @@ import EventManagement.Event.DTO.CartDTO;
 import EventManagement.Event.DTO.TicketDTO;
 import EventManagement.Event.DTO.VisitorDTO;
 
-import EventManagement.Event.entity.Attendance;
-import EventManagement.Event.entity.Cart;
-import EventManagement.Event.entity.Ticket;
-import EventManagement.Event.entity.Visitor;
+import EventManagement.Event.entity.*;
 import EventManagement.Event.repository.AttendanceRepository;
+import EventManagement.Event.repository.CheckingStaffRepository;
 import EventManagement.Event.repository.TicketRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +26,8 @@ public class AttendanceService {
 
     @Autowired
     private TicketRepository ticketRepository;
+    @Autowired
+    private CheckingStaffRepository checkingStaffRepository;
 
     public List<Attendance> createAttendancesForEvent(int eventId) {
         try {
@@ -87,6 +87,23 @@ public class AttendanceService {
         } catch (Exception e) {
             log.error("Error fetching attendances for event ID: {}", eventId, e);
             throw new RuntimeException("Error fetching attendances for event ID: " + eventId);
+        }
+    }
+    public List<Attendance> getAttendancesByCheckingStaffAccountId(String accountId) {
+        try {
+            List<CheckingStaff> checkingStaffList = checkingStaffRepository.findByAccountId(Integer.parseInt(accountId));
+            if (checkingStaffList.isEmpty()) {
+                throw new RuntimeException("No CheckingStaff found for account ID: " + accountId);
+            }
+
+
+            int eventId = checkingStaffList.get(0).getEvent().getId();
+
+
+            return attendanceRepository.findByEventId(eventId);
+        } catch (Exception e) {
+            log.error("Error fetching attendances for account ID: {}", accountId, e);
+            throw new RuntimeException("Error fetching attendances for account ID: " + accountId);
         }
     }
 

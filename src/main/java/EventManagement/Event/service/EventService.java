@@ -118,9 +118,9 @@ public class EventService implements EventServiceImp {
             eventEntity.setTimeclosesale(request.getTimeCloseSale());
             Event eventSaved = eventRepository.save(eventEntity);
 
-            return eventSaved != null; // Trả về true nếu lưu thành công, false nếu không thành công
+            return eventSaved != null;
         } catch (Exception e) {
-            e.printStackTrace(); // In ra lỗi nếu có lỗi xảy ra
+            e.printStackTrace();
             return false;
         }
     }

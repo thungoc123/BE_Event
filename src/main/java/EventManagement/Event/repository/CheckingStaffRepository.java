@@ -10,6 +10,6 @@ import java.util.Set;
 
 @Repository
 public interface CheckingStaffRepository extends JpaRepository<CheckingStaff, Integer> {
-   Set<CheckingStaff> findByAccountId(int id);
+   List<CheckingStaff> findByAccountId(int id);
    List<CheckingStaff> findByEventId(int eventId);
 }
