@@ -1,9 +1,11 @@
 package EventManagement.Event.service;
 
+
 import EventManagement.Event.DTO.AttendanceDTO;
 import EventManagement.Event.DTO.CartDTO;
 import EventManagement.Event.DTO.TicketDTO;
 import EventManagement.Event.DTO.VisitorDTO;
+
 import EventManagement.Event.entity.Attendance;
 import EventManagement.Event.entity.Cart;
 import EventManagement.Event.entity.Ticket;
@@ -69,6 +71,7 @@ public class AttendanceService {
         }
     }
 
+
     public List<Attendance> getAllAttendances() {
         try {
             return attendanceRepository.findAll();
@@ -128,6 +131,21 @@ public class AttendanceService {
 
                 return dto;
             }).collect(Collectors.toList());
+
+
+    public List<Attendance> getAllAttendances() {
+        try {
+            return attendanceRepository.findAll();
+        } catch (Exception e) {
+            log.error("Error fetching all attendances", e);
+            throw new RuntimeException("Error fetching all attendances");
+        }
+    }
+
+    public List<Attendance> getAttendancesByEventId(int eventId) {
+        try {
+            return attendanceRepository.findByEventId(eventId);
+
         } catch (Exception e) {
             log.error("Error fetching attendances for event ID: {}", eventId, e);
             throw new RuntimeException("Error fetching attendances for event ID: " + eventId);
