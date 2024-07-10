@@ -69,6 +69,10 @@ public class FeedbackQuestionController {
             return ResponseEntity.notFound().build();  // HTTP 404 Not Found nếu không tìm thấy FeedbackQuestion
         }
     }
+//    @GetMapping("/feedback/{feedbackID}")
+//    public List<FeedbackQuestionDTO> getFeedbackQuestionsByFeedbackID(@PathVariable int feedbackID) {
+//        return feedbackQuestionService.getListFeedbackQuestionsByFeedbackID(feedbackID);
+//    }
 
 
 

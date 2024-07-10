@@ -135,6 +135,9 @@ public class FeedbackQuestionService {
 
         return dtos;
     }
+    public List<FeedbackQuestion> getFeedbackQuestionsByFeedbackID(int feedbackID) {
+        return feedbackQuestionRepository.findByFeedback_FeedbackID(feedbackID);
+    }
 }
 //    public List<FeedbackQuestionDTO> getListFeedbackQuestionsByFeedbackID2(int feedbackID) {
 //        Optional<Feedback> feedbackOptional = feedbackRepository.findById(feedbackID);

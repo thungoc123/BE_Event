@@ -53,6 +53,13 @@ public class VisitorAnswerController {
         List<FeedbackVisitorDTO> visitorAnswerDTOs = visitorAnswerService.getVisitorAnswersByFeedbackIdAndVisitorId(feedbackId, visitorId);
         return ResponseEntity.ok(visitorAnswerDTOs);
     }
-
+//    @PostMapping("/account/{accountId}")
+//    public VisitorAnswer createVisitorAnswer(@PathVariable int accountId, @RequestBody VisitorAnswerDTO visitorAnswerDTO) {
+//        return visitorAnswerService.createVisitorAnswer(accountId, visitorAnswerDTO);
+//    }
+@PostMapping("/account/{accountId}")
+public List<VisitorAnswer> createVisitorAnswers(@PathVariable int accountId, @RequestBody List<VisitorAnswerDTO> visitorAnswerDTOs) {
+    return visitorAnswerService.createVisitorAnswers(accountId, visitorAnswerDTOs);
+}
 
     }

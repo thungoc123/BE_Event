@@ -11,7 +11,9 @@ import EventManagement.Event.repository.VisitorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service // Đánh dấu đây là một service để Spring có thể quản lý và inject
@@ -139,6 +141,51 @@ public class VisitorAnswerService {
         dto.setAnswerText(visitorAnswer.getVisitorAnswerFeedback());
         return dto;
     }
+//    public VisitorAnswer createVisitorAnswer(int accountId, VisitorAnswerDTO visitorAnswerDTO) {
+//        Optional<Visitor> optionalVisitor = visitorRepository.findByAccount_Id(accountId);
+//        Optional<FeedbackQuestion> optionalFeedbackQuestion = feedbackQuestionRepository.findById(visitorAnswerDTO.getFeedbackQuestionId());
+//
+//        if (optionalVisitor.isPresent() && optionalFeedbackQuestion.isPresent()) {
+//            Visitor visitor = optionalVisitor.get();
+//            FeedbackQuestion feedbackQuestion = optionalFeedbackQuestion.get();
+//
+//            VisitorAnswer visitorAnswer = new VisitorAnswer();
+//            visitorAnswer.setVisitor(visitor);
+//            visitorAnswer.setVisitorAnswerFeedback(visitorAnswerDTO.getVisitorAnswerFeedback());
+//            visitorAnswer.setFeedbackQuestion(feedbackQuestion);
+//
+//            return visitorAnswerRepository.save(visitorAnswer);
+//        } else {
+//            throw new RuntimeException("Visitor or FeedbackQuestion not found");
+//        }
+//    }
+public List<VisitorAnswer> createVisitorAnswers(int accountId, List<VisitorAnswerDTO> visitorAnswerDTOs) {
+    Optional<Visitor> optionalVisitor = visitorRepository.findByAccount_Id(accountId);
+
+    if (optionalVisitor.isPresent()) {
+        Visitor visitor = optionalVisitor.get();
+        List<VisitorAnswer> visitorAnswers = new ArrayList<>();
+
+        for (VisitorAnswerDTO visitorAnswerDTO : visitorAnswerDTOs) {
+            Optional<FeedbackQuestion> optionalFeedbackQuestion = feedbackQuestionRepository.findById(visitorAnswerDTO.getFeedbackQuestionId());
+
+            if (optionalFeedbackQuestion.isPresent()) {
+                FeedbackQuestion feedbackQuestion = optionalFeedbackQuestion.get();
+                VisitorAnswer visitorAnswer = new VisitorAnswer();
+                visitorAnswer.setVisitor(visitor);
+                visitorAnswer.setVisitorAnswerFeedback(visitorAnswerDTO.getVisitorAnswerFeedback());
+                visitorAnswer.setFeedbackQuestion(feedbackQuestion);
+                visitorAnswers.add(visitorAnswer);
+            } else {
+                throw new RuntimeException("FeedbackQuestion not found for ID: " + visitorAnswerDTO.getFeedbackQuestionId());
+            }
+        }
+
+        return visitorAnswerRepository.saveAll(visitorAnswers);
+    } else {
+        throw new RuntimeException("Visitor not found for Account ID: " + accountId);
+    }
+}
 }
 
 
