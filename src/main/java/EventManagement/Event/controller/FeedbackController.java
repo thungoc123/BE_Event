@@ -84,10 +84,7 @@ public class FeedbackController {
 //
 //        return feedbackRepository.findByAccount_Id(Integer.parseInt(accountid));
 //    }
-    @GetMapping("/list-feedback/{eventID}")
-    public List<Feedback> getFeedbacksByEventID(@PathVariable int eventID) {
-    return feedbackService.getFeedbacksByEventID(eventID);
-}
+
     @GetMapping("/list-feedback-account/{accountID}")
     public List<FeedbackEventDTO> getFeedbacksByAccountID(@PathVariable int accountID) {
         return feedbackService.getFeedbacksByAccountID(accountID);

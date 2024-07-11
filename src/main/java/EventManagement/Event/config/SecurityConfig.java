@@ -57,6 +57,9 @@ public class SecurityConfig {
                     author.requestMatchers("/api-feedback-questions-event/**").permitAll();
                     author.requestMatchers("/api-auth-resetpassword/**").permitAll();
                     author.requestMatchers("/api-attendances-2/**").permitAll();
+                    author.requestMatchers("/api-feedback-list-event/**").permitAll();
+
+
                     author.anyRequest().authenticated();
                 })
                 .addFilterBefore(customFilterSecurity, UsernamePasswordAuthenticationFilter.class)
