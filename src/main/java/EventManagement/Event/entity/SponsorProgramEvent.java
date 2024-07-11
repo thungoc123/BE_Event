@@ -27,7 +27,8 @@ public class SponsorProgramEvent {
     @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("eventId")
     @JoinColumn(name = "event_id", referencedColumnName = "id")
-    @JsonBackReference
+    @JsonManagedReference
+//    @JsonBackReference
     private Event event;
 
 
