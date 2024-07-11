@@ -29,10 +29,21 @@ public class CheckingStaffService implements CheckingStaffImp {
 
 
 
-    public List<CheckingStaff> getEventsByAccountId(HttpServletRequest request) {
-        String accountId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//    @Override
+//    public void sendMailService(String to, String subject, String body){
+//
+//
+//
+//    }
 
-        return checkingStaffRepository.findByAccountId(Integer.parseInt(accountId));
+
+
+    public CheckingStaff getEventsByAccountId(HttpServletRequest request) {
+        String accountId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CheckingStaff checkingStaff = checkingStaffRepository.findFirstByAccountId(Integer.parseInt(accountId));
+
+            return checkingStaff;
+
 
 
     }

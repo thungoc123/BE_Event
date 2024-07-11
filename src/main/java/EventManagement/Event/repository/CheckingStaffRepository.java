@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Repository
 public interface CheckingStaffRepository extends JpaRepository<CheckingStaff, Integer> {
-   List<CheckingStaff> findByAccountId(int id);
+   CheckingStaff findFirstByAccountId(int accountId);
    List<CheckingStaff> findByEventId(int eventId);
+   List<CheckingStaff> findByAccountId(int id);
 }
