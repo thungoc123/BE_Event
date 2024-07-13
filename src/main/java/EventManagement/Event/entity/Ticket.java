@@ -44,6 +44,9 @@ public class Ticket {
     @Column(name = "status")
     private Status status;
 
+    @Column(name = "status_cart", nullable = false)
+    private boolean statusCart;
+
     public enum Status {
         PENDING,
         PAID,

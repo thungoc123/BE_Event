@@ -58,9 +58,9 @@ public class TicketController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, String>> deleteTicket(@PathVariable int id) {
         try {
-            Map<String, String> response = ticketService.deleteTicket(id);
-            if (response.containsKey("message") && response.get("message").equals("Successfully deleted the ticket!")) {
-                return ResponseEntity.ok(response);
+            boolean isDeleted = ticketService.deleteTicket(id);
+            if (isDeleted) {
+                return ResponseEntity.ok(Collections.singletonMap("message", "Successfully deleted the ticket!"));
             } else {
                 return ResponseEntity.status(404).body(Collections.singletonMap("message", "Can't delete, the ticket does not exist!"));
             }
@@ -86,7 +86,7 @@ public class TicketController {
     @PostMapping("/create_ticket_order")
     public ResponseEntity<Map<String, String>> createOrderTicket(@Valid @RequestBody TicketRequestDTO ticketRequest) {
         try {
-            Optional<Map<String, String>> result = ticketService.createOrderTicket(ticketRequest.getVisitorId(), ticketRequest.getEventId());
+            Optional<Map<String, String>> result = ticketService.createOrderTicket(ticketRequest.getVisitorId(), ticketRequest.getEventId(), ticketRequest.isStatusCart(), ticketRequest.getStatus());
             if (result.isPresent()) {
                 return ResponseEntity.ok(result.get());
             } else {
@@ -126,35 +126,57 @@ public class TicketController {
 
     @GetMapping("/event/{eventId}/tickets")
     public ResponseEntity<?> viewTicketsByEventAndDate(@PathVariable int eventId,
-                                                       @RequestParam("startDate") String startDateStr,
-                                                       @RequestParam("endDate") String endDateStr) {
+                                                       @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss") LocalDateTime startDate,
+                                                       @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss") LocalDateTime endDate) {
+        return ticketService.viewTicketsByEventAndDate(eventId, startDate, endDate)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(404).body(Collections.singletonMap("message", "Event not found or no tickets found within the date range")));
+    }
+
+    @GetMapping("/count-tickets")
+    public ResponseEntity<?> countTicketsByEventIdAndDate(
+            @RequestParam("eventId") int eventId,
+            @RequestParam("date") @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss") LocalDateTime dateTime) {
+        return ticketService.countTicketsByEventIdAndDate(eventId, dateTime)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(404).body(Collections.singletonMap("message", "Event not found or date out of range")));
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<?> getVisitorEmailAndTicketPrice(@RequestParam int ticketId) {
         try {
-            LocalDateTime startDate = LocalDateTime.parse(startDateStr);
-            LocalDateTime endDate = LocalDateTime.parse(endDateStr);
-            Optional<Map<String, Object>> result = ticketService.viewTicketsByEventAndDate(eventId, startDate, endDate);
-            if (result.isPresent()) {
-                return ResponseEntity.ok(result.get());
+            Map<String, Object> response = ticketService.getVisitorEmailAndTicketPrice(ticketId);
+            if (response.containsKey("message") && response.get("message").equals("Ticket not found")) {
+                return ResponseEntity.status(404).body(response);
             } else {
-                return ResponseEntity.status(404).body(Collections.singletonMap("message", "Event not found or no tickets found within the date range"));
+                return ResponseEntity.ok(response);
             }
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Collections.singletonMap("message", "An unknown error occurred: " + e.getMessage()));
         }
     }
 
-    @GetMapping("/count-tickets")
-    public ResponseEntity<?> countTicketsByEventIdAndDate(
-            @RequestParam("eventId") int eventId,
-            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        try {
-            Optional<Map<String, Object>> result = ticketService.countTicketsByEventIdAndDate(eventId, date);
-            if (result.isPresent()) {
-                return ResponseEntity.ok(result.get());
-            } else {
-                return ResponseEntity.status(404).body(Collections.singletonMap("message", "Event not found or date out of range"));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Collections.singletonMap("message", "An unknown error occurred: " + e.getMessage()));
-        }
+    @GetMapping("/status/paid")
+    public ResponseEntity<List<Ticket>> getAllTicketsWithStatusPaid() {
+        List<Ticket> tickets = ticketService.getTicketsByStatusAndCart(Ticket.Status.PAID);
+        return ResponseEntity.ok(tickets);
+    }
+
+    @GetMapping("/status/pending")
+    public ResponseEntity<List<Ticket>> getAllTicketsWithStatusPending() {
+        List<Ticket> tickets = ticketService.getTicketsByStatusAndCart(Ticket.Status.PENDING);
+        return ResponseEntity.ok(tickets);
+    }
+
+    @GetMapping("/status/cancelled")
+    public ResponseEntity<List<Ticket>> getAllTicketsWithStatusCancelled() {
+        List<Ticket> tickets = ticketService.getTicketsByStatusAndCart(Ticket.Status.CANCELLED);
+        return ResponseEntity.ok(tickets);
+    }
+
+    @GetMapping("/cart")
+    public ResponseEntity<List<Ticket>> getTicketsInCart() {
+        List<Ticket> tickets = ticketService.getTicketsInCart();
+        return ResponseEntity.ok(tickets);
     }
 }
