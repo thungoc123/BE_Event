@@ -1,10 +1,12 @@
 package EventManagement.Event.service;
 
-import EventManagement.Event.entity.Cart;
 import EventManagement.Event.entity.Event;
 import EventManagement.Event.entity.Ticket;
 import EventManagement.Event.entity.Visitor;
 import EventManagement.Event.repository.TicketRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +21,13 @@ public class TicketService {
     private TicketRepository ticketRepository;
 
     @Autowired
-    private CartService cartService;
+    private VisitorService visitorService;
 
     @Autowired
     private EventService eventService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public List<Ticket> findAll() {
         return ticketRepository.findAll();
@@ -36,17 +41,28 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
+    @Transactional
     public void deleteById(int id) {
+        System.out.println("Attempting to delete ticket with ID: " + id);
         ticketRepository.deleteById(id);
+        entityManager.flush();
+        System.out.println("Deletion attempted for ticket with ID: " + id);
     }
 
+    @Transactional
     public Map<String, String> deleteTicket(int id) {
         Map<String, String> response = new HashMap<>();
         Optional<Ticket> ticketOptional = findById(id);
 
         if (ticketOptional.isPresent()) {
+            System.out.println("Ticket found with ID: " + id);
             deleteById(id);
-            response.put("message", "Successfully deleted the ticket!");
+            // Additional check to confirm deletion
+            if (findById(id).isPresent()) {
+                response.put("message", "Failed to delete the ticket. Ticket still exists!");
+            } else {
+                response.put("message", "Successfully deleted the ticket!");
+            }
         } else {
             response.put("message", "The ticket maybe not exist?");
         }
@@ -54,12 +70,11 @@ public class TicketService {
         return response;
     }
 
-    public Optional<Ticket> updateTicketStatusAndQuantity(int id, int quantity, Ticket.Status status) {
+    public Optional<Ticket> updateTicketStatus(int id, Ticket.Status status) {
         try {
             Optional<Ticket> ticketOptional = findById(id);
             if (ticketOptional.isPresent()) {
                 Ticket ticket = ticketOptional.get();
-                ticket.setQuantity(quantity);
                 ticket.setStatus(status);
                 return Optional.of(ticketRepository.save(ticket));
             } else {
@@ -73,21 +88,21 @@ public class TicketService {
         }
     }
 
-    public Optional<Map<String, String>> createOrderTicket(int cartId, int eventId, int quantity) {
+    public Optional<Map<String, String>> createOrderTicket(Integer visitorId, Integer eventId) {
         Map<String, String> response = new HashMap<>();
+
         try {
-            Optional<Cart> cartOptional = cartService.findById(cartId);
+            Optional<Visitor> visitorOptional = visitorService.findById(visitorId);
             Optional<Event> eventOptional = eventService.findById(eventId);
 
-            if (cartOptional.isPresent() && eventOptional.isPresent()) {
-                Cart cart = cartOptional.get();
+            if (visitorOptional.isPresent() && eventOptional.isPresent()) {
+                Visitor visitor = visitorOptional.get();
                 Event event = eventOptional.get();
 
                 if (LocalDateTime.now().isBefore(event.getTimeclosesale())) {
                     Ticket ticket = new Ticket();
-                    ticket.setCart(cart);
+                    ticket.setVisitor(visitor);
                     ticket.setEvent(event);
-                    ticket.setQuantity(quantity);
                     ticket.setCreatedDate(LocalDateTime.now());
                     ticket.setExpiredDate(event.getTimeclosesale());
                     ticket.setStatus(Ticket.Status.PENDING);
@@ -100,7 +115,7 @@ public class TicketService {
                     return Optional.of(response);
                 }
             } else {
-                response.put("message", "Cart or Event not found for given IDs.");
+                response.put("message", "Visitor or Event not found for given IDs.");
                 return Optional.of(response);
             }
         } catch (Exception e) {
@@ -146,7 +161,7 @@ public class TicketService {
         List<Map<String, Object>> visitorList = new ArrayList<>();
         for (Ticket ticket : tickets) {
             Map<String, Object> visitorInfo = new HashMap<>();
-            Visitor visitor = ticket.getCart().getVisitor();
+            Visitor visitor = ticket.getVisitor();
             visitorInfo.put("visitorId", visitor.getId());
             visitorList.add(visitorInfo);
         }

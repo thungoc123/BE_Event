@@ -1,9 +1,9 @@
 package EventManagement.Event.controller;
 
-import EventManagement.Event.DTO.TicketCountRequestDTO;
 import EventManagement.Event.DTO.TicketRequestDTO;
 import EventManagement.Event.entity.Ticket;
 import EventManagement.Event.service.TicketService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -70,9 +70,9 @@ public class TicketController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Map<String, String>> updateTicketStatusAndQuantity(@PathVariable int id, @RequestBody TicketRequestDTO ticketDetails) {
+    public ResponseEntity<Map<String, String>> updateTicketStatus(@PathVariable int id, @RequestBody TicketRequestDTO ticketDetails) {
         try {
-            Optional<Ticket> updatedTicket = ticketService.updateTicketStatusAndQuantity(id, ticketDetails.getQuantity(), ticketDetails.getStatus());
+            Optional<Ticket> updatedTicket = ticketService.updateTicketStatus(id, ticketDetails.getStatus());
             if (updatedTicket.isPresent()) {
                 return ResponseEntity.ok(Collections.singletonMap("message", "Ticket updated successfully"));
             } else {
@@ -84,13 +84,13 @@ public class TicketController {
     }
 
     @PostMapping("/create_ticket_order")
-    public ResponseEntity<Map<String, String>> createOrderTicket(@RequestBody TicketRequestDTO ticketRequest) {
+    public ResponseEntity<Map<String, String>> createOrderTicket(@Valid @RequestBody TicketRequestDTO ticketRequest) {
         try {
-            Optional<Map<String, String>> result = ticketService.createOrderTicket(ticketRequest.getCartId(), ticketRequest.getEventId(), ticketRequest.getQuantity());
+            Optional<Map<String, String>> result = ticketService.createOrderTicket(ticketRequest.getVisitorId(), ticketRequest.getEventId());
             if (result.isPresent()) {
                 return ResponseEntity.ok(result.get());
             } else {
-                return ResponseEntity.status(404).body(Collections.singletonMap("message", "Can't create, the cart or event does not exist!"));
+                return ResponseEntity.status(404).body(Collections.singletonMap("message", "Can't create, the visitor or event does not exist!"));
             }
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Collections.singletonMap("message", "An unknown error occurred: " + e.getMessage()));

@@ -1,8 +1,6 @@
 package EventManagement.Event.controller;
 
-import EventManagement.Event.entity.Cart;
 import EventManagement.Event.entity.Ticket;
-import EventManagement.Event.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

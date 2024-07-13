@@ -12,6 +12,8 @@ import EventManagement.Event.repository.VisitorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class VisitorService {
     @Autowired
@@ -55,6 +57,10 @@ public class VisitorService {
         visitor.setInformation(visitorRegistrationDTO.getInformation());
         visitor.setAccount(account);
         visitorRepository.save(visitor);
+    }
+
+    public Optional<Visitor> findById(int id) {
+        return visitorRepository.findById(id);
     }
 }
 

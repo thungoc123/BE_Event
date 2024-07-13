@@ -11,6 +11,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
     List<Attendance> findAllByTicket_Id(int ticketId);
     List<Attendance> findAll();
     List<Attendance> findByEventId(int eventId);
+    List<Attendance> findByTicket_Id(int ticketId);
 }
 
 
