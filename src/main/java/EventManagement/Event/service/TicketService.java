@@ -194,9 +194,11 @@ public class TicketService {
             Account account = visitor.getAccount();
             String email = account.getEmail();
             double price = ticket.getPrice();
+            int visitorId = visitor.getId(); // Get the visitor ID
 
             response.put("email", email);
             response.put("price", price);
+            response.put("visitorId", visitorId); // Add the visitor ID to the response
         } else {
             response.put("message", "Ticket not found");
         }
