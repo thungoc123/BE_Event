@@ -20,7 +20,7 @@ public class Visitor {
 
     @JsonIgnore
     @OneToOne(mappedBy = "visitor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Cart cart;
+    private Ticket ticket;
 
     public int getId() {
         return id;
@@ -46,11 +46,11 @@ public class Visitor {
         this.account = account;
     }
 
-    public Cart getCart() {
-        return cart;
+    public Ticket getTicket() {
+        return ticket;
     }
 
-    public void setCart(Cart cart) {
-        this.cart = cart;
+    public void setTicket(Ticket ticket) {
+        this.ticket = ticket;
     }
 }

@@ -1,12 +1,11 @@
 package EventManagement.Event.service;
 
-
 import EventManagement.Event.DTO.AttendanceDTO;
-import EventManagement.Event.DTO.CartDTO;
 import EventManagement.Event.DTO.TicketDTO;
 import EventManagement.Event.DTO.VisitorDTO;
-
-import EventManagement.Event.entity.*;
+import EventManagement.Event.entity.Attendance;
+import EventManagement.Event.entity.CheckingStaff;
+import EventManagement.Event.entity.Ticket;
 import EventManagement.Event.repository.AttendanceRepository;
 import EventManagement.Event.repository.CheckingStaffRepository;
 import EventManagement.Event.repository.TicketRepository;
@@ -26,6 +25,7 @@ public class AttendanceService {
 
     @Autowired
     private TicketRepository ticketRepository;
+
     @Autowired
     private CheckingStaffRepository checkingStaffRepository;
 
@@ -33,13 +33,18 @@ public class AttendanceService {
         try {
             List<Ticket> tickets = ticketRepository.findByEvent_Id(eventId);
 
-            List<Attendance> attendances = tickets.stream().map(ticket -> {
+            // Filter tickets to only include those that are PAID and do not have an existing attendance
+            List<Ticket> validTickets = tickets.stream()
+                    .filter(ticket -> ticket.getStatus() == Ticket.Status.PAID && attendanceRepository.findByTicket_Id(ticket.getId()).isEmpty())
+                    .toList(); // Using toList() instead of collect(Collectors.toList())
+
+            List<Attendance> attendances = validTickets.stream().map(ticket -> {
                 Attendance attendance = new Attendance();
                 attendance.setTicket(ticket);
                 attendance.setEventId(eventId);
                 attendance.setStatus(Attendance.AttendanceStatus.ABSENT);
                 return attendance;
-            }).collect(Collectors.toList());
+            }).toList(); // Using toList() instead of collect(Collectors.toList())
 
             return attendanceRepository.saveAll(attendances);
         } catch (Exception e) {
@@ -71,7 +76,6 @@ public class AttendanceService {
         }
     }
 
-
     public List<Attendance> getAllAttendances() {
         try {
             return attendanceRepository.findAll();
@@ -89,6 +93,7 @@ public class AttendanceService {
             throw new RuntimeException("Error fetching attendances for event ID: " + eventId);
         }
     }
+
     public List<Attendance> getAttendancesByCheckingStaffAccountId(String accountId) {
         try {
             List<CheckingStaff> checkingStaffList = checkingStaffRepository.findByAccountId(Integer.parseInt(accountId));
@@ -96,9 +101,7 @@ public class AttendanceService {
                 throw new RuntimeException("No CheckingStaff found for account ID: " + accountId);
             }
 
-
             int eventId = checkingStaffList.get(0).getEvent().getId();
-
 
             return attendanceRepository.findByEventId(eventId);
         } catch (Exception e) {
@@ -123,7 +126,6 @@ public class AttendanceService {
 
                 TicketDTO ticketDTO = new TicketDTO();
                 ticketDTO.setId(attendance.getTicket().getId());
-                ticketDTO.setQuantity(attendance.getTicket().getQuantity());
                 ticketDTO.setCreatedDate(attendance.getTicket().getCreatedDate());
                 ticketDTO.setExpiredDate(attendance.getTicket().getExpiredDate());
                 ticketDTO.setStatus(attendance.getTicket().getStatus().name());
@@ -132,16 +134,11 @@ public class AttendanceService {
                 ticketDTO.setDescription(attendance.getTicket().getDescription());
                 ticketDTO.setEventEndDate(attendance.getTicket().getEventEndDate());
 
-                CartDTO cartDTO = new CartDTO();
-                cartDTO.setCartId(attendance.getTicket().getCart().getCartId());
-
                 VisitorDTO visitorDTO = new VisitorDTO();
-                visitorDTO.setId(attendance.getTicket().getCart().getVisitor().getId());
-                visitorDTO.setInformation(attendance.getTicket().getCart().getVisitor().getInformation());
-                visitorDTO.setAccount_id(attendance.getTicket().getCart().getVisitor().getAccount().getId());
+                visitorDTO.setId(attendance.getTicket().getVisitor().getId());
+                visitorDTO.setInformation(attendance.getTicket().getVisitor().getInformation());
+                visitorDTO.setAccount_id(attendance.getTicket().getVisitor().getAccount().getId());
 
-                cartDTO.setVisitor(visitorDTO);
-                ticketDTO.setCart(cartDTO);
                 ticketDTO.setVisitor(visitorDTO);
 
                 dto.setTicket(ticketDTO);
@@ -153,7 +150,4 @@ public class AttendanceService {
             throw new RuntimeException("Error fetching attendances for event ID: " + eventId);
         }
     }
-
-
-
 }

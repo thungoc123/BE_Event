@@ -1,9 +1,6 @@
 package EventManagement.Event.controller;
 
-
 import EventManagement.Event.DTO.AttendanceDTO;
-
-
 import EventManagement.Event.entity.Attendance;
 import EventManagement.Event.service.AttendanceService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +28,6 @@ public class AttendanceController {
             log.error("Error creating attendances for event ID: {}", eventId, e);
             return ResponseEntity.status(500).body("{\"message\": \"Error creating attendances for event ID: " + eventId + "\"}");
         }
-
-
     }
 
     @PutMapping("/update")
@@ -68,7 +63,8 @@ public class AttendanceController {
 
     }
 
-
-
-
+    @GetMapping("/list/event/{eventId}")
+    public List<AttendanceDTO> getAttendancesByEventId2(@PathVariable int eventId) {
+        return attendanceService.getAttendancesByEventId2(eventId);
+    }
 }
