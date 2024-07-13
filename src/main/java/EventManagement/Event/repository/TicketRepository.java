@@ -25,4 +25,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
     long countTicketsByEventIdAndDate(@Param("eventId") int eventId, @Param("date") LocalDate date);
 
     List<Ticket> findByEvent_Id(int eventId);
+    List<Ticket> findByStatusAndStatusCart(Ticket.Status status, boolean statusCart);
+    List<Ticket> findByStatusCart(boolean statusCart);
 }

@@ -1,6 +1,6 @@
 package EventManagement.Event.DTO;
 
-import EventManagement.Event.entity.Ticket.Status;
+import EventManagement.Event.entity.Ticket;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -12,5 +12,8 @@ public class TicketRequestDTO {
     @NotNull
     private Integer eventId;
 
-    private Status status;
+    @NotNull
+    private Ticket.Status status;
+
+    private boolean statusCart;
 }

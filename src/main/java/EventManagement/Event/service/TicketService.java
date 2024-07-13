@@ -1,5 +1,6 @@
 package EventManagement.Event.service;
 
+import EventManagement.Event.entity.Account;
 import EventManagement.Event.entity.Event;
 import EventManagement.Event.entity.Ticket;
 import EventManagement.Event.entity.Visitor;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -43,31 +45,19 @@ public class TicketService {
 
     @Transactional
     public void deleteById(int id) {
-        System.out.println("Attempting to delete ticket with ID: " + id);
         ticketRepository.deleteById(id);
         entityManager.flush();
-        System.out.println("Deletion attempted for ticket with ID: " + id);
     }
 
     @Transactional
-    public Map<String, String> deleteTicket(int id) {
-        Map<String, String> response = new HashMap<>();
+    public boolean deleteTicket(int id) {
         Optional<Ticket> ticketOptional = findById(id);
-
         if (ticketOptional.isPresent()) {
-            System.out.println("Ticket found with ID: " + id);
             deleteById(id);
-            // Additional check to confirm deletion
-            if (findById(id).isPresent()) {
-                response.put("message", "Failed to delete the ticket. Ticket still exists!");
-            } else {
-                response.put("message", "Successfully deleted the ticket!");
-            }
+            return true;
         } else {
-            response.put("message", "The ticket maybe not exist?");
+            return false;
         }
-
-        return response;
     }
 
     public Optional<Ticket> updateTicketStatus(int id, Ticket.Status status) {
@@ -88,7 +78,7 @@ public class TicketService {
         }
     }
 
-    public Optional<Map<String, String>> createOrderTicket(Integer visitorId, Integer eventId) {
+    public Optional<Map<String, String>> createOrderTicket(Integer visitorId, Integer eventId, boolean statusCart, Ticket.Status status) {
         Map<String, String> response = new HashMap<>();
 
         try {
@@ -105,7 +95,8 @@ public class TicketService {
                     ticket.setEvent(event);
                     ticket.setCreatedDate(LocalDateTime.now());
                     ticket.setExpiredDate(event.getTimeclosesale());
-                    ticket.setStatus(Ticket.Status.PENDING);
+                    ticket.setStatus(status); // Use the provided status
+                    ticket.setStatusCart(statusCart);
 
                     ticketRepository.save(ticket);
                     response.put("message", "Ticket created successfully");
@@ -153,9 +144,11 @@ public class TicketService {
             return Optional.empty();
         }
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+
         Map<String, Object> response = new HashMap<>();
-        response.put("startDate", startDate);
-        response.put("endDate", endDate);
+        response.put("startDate", startDate.format(formatter));
+        response.put("endDate", endDate.format(formatter));
         response.put("amount", tickets.size());
 
         List<Map<String, Object>> visitorList = new ArrayList<>();
@@ -170,15 +163,17 @@ public class TicketService {
         return Optional.of(response);
     }
 
-    public Optional<Map<String, Object>> countTicketsByEventIdAndDate(int eventId, LocalDate date) {
+    public Optional<Map<String, Object>> countTicketsByEventIdAndDate(int eventId, LocalDateTime dateTime) {
         Optional<Event> eventOptional = eventService.findById(eventId);
 
         if (eventOptional.isPresent()) {
             Event event = eventOptional.get();
+            LocalDate date = dateTime.toLocalDate();
             if (date.isAfter(event.getTimeopensale().toLocalDate()) && date.isBefore(event.getTimeclosesale().toLocalDate())) {
                 long count = ticketRepository.countTicketsByEventIdAndDate(eventId, date);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                 Map<String, Object> response = new HashMap<>();
-                response.put("Date", date);
+                response.put("Date", dateTime.format(formatter));
                 response.put("Amount Ticket on Date", count);
                 return Optional.of(response);
             } else {
@@ -187,5 +182,33 @@ public class TicketService {
         } else {
             return Optional.empty();
         }
+    }
+
+    public Map<String, Object> getVisitorEmailAndTicketPrice(int ticketId) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<Ticket> ticketOptional = ticketRepository.findById(ticketId);
+
+        if (ticketOptional.isPresent()) {
+            Ticket ticket = ticketOptional.get();
+            Visitor visitor = ticket.getVisitor();
+            Account account = visitor.getAccount();
+            String email = account.getEmail();
+            double price = ticket.getPrice();
+
+            response.put("email", email);
+            response.put("price", price);
+        } else {
+            response.put("message", "Ticket not found");
+        }
+
+        return response;
+    }
+
+    public List<Ticket> getTicketsByStatusAndCart(Ticket.Status status) {
+        return ticketRepository.findByStatusAndStatusCart(status, true);
+    }
+
+    public List<Ticket> getTicketsInCart() {
+        return ticketRepository.findByStatusCart(true);
     }
 }
