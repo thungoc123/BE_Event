@@ -28,9 +28,6 @@ public class TicketService {
     @Autowired
     private EventService eventService;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     public List<Ticket> findAll() {
         return ticketRepository.findAll();
     }
@@ -43,13 +40,10 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
-    @Transactional
     public void deleteById(int id) {
         ticketRepository.deleteById(id);
-        entityManager.flush();
     }
 
-    @Transactional
     public boolean deleteTicket(int id) {
         Optional<Ticket> ticketOptional = findById(id);
         if (ticketOptional.isPresent()) {
@@ -212,5 +206,17 @@ public class TicketService {
 
     public List<Ticket> getTicketsInCart() {
         return ticketRepository.findByStatusCart(true);
+    }
+
+    public Optional<Map<String, Object>> findVisitorIdByAccountId(int accountId) {
+        Optional<Visitor> visitorOptional = visitorService.findByAccountId(accountId);
+        if (visitorOptional.isPresent()) {
+            Visitor visitor = visitorOptional.get();
+            Map<String, Object> response = new HashMap<>();
+            response.put("visitorId", visitor.getId());
+            return Optional.of(response);
+        } else {
+            return Optional.empty();
+        }
     }
 }
