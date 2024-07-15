@@ -1,5 +1,6 @@
 package EventManagement.Event.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -19,7 +20,7 @@ public class Visitor {
     private Account account;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "visitor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "visitor")
     private Ticket ticket;
 
     public int getId() {
