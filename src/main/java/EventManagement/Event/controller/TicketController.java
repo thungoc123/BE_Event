@@ -179,4 +179,18 @@ public class TicketController {
         List<Ticket> tickets = ticketService.getTicketsInCart();
         return ResponseEntity.ok(tickets);
     }
+
+    @GetMapping("/visitorId")
+    public ResponseEntity<?> getVisitorIdByAccountId(@RequestParam int accountId) {
+        try {
+            Optional<Map<String, Object>> response = ticketService.findVisitorIdByAccountId(accountId);
+            if (response.isPresent()) {
+                return ResponseEntity.ok(response.get());
+            } else {
+                return ResponseEntity.status(404).body(Collections.singletonMap("message", "Account not found or visitor not associated with the account"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Collections.singletonMap("message", "An unknown error occurred: " + e.getMessage()));
+        }
+    }
 }

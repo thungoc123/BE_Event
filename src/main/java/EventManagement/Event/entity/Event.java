@@ -67,5 +67,5 @@ public class Event {
 
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Ticket> tickets = new HashSet<>();
+    private List<Ticket> tickets;
 }

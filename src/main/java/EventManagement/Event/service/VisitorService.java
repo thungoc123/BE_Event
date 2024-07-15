@@ -63,6 +63,10 @@ public class VisitorService {
         return visitorRepository.findById(id);
     }
 
+    public Optional<Visitor> findByAccountId(int accountId) {
+        return visitorRepository.findByAccount_Id(accountId);
+    }
+
 }
 
 
