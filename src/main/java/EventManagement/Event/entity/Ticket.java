@@ -1,7 +1,7 @@
 package EventManagement.Event.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -15,6 +15,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "ticket")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,15 +23,12 @@ public class Ticket {
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
-    @JsonBackReference(value = "event-ticket")
     private Event event;
 
     @OneToOne
     @JoinColumn(name = "visitor_id", nullable = false)
-    @JsonBackReference(value = "visitor-ticket")
     private Visitor visitor;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Attendance> attendances;
 
