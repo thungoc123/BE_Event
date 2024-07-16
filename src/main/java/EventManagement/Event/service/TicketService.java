@@ -83,6 +83,13 @@ public class TicketService {
                 Visitor visitor = visitorOptional.get();
                 Event event = eventOptional.get();
 
+                // Check if the visitor already has a ticket for this event
+                Optional<Ticket> existingTicket = ticketRepository.findByVisitor_IdAndEvent_Id(visitorId, eventId);
+                if (existingTicket.isPresent()) {
+                    response.put("message", "Visitor already has a ticket for this event.");
+                    return Optional.of(response);
+                }
+
                 if (LocalDateTime.now().isBefore(event.getTimeclosesale())) {
                     Ticket ticket = new Ticket();
                     ticket.setVisitor(visitor);

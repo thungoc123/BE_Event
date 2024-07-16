@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Integer> {
@@ -24,6 +25,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
     @Query("SELECT COUNT(t) FROM Ticket t WHERE t.event.id = :eventId AND DATE(t.createdDate) = :date")
     long countTicketsByEventIdAndDate(@Param("eventId") int eventId, @Param("date") LocalDate date);
 
+    Optional<Ticket> findByVisitor_IdAndEvent_Id(int visitorId, int eventId);
     List<Ticket> findByEvent_Id(int eventId);
     List<Ticket> findByStatusAndStatusCart(Ticket.Status status, boolean statusCart);
     List<Ticket> findByStatusCart(boolean statusCart);
