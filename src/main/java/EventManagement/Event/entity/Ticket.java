@@ -29,7 +29,7 @@ public class Ticket {
     @JoinColumn(name = "visitor_id", nullable = false)
     private Visitor visitor;
 
-    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "ticket")
     private List<Attendance> attendances;
 
     @Column(name = "created_date")
