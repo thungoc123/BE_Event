@@ -66,6 +66,6 @@ public class Event {
     private List<SponsorProgramEvent> sponsorProgramEvents;
 
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "event")
     private List<Ticket> tickets;
 }
