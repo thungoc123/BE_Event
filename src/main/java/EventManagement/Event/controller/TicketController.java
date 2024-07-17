@@ -181,9 +181,9 @@ public class TicketController {
     }
 
     @GetMapping("/visitorId")
-    public ResponseEntity<?> getVisitorIdByAccountId(@RequestParam int accountId) {
+    public ResponseEntity<?> getVisitorIdsByAccountId(@RequestParam int accountId) {
         try {
-            Optional<Map<String, Object>> response = ticketService.findVisitorIdByAccountId(accountId);
+            Optional<List<Map<String, Object>>> response = ticketService.findVisitorIdsByAccountId(accountId);
             if (response.isPresent()) {
                 return ResponseEntity.ok(response.get());
             } else {
