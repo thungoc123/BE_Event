@@ -9,6 +9,8 @@ import EventManagement.Event.repository.AttendanceRepository;
 import EventManagement.Event.service.AttendanceService;
 import EventManagement.Event.service.CheckingStaffService;
 import EventManagement.Event.service.EmailService;
+import EventManagement.Event.service.MailService;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +28,7 @@ public class CheckingStaffController {
     @Autowired
     private AttendanceService attendanceService;
     @Autowired
-    private EmailService emailService;
+    private MailService mailService;
 
 
 
@@ -42,8 +44,8 @@ public class CheckingStaffController {
         return ResponseEntity.ok(attendances);
     }
     @PostMapping("/send")
-    public ResponseEntity<EmailResponse>  sendEmail(@RequestBody EmailRequest emailRequest) {
-        emailService.sendEmail(emailRequest.getTo(), emailRequest.getSubject(), emailRequest.getText());
+    public ResponseEntity<EmailResponse>  sendEmail(@RequestBody EmailRequest emailRequest) throws MessagingException {
+        mailService.sendEmail(emailRequest.getTo(), emailRequest.getSubject(), emailRequest.getFeedbackLink());
         EmailResponse response = new EmailResponse("success", "Email sent successfully to " + emailRequest.getTo());
         return new ResponseEntity<>(response, HttpStatus.OK);
 

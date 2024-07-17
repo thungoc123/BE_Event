@@ -41,6 +41,7 @@ jwt:
             starttls:
               enable: true
 
+#
 #server:
 #  port: 7979
 #
@@ -49,12 +50,24 @@ jwt:
 #    hibernate:
 #      ddl-auto: update
 #  datasource:
-#    url: jdbc:mysql://localhost:3307/EventManagement
+#    url: jdbc:mysql://localhost:3306/EventManagement
 #    username: root
-#    password: admin123
+#    password: root
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 #jwt:
 #  private-key: CLp/edt3SGCOs7+ByILRGWPR5N168VSi8TG12KBe2/Y=
+#  spring:
+#    mail:
+#      host: smtp.gmail.com
+#      port: 587
+#      username: swp391eventmanagement@gmail.com
+#      password: atbb jgic gfsj cvvh
+#      properties:
+#        mail:
+#          smtp:
+#            auth: true
+#            starttls:
+#              enable: true
 
 
 
