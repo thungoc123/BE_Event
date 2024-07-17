@@ -120,10 +120,17 @@ public class VNPayService implements VNPayServiceImp {
 
             if (email != null) {
                 // Send email notification
+                String emailContent = "Dear " + email + ",\n\n" +
+                        "Your bill for the ticket you just bought is " + amount + " VND.\n" +
+                        "If you have not completed the payment, please click the link below to continue:\n" +
+                        paymentUrl + "\n\n" +
+                        "Please complete the payment before " + expirationTime + " on " + formattedExpireDate + "\n" +
+                        "Thank you for using our online ticket purchasing service!\n";
+
                 emailService.sendEmail(
                         email,  // Use the email from the request parameter
-                        "Payment Successful",
-                        "Your payment of " + amount + " VND was successful. Visit the following URL to complete your payment: " + paymentUrl
+                        "Payment Request Successful",
+                        emailContent
                 );
             }
 
