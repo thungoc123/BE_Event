@@ -44,7 +44,7 @@ public class VNPayService implements VNPayServiceImp {
             String vnp_TxnRef = VnPayConfig.getRandomNumber(8);
             String vnp_IpAddr = "127.0.0.1";  // Replace this with actual IP retrieval logic
             String vnp_TmnCode = VnPayConfig.vnp_TmnCode;
-            String returnUrl = "http://localhost:5173/"; // Replace with your actual return URL
+            String returnUrl = "http://localhost:5173/payment-successfull"; // Replace with your actual return URL
 
             Map<String, String> vnp_Params = new HashMap<>();
             vnp_Params.put("vnp_Version", VnPayConfig.vnp_Version);

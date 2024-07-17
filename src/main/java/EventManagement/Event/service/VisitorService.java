@@ -12,6 +12,7 @@ import EventManagement.Event.repository.VisitorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -63,10 +64,9 @@ public class VisitorService {
         return visitorRepository.findById(id);
     }
 
-    public Optional<Visitor> findByAccountId(int accountId) {
-        return visitorRepository.findByAccount_Id(accountId);
+    public List<Visitor> findByAccountId(int accountId) {
+        return visitorRepository.findByAccountId(accountId);
     }
-
 }
 
 

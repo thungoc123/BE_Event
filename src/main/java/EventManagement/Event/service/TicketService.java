@@ -215,13 +215,16 @@ public class TicketService {
         return ticketRepository.findByStatusCart(true);
     }
 
-    public Optional<Map<String, Object>> findVisitorIdByAccountId(int accountId) {
-        Optional<Visitor> visitorOptional = visitorService.findByAccountId(accountId);
-        if (visitorOptional.isPresent()) {
-            Visitor visitor = visitorOptional.get();
-            Map<String, Object> response = new HashMap<>();
-            response.put("visitorId", visitor.getId());
-            return Optional.of(response);
+    public Optional<List<Map<String, Object>>> findVisitorIdsByAccountId(int accountId) {
+        List<Visitor> visitors = visitorService.findByAccountId(accountId);
+        if (!visitors.isEmpty()) {
+            List<Map<String, Object>> responseList = new ArrayList<>();
+            for (Visitor visitor : visitors) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("visitorId", visitor.getId());
+                responseList.add(response);
+            }
+            return Optional.of(responseList);
         } else {
             return Optional.empty();
         }
