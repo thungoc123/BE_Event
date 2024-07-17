@@ -294,4 +294,19 @@ public class TicketService {
 
         return Optional.of(response);
     }
+
+    public Optional<Map<String, Object>> countTotalParticipants(int eventId) {
+        Optional<Event> eventOptional = eventService.findById(eventId);
+        if (!eventOptional.isPresent()) {
+            return Optional.empty();
+        }
+
+        long totalParticipants = ticketRepository.countDistinctByEvent_Id(eventId);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("eventId", eventId);
+        response.put("totalParticipants", totalParticipants);
+
+        return Optional.of(response);
+    }
 }
