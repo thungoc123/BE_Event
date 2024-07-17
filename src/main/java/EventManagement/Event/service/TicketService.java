@@ -276,4 +276,22 @@ public class TicketService {
             return Optional.empty();
         }
     }
+
+    public Optional<Map<String, Object>> calculateTotalAmountRaised(int eventId) {
+        Optional<Event> eventOptional = eventService.findById(eventId);
+        if (!eventOptional.isPresent()) {
+            return Optional.empty();
+        }
+
+        double totalAmount = ticketRepository.findByEvent_Id(eventId)
+                .stream()
+                .mapToDouble(Ticket::getPrice)
+                .sum();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("eventId", eventId);
+        response.put("totalAmountRaised", totalAmount);
+
+        return Optional.of(response);
+    }
 }

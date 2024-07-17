@@ -193,4 +193,18 @@ public class TicketController {
             return ResponseEntity.status(500).body(Collections.singletonMap("message", "An unknown error occurred: " + e.getMessage()));
         }
     }
+
+    @GetMapping("/total-amount/{eventId}")
+    public ResponseEntity<?> getTotalAmountRaised(@PathVariable int eventId) {
+        try {
+            Optional<Map<String, Object>> result = ticketService.calculateTotalAmountRaised(eventId);
+            if (result.isPresent()) {
+                return ResponseEntity.ok(result.get());
+            } else {
+                return ResponseEntity.status(404).body(Collections.singletonMap("message", "Event not found"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Collections.singletonMap("message", "An unknown error occurred: " + e.getMessage()));
+        }
+    }
 }
