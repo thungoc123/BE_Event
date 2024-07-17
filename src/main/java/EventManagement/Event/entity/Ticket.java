@@ -25,7 +25,7 @@ public class Ticket {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "visitor_id", nullable = false)
     private Visitor visitor;
 
