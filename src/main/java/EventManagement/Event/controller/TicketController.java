@@ -221,4 +221,18 @@ public class TicketController {
             return ResponseEntity.status(500).body(Collections.singletonMap("message", "An unknown error occurred: " + e.getMessage()));
         }
     }
+
+    @DeleteMapping("/by-event/{eventId}")
+    public ResponseEntity<Map<String, String>> deleteTicketsByEventId(@PathVariable int eventId) {
+        try {
+            boolean isDeleted = ticketService.deleteTicketsByEventId(eventId);
+            if (isDeleted) {
+                return ResponseEntity.ok(Collections.singletonMap("message", "Successfully deleted the tickets for the event!"));
+            } else {
+                return ResponseEntity.status(404).body(Collections.singletonMap("message", "No tickets found for the given event ID!"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Collections.singletonMap("message", "An unknown error occurred: " + e.getMessage()));
+        }
+    }
 }
