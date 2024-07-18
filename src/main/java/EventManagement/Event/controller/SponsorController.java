@@ -139,8 +139,18 @@ public class SponsorController {
         }
     }
     @GetMapping("/{eventId}/sponsors/profits")
-    public ResponseEntity<List<SponsorProfitDTO>> getSponsorProfitsByEventId(@PathVariable int eventId) {
-        List<SponsorProfitDTO> sponsorProfits = sponsorService.getSponsorProfitsByEventId(eventId);
-        return new ResponseEntity<>(sponsorProfits, HttpStatus.OK);
+    public ResponseEntity<List<SponsorProfitDTO>> getSponsorProfitsByEventId(
+            @PathVariable("eventId") int eventId,
+            @RequestParam(required = false) Double totalEventProfit) {
+
+        List<SponsorProfitDTO> sponsorProfits;
+        if (totalEventProfit != null) {
+            sponsorProfits = sponsorService.getSponsorProfitsByEventId(eventId, totalEventProfit);
+        } else {
+            sponsorProfits = sponsorService.getSponsorProfitsByEventId(eventId,totalEventProfit);
+        }
+
+        return ResponseEntity.ok().body(sponsorProfits);
     }
+
 }
