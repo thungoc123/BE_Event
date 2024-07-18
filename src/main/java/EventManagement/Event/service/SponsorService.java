@@ -1,6 +1,7 @@
 package EventManagement.Event.service;
 
 import EventManagement.Event.DTO.SponsorDTO;
+import EventManagement.Event.DTO.SponsorProfitDTO;
 import EventManagement.Event.DTO.SponsorRegistrationDto;
 import EventManagement.Event.entity.*;
 import EventManagement.Event.entity.SponsorProgramEvent;
@@ -10,6 +11,11 @@ import EventManagement.Event.payload.Request.InsertSponsorProgramRequest;
 import EventManagement.Event.payload.Request.InsertSponsorRequest;
 import EventManagement.Event.repository.*;
 import EventManagement.Event.service.imp.SponsorProgramImp;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +41,8 @@ public class SponsorService implements SponsorProgramImp {
     @Autowired
     private SponsorEventRepository sponsorEventRepository;
     @Autowired SponsorProgramEventRepository sponsorProgramEventRepository;
-
+    @Autowired
+    private EntityManager entityManager;
 
     public List<SponsorProgram> getAllSponsorPrograms() {
         List<SponsorProgram> sponsorPrograms = sponsorProgramRepository.findAll();
@@ -275,5 +282,49 @@ public class SponsorService implements SponsorProgramImp {
             return false;
         }
     }
+    public List<SponsorProfitDTO> getSponsorProfitsByEventId(int eventId) {
+        Double totalEventProfit = getTotalEventProfit(eventId);
+        List<SponsorProfitDTO> sponsorProfits = new ArrayList<>();
 
+        List<SponsorEvent> sponsorEvents = getSponsorEventsByEventId(eventId);
+        for (SponsorEvent sponsorEvent : sponsorEvents) {
+            Double sponsorProfitPercent = (sponsorEvent.getProfitPercent() / totalEventProfit) * 1000;
+            Double profitAmount = (sponsorProfitPercent * totalEventProfit) ;
+
+            SponsorProfitDTO dto = new SponsorProfitDTO();
+            dto.setSponsorId(sponsorEvent.getSponsor().getId());
+            dto.setCompanyName(sponsorEvent.getSponsor().getCompanyName());
+            dto.setSponsorEmail(sponsorEvent.getSponsor().getFptStaffEmail());
+            dto.setSponsorProfitPercent(sponsorProfitPercent);
+            dto.setProfitAmount(profitAmount); // Sửa lại thành tính toán đúng profitAmount
+
+            sponsorProfits.add(dto);
+        }
+
+        return sponsorProfits;
+    }
+
+    private Double getTotalEventProfit(int eventId) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Double> cq = cb.createQuery(Double.class);
+        Root<SponsorEvent> root = cq.from(SponsorEvent.class);
+
+        cq.select(cb.sum(root.get("profitPercent")))
+                .where(cb.equal(root.get("event").get("id"), eventId));
+
+        TypedQuery<Double> query = entityManager.createQuery(cq);
+        return query.getSingleResult();
+    }
+
+    private List<SponsorEvent> getSponsorEventsByEventId(int eventId) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<SponsorEvent> cq = cb.createQuery(SponsorEvent.class);
+        Root<SponsorEvent> root = cq.from(SponsorEvent.class);
+
+        cq.select(root)
+                .where(cb.equal(root.get("event").get("id"), eventId));
+
+        TypedQuery<SponsorEvent> query = entityManager.createQuery(cq);
+        return query.getResultList();
+    }
 }

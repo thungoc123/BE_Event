@@ -37,28 +37,5 @@ public class Sponsor {
     // Getters and Setters
 
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
-    public void setInformation(String information) {
-        this.information = information;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-
-    public void setCompanyID(String companyID) {
-        this.companyID = companyID;
-    }
-
-    public void setFptStaffEmail(String fptStaffEmail) {
-        this.fptStaffEmail = fptStaffEmail;
-    }
-
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
 }
