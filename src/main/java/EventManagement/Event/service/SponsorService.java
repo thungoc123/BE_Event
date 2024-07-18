@@ -288,8 +288,8 @@ public class SponsorService implements SponsorProgramImp {
 
         List<SponsorEvent> sponsorEvents = getSponsorEventsByEventId(eventId);
         for (SponsorEvent sponsorEvent : sponsorEvents) {
-            Double sponsorProfitPercent = (sponsorEvent.getProfitPercent() / totalEventProfit) * 1000;
-            Double profitAmount = (sponsorProfitPercent * totalEventProfit) ;
+            Double sponsorProfitPercent = (sponsorEvent.getProfitPercent() / totalEventProfit) * 100;
+            Double profitAmount = (sponsorProfitPercent * totalEventProfit) *10;
 
             SponsorProfitDTO dto = new SponsorProfitDTO();
             dto.setSponsorId(sponsorEvent.getSponsor().getId());
