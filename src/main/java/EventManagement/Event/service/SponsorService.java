@@ -282,21 +282,23 @@ public class SponsorService implements SponsorProgramImp {
             return false;
         }
     }
-    public List<SponsorProfitDTO> getSponsorProfitsByEventId(int eventId) {
-        Double totalEventProfit = getTotalEventProfit(eventId);
+    public List<SponsorProfitDTO> getSponsorProfitsByEventId(int eventId, Double totalEventProfit) {
         List<SponsorProfitDTO> sponsorProfits = new ArrayList<>();
 
         List<SponsorEvent> sponsorEvents = getSponsorEventsByEventId(eventId);
         for (SponsorEvent sponsorEvent : sponsorEvents) {
-            Double sponsorProfitPercent = (sponsorEvent.getProfitPercent() / totalEventProfit) * 100;
-            Double profitAmount = (sponsorProfitPercent * totalEventProfit) *10;
+            // Tính sponsorProfitPercent dựa trên tổng lợi nhuận
+            Double sponsorProfitPercent = (sponsorEvent.getProfitPercent() / 100.0);
+
+            // Tính profitAmount dựa trên sponsorProfitPercent và totalEventProfit
+            Double profitAmount = sponsorProfitPercent * totalEventProfit;
 
             SponsorProfitDTO dto = new SponsorProfitDTO();
             dto.setSponsorId(sponsorEvent.getSponsor().getId());
             dto.setCompanyName(sponsorEvent.getSponsor().getCompanyName());
             dto.setSponsorEmail(sponsorEvent.getSponsor().getFptStaffEmail());
-            dto.setSponsorProfitPercent(sponsorProfitPercent);
-            dto.setProfitAmount(profitAmount); // Sửa lại thành tính toán đúng profitAmount
+            dto.setSponsorProfitPercent(sponsorProfitPercent * 100); // Đảm bảo hiển thị phần trăm
+            dto.setProfitAmount(profitAmount);
 
             sponsorProfits.add(dto);
         }
@@ -304,7 +306,9 @@ public class SponsorService implements SponsorProgramImp {
         return sponsorProfits;
     }
 
-    private Double getTotalEventProfit(int eventId) {
+
+
+    public Double getTotalEventProfit(int eventId) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Double> cq = cb.createQuery(Double.class);
         Root<SponsorEvent> root = cq.from(SponsorEvent.class);
@@ -313,7 +317,8 @@ public class SponsorService implements SponsorProgramImp {
                 .where(cb.equal(root.get("event").get("id"), eventId));
 
         TypedQuery<Double> query = entityManager.createQuery(cq);
-        return query.getSingleResult();
+        Double totalProfit = query.getSingleResult();
+        return totalProfit != null ? totalProfit : 0.0; // Đảm bảo trả về 0 nếu không có kết quả
     }
 
     private List<SponsorEvent> getSponsorEventsByEventId(int eventId) {
