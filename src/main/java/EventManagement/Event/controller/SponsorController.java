@@ -1,5 +1,6 @@
 package EventManagement.Event.controller;
 
+import EventManagement.Event.DTO.SponsorProfitDTO;
 import EventManagement.Event.entity.Event;
 import EventManagement.Event.entity.SponsorProgram;
 import EventManagement.Event.payload.Request.AddEventsToSponsorProgramRequest;
@@ -10,6 +11,7 @@ import EventManagement.Event.service.SponsorService;
 import EventManagement.Event.DTO.SponsorDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -135,5 +137,10 @@ public class SponsorController {
             response.put("message", "Failed to delete program");
             return ResponseEntity.status(500).body(response);
         }
+    }
+    @GetMapping("/{eventId}/sponsors/profits")
+    public ResponseEntity<List<SponsorProfitDTO>> getSponsorProfitsByEventId(@PathVariable int eventId) {
+        List<SponsorProfitDTO> sponsorProfits = sponsorService.getSponsorProfitsByEventId(eventId);
+        return new ResponseEntity<>(sponsorProfits, HttpStatus.OK);
     }
 }

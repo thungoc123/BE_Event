@@ -34,4 +34,5 @@ import lombok.Data;
             @Column(name = "profit_percent")
             private Double profitPercent;
 
+
 }
