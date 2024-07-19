@@ -29,28 +29,31 @@ public class EventOperatorService {
         if (!eventOperatorDTO.getPassword().equals(eventOperatorDTO.getPassword())) {
             throw new Exception("Passwords do not match");
         }
+
         Role role = roleRepository.findByRoleName("ROLE_EO");
         if (role == null) {
             role = new Role();
             role.setRoleName("ROLE_EO");
             role = roleRepository.save(role);
         }
+
         Account account = new Account();
         account.setEmail(eventOperatorDTO.getEmail());
         account.setPassword(eventOperatorDTO.getPassword());
         account.setRole(role);
+        account.setEnabled(false); // Tạo tài khoản luôn bị vô hiệu hóa
         accountRepository.save(account);
 
-        // Create an EventOperator entity
+        // Tạo một đối tượng EventOperator
         EventOperator eventOperator = new EventOperator();
         eventOperator.setInformation(eventOperatorDTO.getInformation());
         eventOperator.setAccount(account);
 
-        // Save the Account (and cascade save EventOperator)
+        // Lưu đối tượng EventOperator (cascade save Account)
         eventOperatorRepository.save(eventOperator);
 
-        String subject = "Create Event Operator  successful";
-        String text = "Hi guy,\n\nYour Event Operator Account  has been successfully created.\n\nEmail: " + account.getEmail()  + "\nPassword: " + account.getPassword() + "\n\nBest regards";
+        String subject = "Create Event Operator successful";
+        String text = "Hi guy,\n\nYour Event Operator Account has been successfully created.\n\nEmail: " + account.getEmail() + "\nPassword: " + account.getPassword() + "\n\nBest regards";
         text += "\n\nCongratulations! You are now a staff member for the following events:\n";
 
         emailService.sendEmail(account.getEmail(), subject, text);
