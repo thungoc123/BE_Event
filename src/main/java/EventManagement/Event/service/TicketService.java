@@ -5,9 +5,6 @@ import EventManagement.Event.entity.Event;
 import EventManagement.Event.entity.Ticket;
 import EventManagement.Event.entity.Visitor;
 import EventManagement.Event.repository.TicketRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +24,9 @@ public class TicketService {
 
     @Autowired
     private EventService eventService;
+
+    @Autowired
+    private AttendanceService attendanceService;  // Inject AttendanceService
 
     public List<Ticket> findAll() {
         return ticketRepository.findAll();
@@ -54,21 +54,33 @@ public class TicketService {
         }
     }
 
-    public Optional<Ticket> updateTicketStatus(int id, Ticket.Status status) {
+    public Map<String, String> updateTicketStatusandAttendence(int id, Ticket.Status status) {
+        Map<String, String> response = new HashMap<>();
         try {
             Optional<Ticket> ticketOptional = findById(id);
             if (ticketOptional.isPresent()) {
                 Ticket ticket = ticketOptional.get();
                 ticket.setStatus(status);
-                return Optional.of(ticketRepository.save(ticket));
+                ticketRepository.save(ticket);
+
+                if (status == Ticket.Status.PAID) {
+                    attendanceService.createAttendancesForEvent(ticket.getEvent().getId());
+                    response.put("message", "Paiding successfully so you are in attendence");
+                } else if (status == Ticket.Status.CANCELLED) {
+                    response.put("message", "Cancel Ticket successfully");
+                } else if (status == Ticket.Status.PENDING) {
+                    response.put("message", "Create Ticket successfully");
+                }
+
+                return response;
             } else {
-                System.err.println("Ticket not found for given ID: " + id);
-                return Optional.empty();
+                response.put("message", "Ticket not found for given ID: " + id);
+                return response;
             }
         } catch (Exception e) {
-            System.err.println("Error occurred while updating the ticket: " + e.getMessage());
+            response.put("message", "Error occurred while updating the ticket: " + e.getMessage());
             e.printStackTrace();
-            return Optional.empty();
+            return response;
         }
     }
 
@@ -274,3 +286,4 @@ public class TicketService {
         return Optional.of(response);
     }
 }
+
