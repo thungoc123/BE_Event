@@ -1,6 +1,7 @@
 package EventManagement.Event.controller;
 
 import EventManagement.Event.DTO.TicketRequestDTO;
+import EventManagement.Event.DTO.TicketStatusUpdateRequestDTO;
 import EventManagement.Event.entity.Ticket;
 import EventManagement.Event.service.TicketService;
 import jakarta.validation.Valid;
@@ -69,17 +70,13 @@ public class TicketController {
         }
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Map<String, String>> updateTicketStatus(@PathVariable int id, @RequestBody TicketRequestDTO ticketDetails) {
-        try {
-            Optional<Ticket> updatedTicket = ticketService.updateTicketStatus(id, ticketDetails.getStatus());
-            if (updatedTicket.isPresent()) {
-                return ResponseEntity.ok(Collections.singletonMap("message", "Ticket updated successfully"));
-            } else {
-                return ResponseEntity.status(404).body(Collections.singletonMap("message", "Can't update, the ticket does not exist!"));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Collections.singletonMap("message", "An unknown error occurred: " + e.getMessage()));
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> updateTicketStatus(@PathVariable int id, @RequestBody TicketStatusUpdateRequestDTO request) {
+        Map<String, String> response = ticketService.updateTicketStatusandAttendence(id, request.getStatus());
+        if (response.containsKey("message")) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 
