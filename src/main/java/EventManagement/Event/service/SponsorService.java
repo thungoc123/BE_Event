@@ -332,4 +332,41 @@ public class SponsorService implements SponsorProgramImp {
         TypedQuery<SponsorEvent> query = entityManager.createQuery(cq);
         return query.getResultList();
     }
+
+    public List<SponsorProfitDTO> getSponsorProfitsByEventIdAndAccountId(int eventId, int accountId, Double totalEventProfit) {
+        List<SponsorProfitDTO> sponsorProfits = new ArrayList<>();
+
+        List<SponsorEvent> sponsorEvents = getSponsorEventsByEventIdAndAccountId(eventId, accountId);
+        for (SponsorEvent sponsorEvent : sponsorEvents) {
+            // Tính sponsorProfitPercent dựa trên tổng lợi nhuận
+            Double sponsorProfitPercent = (sponsorEvent.getProfitPercent() / 100.0);
+
+            // Tính profitAmount dựa trên sponsorProfitPercent và totalEventProfit
+            Double profitAmount = sponsorProfitPercent * totalEventProfit;
+
+            SponsorProfitDTO dto = new SponsorProfitDTO();
+            dto.setSponsorId(sponsorEvent.getSponsor().getId());
+            dto.setCompanyName(sponsorEvent.getSponsor().getCompanyName());
+            dto.setSponsorEmail(sponsorEvent.getSponsor().getAccount().getEmail());
+            dto.setSponsorProfitPercent(sponsorProfitPercent * 100); // Đảm bảo hiển thị phần trăm
+            dto.setProfitAmount(profitAmount);
+
+            sponsorProfits.add(dto);
+        }
+
+        return sponsorProfits;
+    }
+
+    private List<SponsorEvent> getSponsorEventsByEventIdAndAccountId(int eventId, int accountId) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<SponsorEvent> cq = cb.createQuery(SponsorEvent.class);
+        Root<SponsorEvent> root = cq.from(SponsorEvent.class);
+
+        cq.select(root)
+                .where(cb.equal(root.get("event").get("id"), eventId),
+                        cb.equal(root.get("sponsor").get("account").get("id"), accountId));
+
+        TypedQuery<SponsorEvent> query = entityManager.createQuery(cq);
+        return query.getResultList();
+    }
 }
