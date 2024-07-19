@@ -21,7 +21,7 @@ public class MailService {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         Context context = new Context();
-        context.setVariable("feedbackLink", feedbackLink);
+        context.setVariable("feedbackLink", feedbackLink); // link feedback in html
         System.out.println("Feedback Link: " + feedbackLink);
 
 
