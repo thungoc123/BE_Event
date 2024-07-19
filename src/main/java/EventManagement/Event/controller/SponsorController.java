@@ -152,5 +152,12 @@ public class SponsorController {
 
         return ResponseEntity.ok().body(sponsorProfits);
     }
+    @GetMapping("/{eventId}/{accountId}")
+    public List<SponsorProfitDTO> getSponsorProfitsByEventId(
+            @PathVariable int eventId,
+            @PathVariable int accountId,
+            @RequestParam Double totalEventProfit) {
+        return sponsorService.getSponsorProfitsByEventIdAndAccountId(eventId, accountId, totalEventProfit);
+    }
 
 }
