@@ -1,9 +1,7 @@
 package EventManagement.Event.service;
 
-import EventManagement.Event.entity.Account;
-import EventManagement.Event.entity.Event;
-import EventManagement.Event.entity.Ticket;
-import EventManagement.Event.entity.Visitor;
+import EventManagement.Event.entity.*;
+import EventManagement.Event.repository.EventProfitRepository;
 import EventManagement.Event.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +25,9 @@ public class TicketService {
 
     @Autowired
     private AttendanceService attendanceService;  // Inject AttendanceService
+
+    @Autowired
+    private EventProfitRepository eventProfitRepository;
 
     public List<Ticket> findAll() {
         return ticketRepository.findAll();
@@ -264,11 +265,31 @@ public class TicketService {
                 .mapToDouble(Ticket::getPrice)
                 .sum();
 
+        // Gọi phương thức để cập nhật bảng event_profit
+        updateEventProfit(eventId, totalAmount);
+
         Map<String, Object> response = new HashMap<>();
         response.put("eventId", eventId);
         response.put("totalAmountRaised", totalAmount);
 
         return Optional.of(response);
+    }
+
+    private void updateEventProfit(int eventId, double totalAmount) {
+        // Debug: Kiểm tra xem có tìm thấy EventProfit không
+        EventProfit eventProfit = eventProfitRepository.findByEventId(eventId)
+                .orElse(new EventProfit());
+
+        // Debug: Kiểm tra giá trị
+        System.out.println("Updating EventProfit for Event ID: " + eventId + " with totalAmount: " + totalAmount);
+
+        eventProfit.setEventId(eventId);
+        eventProfit.setTotalProfit(totalAmount);
+
+        // Debug: Kiểm tra trước khi lưu
+        System.out.println("Saving EventProfit: " + eventProfit);
+
+        eventProfitRepository.save(eventProfit);
     }
 
     public Optional<Map<String, Object>> countTotalParticipants(int eventId) {

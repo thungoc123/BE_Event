@@ -43,6 +43,8 @@ public class SponsorService implements SponsorProgramImp {
     @Autowired SponsorProgramEventRepository sponsorProgramEventRepository;
     @Autowired
     private EntityManager entityManager;
+    @Autowired
+    private EventProfitRepository eventProfitRepository;
 
     public List<SponsorProgram> getAllSponsorPrograms() {
         List<SponsorProgram> sponsorPrograms = sponsorProgramRepository.findAll();
@@ -369,4 +371,51 @@ public class SponsorService implements SponsorProgramImp {
         TypedQuery<SponsorEvent> query = entityManager.createQuery(cq);
         return query.getResultList();
     }
+    public List<SponsorProfitDTO> getSponsorProfitsByAccountId(int accountId) {
+        List<SponsorProfitDTO> sponsorProfits = new ArrayList<>();
+
+        List<SponsorEvent> sponsorEvents = getSponsorEventsByAccountId(accountId);
+        for (SponsorEvent sponsorEvent : sponsorEvents) {
+            // Gọi hàm tính tổng lợi nhuận của sự kiện
+            Double totalEventProfit = calculateTotalEventProfit(sponsorEvent.getEvent().getId());
+
+            // Tính sponsorProfitPercent dựa trên tổng lợi nhuận
+            Double sponsorProfitPercent = (sponsorEvent.getProfitPercent() / 100.0);
+
+            // Tính profitAmount dựa trên sponsorProfitPercent và totalEventProfit
+            Double profitAmount = sponsorProfitPercent * totalEventProfit;
+
+            SponsorProfitDTO dto = new SponsorProfitDTO();
+            dto.setSponsorId(sponsorEvent.getSponsor().getId());
+            dto.setCompanyName(sponsorEvent.getSponsor().getCompanyName());
+            dto.setSponsorEmail(sponsorEvent.getSponsor().getAccount().getEmail());
+            dto.setSponsorProfitPercent(sponsorProfitPercent * 100); // Đảm bảo hiển thị phần trăm
+            dto.setEventName(sponsorEvent.getEvent().getName());
+            dto.setProfitAmount(profitAmount);
+
+            sponsorProfits.add(dto);
+        }
+
+        return sponsorProfits;
+    }
+
+    private List<SponsorEvent> getSponsorEventsByAccountId(int accountId) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<SponsorEvent> cq = cb.createQuery(SponsorEvent.class);
+        Root<SponsorEvent> root = cq.from(SponsorEvent.class);
+
+        cq.select(root)
+                .where(cb.equal(root.get("sponsor").get("account").get("id"), accountId));
+
+        TypedQuery<SponsorEvent> query = entityManager.createQuery(cq);
+        return query.getResultList();
+    }
+
+    // Giả sử đây là hàm tính tổng lợi nhuận của sự kiện
+    private Double calculateTotalEventProfit(int eventId) {
+        return eventProfitRepository.findByEventId(eventId)
+                .map(EventProfit::getTotalProfit)
+                .orElse(0.0);  // Hoặc trả về giá trị mặc định khác nếu không tìm thấy
+    }
+
 }
