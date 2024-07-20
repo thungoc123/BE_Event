@@ -159,5 +159,9 @@ public class SponsorController {
             @RequestParam Double totalEventProfit) {
         return sponsorService.getSponsorProfitsByEventIdAndAccountId(eventId, accountId, totalEventProfit);
     }
-
+    @GetMapping("/profits/{accountId}")
+    public List<SponsorProfitDTO> getSponsorProfitsByAccountId(
+            @PathVariable int accountId) {
+        return sponsorService.getSponsorProfitsByAccountId(accountId);
+    }
 }

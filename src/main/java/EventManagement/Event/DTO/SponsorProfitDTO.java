@@ -9,4 +9,5 @@ public class SponsorProfitDTO {
     private String sponsorEmail;
     private Double sponsorProfitPercent;
     private Double profitAmount;
+    private String eventName;
 }
