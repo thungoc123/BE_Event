@@ -5,6 +5,8 @@ import EventManagement.Event.DTO.TicketStatusUpdateRequestDTO;
 import EventManagement.Event.entity.Ticket;
 import EventManagement.Event.service.TicketService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api-ticket")
 public class TicketController {
+
+    private static final Logger logger = LoggerFactory.getLogger(TicketService.class);
 
     @Autowired
     private TicketService ticketService;
