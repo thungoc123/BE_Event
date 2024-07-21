@@ -8,6 +8,7 @@ import EventManagement.Event.service.imp.EventServiceImp;
 import EventManagement.Event.utils.JwtHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,11 +45,9 @@ public class EventService implements EventServiceImp {
 
     @Autowired
     private FeedBackQuestionRepository feedbackQuestionRepository;
-
-
-
-
-
+    @Lazy
+    @Autowired
+    private TicketService ticketService;
 
 
     //list event
@@ -179,7 +178,7 @@ public class EventService implements EventServiceImp {
                     // Xóa Feedback
                     feedbackRepository.deleteById(feedbackId);
                 }
-
+                ticketService.deleteTicketsByEventId(eventId);
                 eventRepository.deleteBySponsorByEventId(eventId);
                 eventRepository.deleteSponsorProgramEventByEventId(eventId);
                 checkingStaffService.deleteAllCheckingStaff(eventId);

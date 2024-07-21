@@ -109,6 +109,12 @@ public class AttendanceService {
             throw new RuntimeException("Error fetching attendances for account ID: " + accountId);
         }
     }
+    public void deleteAttendancesByTicketId(int ticketId) {
+        List<Attendance> attendances = attendanceRepository.findByTicket_Id(ticketId);
+        if (!attendances.isEmpty()) {
+            attendanceRepository.deleteAll(attendances);
+        }
+    }
 
     public List<AttendanceDTO> getAttendancesByEventId2(int eventId) {
         try {

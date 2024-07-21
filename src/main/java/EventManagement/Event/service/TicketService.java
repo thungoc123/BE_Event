@@ -88,6 +88,10 @@ public class TicketService {
     public boolean deleteTicketsByEventId(int eventId) {
         List<Ticket> tickets = ticketRepository.findByEvent_Id(eventId);
         if (!tickets.isEmpty()) {
+            for (Ticket ticket : tickets) {
+                // Xóa attendances liên quan đến ticket
+                attendanceService.deleteAttendancesByTicketId(ticket.getId());
+            }
             ticketRepository.deleteAll(tickets);
             return true;
         }
