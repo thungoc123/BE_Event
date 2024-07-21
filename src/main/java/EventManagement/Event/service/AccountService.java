@@ -40,7 +40,25 @@ public class AccountService {
         if (account != null) {
             account.setEnabled(true);
             accountRepository.save(account);
+            sendActivationEmail(account);
         }
+    }
+    private void sendActivationEmail(Account account) {
+        String subject = "Your account has been activated";
+        String body = "Hello " + account.getEmail() + ",\n\nYour account has been successfully activated. You can now log in and use our services.\n\nBest regards,\nYour Company";
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        try {
+            helper.setTo(account.getEmail());
+            helper.setSubject(subject);
+            helper.setText(body);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+
+        mailSender.send(message);
     }
 
 
