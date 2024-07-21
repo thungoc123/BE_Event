@@ -177,6 +177,12 @@ public class TicketController {
         return ResponseEntity.ok(tickets);
     }
 
+    @GetMapping("/cart/{visitorId}")
+    public ResponseEntity<List<Ticket>> getTicketsInCartByVisitorId(@PathVariable int visitorId) {
+        List<Ticket> tickets = ticketService.getTicketsInCartByVisitorId(visitorId);
+        return ResponseEntity.ok(tickets);
+    }
+
     @GetMapping("/visitorId")
     public ResponseEntity<?> getVisitorIdsByAccountId(@RequestParam int accountId) {
         try {
