@@ -29,6 +29,9 @@ public class TicketService {
     @Autowired
     private EventProfitRepository eventProfitRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     public List<Ticket> findAll() {
         return ticketRepository.findAll();
     }
@@ -66,6 +69,17 @@ public class TicketService {
 
                 if (status == Ticket.Status.PAID) {
                     attendanceService.createAttendancesForEvent(ticket.getEvent().getId());
+                    String visitorEmail = ticket.getVisitor().getAccount().getEmail();
+                    String eventName = ticket.getEvent().getName();
+                    String Price = String.valueOf(ticket.getEvent().getPrice());
+                    String text = "Dear visitor,\n\n" +
+                            "You have successfully paid for the event: " + eventName + "Thank for comming !.\n" +
+                            "Ticket ID: " + ticket.getId() + "\n" +
+                            "Price: " + Price + "\n" +
+                            "Thank you for your purchase!\n\n" +
+                            "Best regards,\n" +
+                            "Event Management Team";
+                    emailService.sendEmail(visitorEmail, "Payment Confirmation", text);
                     response.put("message", "Paiding successfully so you are in attendence");
                 } else if (status == Ticket.Status.CANCELLED) {
                     response.put("message", "Cancel Ticket successfully");
@@ -97,98 +111,6 @@ public class TicketService {
         }
         return false;
     }
-
-//    public Optional<Map<String, String>> createOrderTicket(Integer visitorId, Integer eventId, boolean statusCart, Ticket.Status status) {
-//        Map<String, String> response = new HashMap<>();
-//
-//        try {
-//            Optional<Visitor> visitorOptional = visitorService.findById(visitorId);
-//            Optional<Event> eventOptional = eventService.findById(eventId);
-//
-//            if (visitorOptional.isPresent() && eventOptional.isPresent()) {
-//                Visitor visitor = visitorOptional.get();
-//                Event event = eventOptional.get();
-//
-//                // Check if the visitor already has a ticket for this event
-//                Optional<Ticket> existingTicket = ticketRepository.findByVisitor_IdAndEvent_Id(visitorId, eventId);
-//                if (existingTicket.isPresent()) {
-//                    response.put("message", "Visitor already has a ticket for this event.");
-//                    return Optional.of(response);
-//                }
-//
-//                if (LocalDateTime.now().isBefore(event.getTimeclosesale())) {
-//                    Ticket ticket = new Ticket();
-//                    ticket.setVisitor(visitor);
-//                    ticket.setEvent(event);
-//                    ticket.setCreatedDate(LocalDateTime.now());
-//                    ticket.setExpiredDate(event.getTimeclosesale());
-//                    ticket.setStatus(status); // Use the provided status
-//                    ticket.setStatusCart(statusCart);
-//
-//                    Ticket savedTicket = ticketRepository.save(ticket);
-//                    response.put("message", "Ticket created successfully");
-//                    response.put("TicketId", String.valueOf(savedTicket.getId()));
-//                    return Optional.of(response);
-//                } else {
-//                    response.put("message", "Cannot create ticket for expired event.");
-//                    return Optional.of(response);
-//                }
-//            } else {
-//                response.put("message", "Visitor or Event not found for given IDs.");
-//                return Optional.of(response);
-//            }
-//        } catch (Exception e) {
-//            response.put("message", "Error occurred while creating the ticket: " + e.getMessage());
-//            e.printStackTrace();
-//            return Optional.of(response);
-//        }
-//    }
-
-//    public Optional<Map<String, String>> createOrderTicket(Integer visitorId, Integer eventId, boolean statusCart, Ticket.Status status) {
-//        Map<String, String> response = new HashMap<>();
-//
-//        try {
-//            Optional<Visitor> visitorOptional = visitorService.findById(visitorId);
-//            Optional<Event> eventOptional = eventService.findById(eventId);
-//
-//            if (visitorOptional.isPresent() && eventOptional.isPresent()) {
-//                Visitor visitor = visitorOptional.get();
-//                Event event = eventOptional.get();
-//
-//                // Check if the visitor already has a ticket for this event
-//                Optional<Ticket> existingTicket = ticketRepository.findByVisitor_IdAndEvent_Id(visitorId, eventId);
-//                if (existingTicket.isPresent() && existingTicket.get().getStatus() != Ticket.Status.CANCELLED) {
-//                    response.put("message", "Visitor already has a ticket for this event.");
-//                    return Optional.of(response);
-//                }
-//
-//                if (LocalDateTime.now().isBefore(event.getTimeclosesale())) {
-//                    Ticket ticket = new Ticket();
-//                    ticket.setVisitor(visitor);
-//                    ticket.setEvent(event);
-//                    ticket.setCreatedDate(LocalDateTime.now());
-//                    ticket.setExpiredDate(event.getTimeclosesale());
-//                    ticket.setStatus(status); // Use the provided status
-//                    ticket.setStatusCart(statusCart);
-//
-//                    Ticket savedTicket = ticketRepository.save(ticket);
-//                    response.put("message", "Ticket created successfully");
-//                    response.put("TicketId", String.valueOf(savedTicket.getId()));
-//                    return Optional.of(response);
-//                } else {
-//                    response.put("message", "Cannot create ticket for expired event.");
-//                    return Optional.of(response);
-//                }
-//            } else {
-//                response.put("message", "Visitor or Event not found for given IDs.");
-//                return Optional.of(response);
-//            }
-//        } catch (Exception e) {
-//            response.put("message", "Error occurred while creating the ticket: " + e.getMessage());
-//            e.printStackTrace();
-//            return Optional.of(response);
-//        }
-//    }
 
     public Optional<Map<String, String>> createOrderTicket(Integer visitorId, Integer eventId, boolean statusCart, Ticket.Status status) {
         Map<String, String> response = new HashMap<>();

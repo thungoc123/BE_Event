@@ -114,31 +114,13 @@ public class VNPayService implements VNPayServiceImp {
             restDTO.setStatus("ok");
             restDTO.setMessage("successfully");
             restDTO.setURL(paymentUrl);
-            restDTO.setExpirationTime(expirationTime); // Set the expiration time in the DTO
-            restDTO.setExpirationDate(formattedExpireDate); // Set the formatted expiration date
-            restDTO.setTimeZone(timeZone.getID());  // Set the time zone in the DTO
-
-            if (email != null) {
-                // Send email notification
-                String emailContent = "Dear " + email + ",\n\n" +
-                        "Your bill for the ticket you just bought is " + amount + " VND.\n" +
-                        "If you have not completed the payment, please click the link below to continue:\n" +
-                        paymentUrl + "\n\n" +
-                        "Please complete the payment before " + expirationTime + " on " + formattedExpireDate + "\n" +
-                        "Thank you for using our online ticket purchasing service!\n";
-
-                emailService.sendEmail(
-                        email,  // Use the email from the request parameter
-                        "Payment Request Successful",
-                        emailContent
-                );
-            }
+            restDTO.setExpirationTime(expirationTime);
+            restDTO.setExpirationDate(formattedExpireDate);
+            restDTO.setTimeZone(timeZone.getID());
 
             return restDTO;
         } catch (Exception e) {
-            // Log the exception for debugging purposes
             logger.error("Error processing payment", e);
-            // Return an error response
             throw new RuntimeException("Error processing payment: " + e.getMessage(), e);
         }
     }
