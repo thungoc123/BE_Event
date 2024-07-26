@@ -60,6 +60,11 @@ public class SponsorService implements SponsorProgramImp {
 
     }
 
+    public List<Sponsor> getSponsorsByAccountId(int accountId) {
+        List<Sponsor> sponsors = sponsorRepository.findByAccountId(accountId);
+        return sponsors;
+    }
+
     public void registerSponsor(SponsorRegistrationDto sponsorDto) throws Exception {
         if (accountRepository.existsByEmail(sponsorDto.getEmail())) {
             throw new Exception("Email already exists");

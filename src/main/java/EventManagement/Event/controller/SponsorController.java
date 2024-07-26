@@ -2,6 +2,7 @@ package EventManagement.Event.controller;
 
 import EventManagement.Event.DTO.SponsorProfitDTO;
 import EventManagement.Event.entity.Event;
+import EventManagement.Event.entity.Sponsor;
 import EventManagement.Event.entity.SponsorProgram;
 import EventManagement.Event.payload.Request.AddEventsToSponsorProgramRequest;
 import EventManagement.Event.payload.Request.InsertSponsorProgramRequest;
@@ -68,7 +69,11 @@ public class SponsorController {
         }
 
 
-
+   @GetMapping("/sponsor/{accountId}")
+   public ResponseEntity<List<Sponsor>> getSponsorByAccountId(@PathVariable int accountId){
+        List<Sponsor> sponsorDTOS = sponsorService.getSponsorsByAccountId(accountId);
+        return ResponseEntity.ok(sponsorDTOS);
+   }
 
 
     @GetMapping("/account/event")
