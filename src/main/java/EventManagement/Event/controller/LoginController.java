@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -26,7 +27,8 @@ public class LoginController {
 //    @PreAuthorize() : Khi gọi link thì kiểm luôn quyền trước khi chạy logic code
 //    @PostAuthorize() : Chạy logic code xong mới kiểm tra quyền
 
-
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtHelper jwtHelper;
 
@@ -46,10 +48,13 @@ public class LoginController {
 
         try {
             // Thực hiện xác thực
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            Account account = feedbackService.findByEmail(email);
+            if (account == null || !passwordEncoder.matches(password, account.getPassword())) {
+                throw new AuthenticationException("Invalid email or password") {};
+            }
 
             // Xác thực thành công, lấy thông tin tài khoản
-            Account account = feedbackService.findByEmail(email);
+
             String accountId = String.valueOf(account.getId());
             String roleUser = account.getRole().getRoleName();
 

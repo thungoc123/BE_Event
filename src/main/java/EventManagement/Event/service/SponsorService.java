@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,6 +28,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class SponsorService implements SponsorProgramImp {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private SponsorProgramRepository sponsorProgramRepository;
     @Autowired
@@ -83,7 +87,7 @@ public class SponsorService implements SponsorProgramImp {
 
         Account account = new Account();
         account.setEmail(sponsorDto.getEmail());
-        account.setPassword(sponsorDto.getPassword());
+        account.setPassword(passwordEncoder.encode(sponsorDto.getPassword()));
         account.setRole(role);
         accountRepository.save(account);
 

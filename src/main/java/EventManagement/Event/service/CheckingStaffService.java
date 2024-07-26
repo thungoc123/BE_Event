@@ -7,6 +7,7 @@ import EventManagement.Event.service.imp.CheckingStaffImp;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -14,6 +15,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class CheckingStaffService implements CheckingStaffImp {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private EmailService emailService;
@@ -82,7 +85,7 @@ public class CheckingStaffService implements CheckingStaffImp {
 
             Account account = new Account();
             account.setEmail(email);
-            account.setPassword(randomPassword);
+            account.setPassword(passwordEncoder.encode(randomPassword));
             account.setRole(role);
             Account accountSaved = accountRepository.save(account);
             System.out.println("Account created with ID: " + accountSaved.getId());

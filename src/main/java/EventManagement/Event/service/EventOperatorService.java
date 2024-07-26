@@ -9,10 +9,13 @@ import EventManagement.Event.repository.EventOperatorRepository;
 import EventManagement.Event.repository.RoleRepository;
 import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EventOperatorService {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
@@ -39,7 +42,7 @@ public class EventOperatorService {
 
         Account account = new Account();
         account.setEmail(eventOperatorDTO.getEmail());
-        account.setPassword(eventOperatorDTO.getPassword());
+        account.setPassword(passwordEncoder.encode(eventOperatorDTO.getPassword()));
         account.setRole(role);
         account.setEnabled(false); // Tạo tài khoản luôn bị vô hiệu hóa
         accountRepository.save(account);

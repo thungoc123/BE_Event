@@ -10,6 +10,7 @@ import EventManagement.Event.repository.RoleRepository;
 
 import EventManagement.Event.repository.VisitorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,8 @@ import java.util.Optional;
 
 @Service
 public class VisitorService {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private AccountRepository accountRepository;
 
@@ -49,7 +52,7 @@ public class VisitorService {
         // Tạo mới tài khoản
         Account account = new Account();
         account.setEmail(visitorRegistrationDTO.getEmail());
-        account.setPassword(visitorRegistrationDTO.getPassword());
+        account.setPassword(passwordEncoder.encode(visitorRegistrationDTO.getPassword()));
         account.setRole(role);
         accountRepository.save(account);
 
