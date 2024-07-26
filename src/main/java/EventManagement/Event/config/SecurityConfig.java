@@ -62,6 +62,8 @@ public class SecurityConfig {
                     author.requestMatchers("/api-auth-resetpassword/**").permitAll();
                     author.requestMatchers("/api-attendances-2/**").permitAll();
                     author.requestMatchers("/api-feedback-list-event/**").permitAll();
+                    author.requestMatchers("/api-surveys/**").hasRole("EO");
+                    author.requestMatchers("/api-surveyQuestion/**").hasRole("EO");
 
 
                     author.anyRequest().authenticated();
