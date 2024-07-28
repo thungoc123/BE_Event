@@ -1,6 +1,7 @@
 package EventManagement.Event.service.imp;
 
 import EventManagement.Event.entity.Event;
+import EventManagement.Event.payload.Request.CallCapitalRequest;
 import EventManagement.Event.payload.Request.InsertEventRequest;
 import EventManagement.Event.payload.Request.InsertSponsorRequest;
 
@@ -11,6 +12,7 @@ public interface EventServiceImp {
     boolean updateEvent(int EventId,  InsertEventRequest request);
     boolean deleteEvent(int EventId);
     boolean changeStateEvent(int eventId);
+    boolean callCapital(int eventId, CallCapitalRequest request);
 
 
 }

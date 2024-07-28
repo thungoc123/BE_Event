@@ -1,6 +1,7 @@
 package EventManagement.Event.service;
 
 import EventManagement.Event.entity.*;
+import EventManagement.Event.payload.Request.CallCapitalRequest;
 import EventManagement.Event.payload.Request.InsertEventRequest;
 import EventManagement.Event.repository.*;
 import EventManagement.Event.service.imp.EventServiceImp;
@@ -124,6 +125,22 @@ public class EventService implements EventServiceImp {
         }
     }
 
+    //call capital
+    public boolean callCapital(int eventId, CallCapitalRequest request) {
+        try{
+
+            Event event = eventRepository.findById(eventId).orElse(null);
+            if (event == null) {
+                throw new RuntimeException("Can't find eventId: " + eventId);
+            }
+            event.setFundraising(request.getFundraising());
+            eventRepository.save(event);
+            return true;
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
     public List<Event> getEventsByAccountId(HttpServletRequest request) {
         String accountId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

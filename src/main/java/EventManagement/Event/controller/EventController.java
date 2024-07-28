@@ -57,6 +57,18 @@ public class EventController {
             return ResponseEntity.ok(response);
         }
     }
+    @PostMapping("/{eventId}/callcapital")
+    public ResponseEntity<Map<String, String>> callCapital(@PathVariable int eventId, @RequestBody CallCapitalRequest capitalRequest){
+        Map<String, String> response = new HashMap<>();
+        boolean isCalled = eventService.callCapital(eventId, capitalRequest);
+        if (isCalled) {
+            response.put("message", "Event has been called.");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "Event has not been called.");
+            return ResponseEntity.ok(response);
+        }
+    }
 
     @GetMapping("/account")
     public ResponseEntity<List<Event>> getEventsByAccount(HttpServletRequest request) {

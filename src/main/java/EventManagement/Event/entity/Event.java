@@ -33,6 +33,8 @@ public class Event {
     @Column(name = "timeclosesale")
     private LocalDateTime timeclosesale;
 
+    @Column(name = "fundraising")
+    private Integer fundraising;
     @ManyToOne
     @JoinColumn(name = "account_id")
     @JsonBackReference
