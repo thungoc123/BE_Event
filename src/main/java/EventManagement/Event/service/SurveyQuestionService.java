@@ -41,5 +41,8 @@ public class SurveyQuestionService {
 
 
     }
+    public List<SurveyQuestion> getSurveyQuestionsBySurveyId(int surveyId) {
+        return surveyQuestionRepository.findBySurveyId(surveyId);
+    }
 }
 
