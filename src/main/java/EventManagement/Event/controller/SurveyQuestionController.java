@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api-surveyQuestion")
 public class SurveyQuestionController {
@@ -20,5 +22,9 @@ public class SurveyQuestionController {
     public ResponseEntity<SurveyQuestion> createSurvey(@PathVariable Long surveyId, @RequestBody SurveyQuestionDTO surveyQuestionDTO) {
         SurveyQuestion createdSurveyQuestion = surveyQuestionService.createSurveyQuestion(surveyId, surveyQuestionDTO);
         return ResponseEntity.ok(createdSurveyQuestion);
+    }
+    @GetMapping("/{surveyId}/questions")
+    public List<SurveyQuestion> getSurveyQuestions(@PathVariable int surveyId) {
+        return surveyQuestionService.getSurveyQuestionsBySurveyId(surveyId);
     }
 }
