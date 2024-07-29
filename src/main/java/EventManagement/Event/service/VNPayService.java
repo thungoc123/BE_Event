@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -123,5 +124,25 @@ public class VNPayService implements VNPayServiceImp {
             logger.error("Error processing payment", e);
             throw new RuntimeException("Error processing payment: " + e.getMessage(), e);
         }
+    }
+    public boolean validateVnpayResponse(Map<String, String> allParams) throws UnsupportedEncodingException {
+        String vnp_SecureHash = allParams.get("vnp_SecureHash");
+        allParams.remove("vnp_SecureHash");
+
+        List<String> fieldNames = new ArrayList<>(allParams.keySet());
+        Collections.sort(fieldNames);
+        StringBuilder hashData = new StringBuilder();
+        for (String fieldName : fieldNames) {
+            String fieldValue = allParams.get(fieldName);
+            if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                hashData.append(fieldName);
+                hashData.append('=');
+                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
+                hashData.append('&');
+            }
+        }
+
+        String secureHash = VnPayConfig.hmacSHA512(VnPayConfig.secretKey, hashData.toString());
+        return secureHash.equals(vnp_SecureHash);
     }
 }

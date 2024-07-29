@@ -134,4 +134,5 @@ public class Account {
     @JsonIgnore
     @JsonIgnoreProperties("account")
     private List<Event> events;
+
 }

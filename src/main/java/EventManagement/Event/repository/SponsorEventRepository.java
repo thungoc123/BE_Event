@@ -11,12 +11,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SponsorEventRepository extends JpaRepository<SponsorEvent, SponsorEventId> {
     List<SponsorEvent> findBySponsorId(Long sponsorId);
     List<SponsorEvent> findByEventAndSponsor(Event event, Sponsor sponsor);
     List<SponsorEvent> findByEventId(int eventId);
+
 
 
 }

@@ -33,6 +33,7 @@ import lombok.Data;
 
             @Column(name = "profit_percent")
             private Double profitPercent;
-
+            @Column(name ="contributed_capital")
+            private Integer contributedCapital;
 
 }

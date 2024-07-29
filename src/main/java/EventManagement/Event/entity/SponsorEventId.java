@@ -9,4 +9,5 @@ public class SponsorEventId {
     private int eventId;
     private Long sponsorId;
 
+
 }
