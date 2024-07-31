@@ -12,6 +12,7 @@ import EventManagement.Event.service.SponsorService;
 import EventManagement.Event.DTO.SponsorDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,10 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api-sponsor")
@@ -52,9 +50,16 @@ public class SponsorController {
 
     }
     @GetMapping("/event/{eventId}/contributed-capital-percentage")
-    public ResponseEntity<Double> getContributedCapitalPercentage(@PathVariable int eventId) {
-        double percentage = sponsorEventService.getTotalContributedCapitalPercentage(eventId);
-        return ResponseEntity.ok(percentage);
+    public ResponseEntity<?> getContributedCapitalPercentage(@PathVariable int eventId) {
+        try {
+            double percentage = sponsorEventService.getTotalContributedCapitalPercentage(eventId);
+            Map<String, Double> response = Collections.singletonMap("percentage", percentage);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", e.getMessage()));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error", e.getMessage()));
+        }
     }
 
 

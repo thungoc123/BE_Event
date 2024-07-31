@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -21,13 +22,23 @@ public class SponsorEventService {
 
     public double getTotalContributedCapitalPercentage(int eventId) {
         List<SponsorEvent> sponsorEvents = sponsorEventRepository.findByEventId(eventId);
+
         int totalContributedCapital = sponsorEvents.stream()
-                .mapToInt(SponsorEvent::getContributedCapital)
+                .map(SponsorEvent::getContributedCapital)
+                .filter(Objects::nonNull)
+                .mapToInt(Integer::intValue)
                 .sum();
         Optional<Event> events = eventRepository.findById(eventId);
         if(events.isPresent()) {
             Event event = events.get();
-            double fundraising = event.getFundraising();
+            Integer fundraising = event.getFundraising();
+            if (fundraising == null) {
+                throw new IllegalArgumentException("The event has not started fundraising.");
+            }
+
+            if (totalContributedCapital == 0) {
+                return 0;
+            }
             double percentage = (totalContributedCapital / (0.7 * fundraising))*100 ;
             return percentage;
         } else {
