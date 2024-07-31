@@ -6,13 +6,12 @@ import EventManagement.Event.entity.Sponsor;
 import EventManagement.Event.entity.SponsorProgram;
 import EventManagement.Event.payload.Request.AddEventsToSponsorProgramRequest;
 import EventManagement.Event.payload.Request.InsertSponsorProgramRequest;
-import EventManagement.Event.repository.SponsorProgramRepository;
 import EventManagement.Event.service.EventService;
+import EventManagement.Event.service.SponsorEventService;
 import EventManagement.Event.service.SponsorService;
 import EventManagement.Event.DTO.SponsorDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +31,8 @@ public class SponsorController {
     private EventService  eventService;
     @Autowired
     private SponsorService sponsorService;
+    @Autowired
+    private SponsorEventService sponsorEventService;
 
 
     @PostMapping("/sponsorProgram/{sponsorProgramId}/events")
@@ -50,6 +51,12 @@ public class SponsorController {
 
 
     }
+    @GetMapping("/event/{eventId}/contributed-capital-percentage")
+    public ResponseEntity<Double> getContributedCapitalPercentage(@PathVariable int eventId) {
+        double percentage = sponsorEventService.getTotalContributedCapitalPercentage(eventId);
+        return ResponseEntity.ok(percentage);
+    }
+
 
     @PutMapping("/program/{sponsorProgramid}")
         public ResponseEntity<Map<String, String>> updateProgram(@PathVariable int sponsorProgramid,

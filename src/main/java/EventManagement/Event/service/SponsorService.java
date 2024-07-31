@@ -368,6 +368,7 @@ public class SponsorService implements SponsorProgramImp {
         return sponsorProfits;
     }
 
+
     private List<SponsorEvent> getSponsorEventsByEventIdAndAccountId(int eventId, int accountId) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<SponsorEvent> cq = cb.createQuery(SponsorEvent.class);
