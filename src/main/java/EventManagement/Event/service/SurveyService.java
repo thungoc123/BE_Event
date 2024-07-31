@@ -2,6 +2,7 @@ package EventManagement.Event.service;
 
 import EventManagement.Event.DTO.FeedbackEventDTO;
 import EventManagement.Event.DTO.SurveyDTO;
+import EventManagement.Event.DTO.SurveyEventDTO;
 import EventManagement.Event.entity.Account;
 import EventManagement.Event.entity.Event;
 import EventManagement.Event.entity.Survey;
@@ -59,8 +60,12 @@ public class SurveyService {
         return surveyRepository.save(survey);
     }
 
-    public List<Survey> getSurveyByAccountID(int accountID) {
-        return surveyRepository.findByAccountId(accountID);
-    }
+//    public List<Survey> getSurveyByAccountID(int accountID) {
+//
+//        return surveyRepository.findByAccountId(accountID);
+//    }
+public List<SurveyEventDTO> getSurveyByAccountID(int accountID) {
+    return surveyRepository.findByAccountId(accountID);
+}
 }
 
