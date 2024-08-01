@@ -88,8 +88,16 @@ public class VNPayController {
 
                 return ResponseEntity.status(HttpStatus.OK).body(paymentResponse);
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("SponsorEvent not found for eventId=" + eventId + " and sponsorId=" + sponsorId);
+                // Tạo mới SponsorEvent nếu chưa tồn tại
+                SponsorEvent newSponsorEvent = new SponsorEvent();
+                newSponsorEvent.setEvent(event);
+                newSponsorEvent.setSponsor(sponsor);
+                int amountAsInt = (int) amount;
+                 // Gán giá trị mặc định cho profitPercent nếu cần
+                newSponsorEvent.setContributedCapital(amountAsInt); // Gán số tiền thanh toán
+                sponsorEventRepository.save(newSponsorEvent);
+
+                return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse);
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
