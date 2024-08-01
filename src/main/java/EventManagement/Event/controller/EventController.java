@@ -213,6 +213,18 @@ public class EventController {
                 return ResponseEntity.status(400).body(response);
             }
     }
+    @PutMapping("/add-sponsor/")
+    public ResponseEntity<Map<String, String>> putSponsor(@RequestBody InsertSponsorRequest insertSponsorRequest){
+        boolean result = sponsorService.putSponsor(insertSponsorRequest);
+        Map<String, String> response = new HashMap<>();
+        if (result) {
+            response.put("message", "Sponsor added successfully");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "Failed to add sponsor");
+            return ResponseEntity.status(400).body(response);
+        }
+    }
     @PutMapping("/{eventId}")
     public ResponseEntity<Map<String, String>> updateEvent(@PathVariable int eventId, @RequestBody InsertEventRequest request) {
         boolean isUpdated = eventService.updateEvent(eventId, request);

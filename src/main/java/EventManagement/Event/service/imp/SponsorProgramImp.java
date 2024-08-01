@@ -15,4 +15,5 @@ public interface SponsorProgramImp {
     boolean removeEventFromSponsorProgram(int sponsorProgramId, int eventId);
     boolean deleteProgram(int sponsorProgramId);
     boolean deleteSponsor(int eventId, Long sponsorId);
+    boolean putSponsor(InsertSponsorRequest insertSponsorRequest);
 }

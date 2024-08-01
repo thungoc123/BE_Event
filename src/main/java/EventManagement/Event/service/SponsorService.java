@@ -216,6 +216,42 @@ public class SponsorService implements SponsorProgramImp {
         }
     }
     @Override
+    public boolean putSponsor(InsertSponsorRequest insertSponsorRequest) {
+        try {
+            int eventId = insertSponsorRequest.getEventId();
+            Event event = eventRepository.findById(eventId)
+                    .orElseThrow(() -> new NoSuchElementException("Event not found for ID: " + eventId));
+
+            Long sponsorId = insertSponsorRequest.getSponsorId();
+            Sponsor sponsor = sponsorRepository.findById(sponsorId).orElse(null);
+            if (sponsor == null) {
+                throw new RuntimeException("Account not found");
+            }
+
+            // Tìm SponsorEvent dựa trên eventId và sponsorId
+            List<SponsorEvent> sponsorEvents = sponsorEventRepository.findByEventAndSponsor(event, sponsor);
+            SponsorEvent sponsorEvent;
+            if (!sponsorEvents.isEmpty()) {
+                // Nếu tìm thấy, sử dụng SponsorEvent hiện tại
+                sponsorEvent = sponsorEvents.get(0);
+            } else {
+                // Nếu không tìm thấy, tạo mới SponsorEvent
+                sponsorEvent = new SponsorEvent();
+                sponsorEvent.setEvent(event);
+                sponsorEvent.setSponsor(sponsor);
+            }
+
+            // Cập nhật thông tin
+            sponsorEvent.setProfitPercent(insertSponsorRequest.getProfitPercentage());
+            sponsorEventRepository.save(sponsorEvent);
+
+            return true;
+        } catch (Exception e) {
+            System.out.println("Unexpected error occurred: " + e.getMessage());
+            return false;
+        }
+    }
+    @Override
     public boolean updateProgram(int sponsorProgramId, InsertSponsorProgramRequest insertSponsorProgramRequest){
         try{
             SponsorProgram sponsorProgram = sponsorProgramRepository.findById(sponsorProgramId).orElse(null);
