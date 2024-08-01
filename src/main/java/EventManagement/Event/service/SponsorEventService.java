@@ -37,8 +37,10 @@ public class SponsorEventService {
                 percentage = 0;
             }
             percentage = (totalContributedCapital / (0.7 * fundraising))*100 ;
+
+            int adjustedFundraising = (int) (fundraising * 0.7);
             Map<String, Object> result = new HashMap<>();
-            result.put("fundraising", fundraising);
+            result.put("fundraising", adjustedFundraising);
             result.put("percentage", percentage);
 
             return result;

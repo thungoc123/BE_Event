@@ -49,7 +49,7 @@ public class VNPayController {
         }
     }
     @GetMapping("/pay/capital")
-    public ResponseEntity<?> pay(@RequestParam long amount, @RequestParam String email, @RequestParam int eventId, @RequestParam Long sponsorId) {
+    public ResponseEntity<?> pay(@RequestParam long amount, @RequestParam String email, @RequestParam int eventId, @RequestParam Long sponsorId, @RequestParam double profit_percent) {
         try {
             System.out.println("Received payment request: amount=" + amount + ", email=" + email + ", eventId=" + eventId + ", sponsorId=" + sponsorId);
 
@@ -84,6 +84,7 @@ public class VNPayController {
                 }
                 int amountAsInt = (int) amount;
                 sponsorEvent.setContributedCapital(amountAsInt);
+                sponsorEvent.setProfitPercent(profit_percent);
                 sponsorEventRepository.save(sponsorEvent);
 
                 return ResponseEntity.status(HttpStatus.OK).body(paymentResponse);
@@ -94,7 +95,8 @@ public class VNPayController {
                 newSponsorEvent.setSponsor(sponsor);
                 int amountAsInt = (int) amount;
                  // Gán giá trị mặc định cho profitPercent nếu cần
-                newSponsorEvent.setContributedCapital(amountAsInt); // Gán số tiền thanh toán
+                newSponsorEvent.setContributedCapital(amountAsInt);
+                newSponsorEvent.setProfitPercent(profit_percent);// Gán số tiền thanh toán
                 sponsorEventRepository.save(newSponsorEvent);
 
                 return ResponseEntity.status(HttpStatus.CREATED).body(paymentResponse);
