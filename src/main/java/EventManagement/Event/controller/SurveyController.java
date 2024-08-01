@@ -2,6 +2,7 @@ package EventManagement.Event.controller;
 
 import EventManagement.Event.DTO.FeedbackEventDTO;
 import EventManagement.Event.DTO.SurveyDTO;
+import EventManagement.Event.DTO.SurveyEventDTO;
 import EventManagement.Event.entity.Survey;
 import EventManagement.Event.service.SurveyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class SurveyController {
     }
 
     @GetMapping("/list-survey/{accountID}")
-    public List<Survey> getSurveyByAccountID(@PathVariable int accountID) {
+    public List<SurveyEventDTO> getSurveyByAccountID(@PathVariable int accountID) {
         return surveyService.getSurveyByAccountID(accountID);
 
     }
