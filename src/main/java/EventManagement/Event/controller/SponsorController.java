@@ -149,7 +149,6 @@ public class SponsorController {
             response.put("message", "program deleted successfully");
             return ResponseEntity.ok(response);
         } else {
-
             response.put("message", "Failed to delete program");
             return ResponseEntity.status(500).body(response);
         }

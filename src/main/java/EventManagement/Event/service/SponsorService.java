@@ -393,7 +393,7 @@ public class SponsorService implements SponsorProgramImp {
             Double sponsorProfitPercent = (sponsorEvent.getProfitPercent() / 100.0);
 
             // Tính profitAmount dựa trên sponsorProfitPercent và totalEventProfit
-            Double profitAmount = sponsorProfitPercent * totalEventProfit;
+            Double profitAmount = sponsorProfitPercent * (totalEventProfit*70/100);
 
             SponsorProfitDTO dto = new SponsorProfitDTO();
             dto.setSponsorId(sponsorEvent.getSponsor().getId());
