@@ -7,10 +7,7 @@ import EventManagement.Event.repository.SponsorEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class SponsorEventService {
@@ -20,7 +17,7 @@ public class SponsorEventService {
     @Autowired
     private EventRepository eventRepository;
 
-    public double getTotalContributedCapitalPercentage(int eventId) {
+    public Map<String, Object>  getTotalContributedCapitalPercentage(int eventId) {
         List<SponsorEvent> sponsorEvents = sponsorEventRepository.findByEventId(eventId);
 
         int totalContributedCapital = sponsorEvents.stream()
@@ -35,12 +32,16 @@ public class SponsorEventService {
             if (fundraising == null) {
                 throw new IllegalArgumentException("The event has not started fundraising.");
             }
-
+            double percentage;
             if (totalContributedCapital == 0) {
-                return 0;
+                percentage = 0;
             }
-            double percentage = (totalContributedCapital / (0.7 * fundraising))*100 ;
-            return percentage;
+            percentage = (totalContributedCapital / (0.7 * fundraising))*100 ;
+            Map<String, Object> result = new HashMap<>();
+            result.put("fundraising", fundraising);
+            result.put("percentage", percentage);
+
+            return result;
         } else {
             throw new NoSuchElementException("Event not found");
         }

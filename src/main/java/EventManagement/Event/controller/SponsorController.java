@@ -52,9 +52,8 @@ public class SponsorController {
     @GetMapping("/event/{eventId}/contributed-capital-percentage")
     public ResponseEntity<?> getContributedCapitalPercentage(@PathVariable int eventId) {
         try {
-            double percentage = sponsorEventService.getTotalContributedCapitalPercentage(eventId);
-            Map<String, Double> response = Collections.singletonMap("percentage", percentage);
-            return ResponseEntity.ok(response);
+            Map<String, Object> result = sponsorEventService.getTotalContributedCapitalPercentage(eventId);
+            return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", e.getMessage()));
         } catch (NoSuchElementException e) {
