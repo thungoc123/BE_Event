@@ -3,9 +3,11 @@ package EventManagement.Event.controller;
 import EventManagement.Event.DTO.SponsorProfitDTO;
 import EventManagement.Event.entity.Event;
 import EventManagement.Event.entity.Sponsor;
+import EventManagement.Event.entity.SponsorEvent;
 import EventManagement.Event.entity.SponsorProgram;
 import EventManagement.Event.payload.Request.AddEventsToSponsorProgramRequest;
 import EventManagement.Event.payload.Request.InsertSponsorProgramRequest;
+import EventManagement.Event.service.BillService;
 import EventManagement.Event.service.EventService;
 import EventManagement.Event.service.SponsorEventService;
 import EventManagement.Event.service.SponsorService;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api-sponsor")
@@ -31,6 +34,8 @@ public class SponsorController {
     private SponsorService sponsorService;
     @Autowired
     private SponsorEventService sponsorEventService;
+    @Autowired
+    private BillService billService;
 
 
     @PostMapping("/sponsorProgram/{sponsorProgramId}/events")
@@ -47,6 +52,15 @@ public class SponsorController {
             return ResponseEntity.ok(response);
         }
 
+
+    }
+    @GetMapping("/bill/event/{eventId}/sponsor/{sponsorId}")
+    public ResponseEntity<List<Map<String, Object>>> getBill(@PathVariable int eventId, @PathVariable Long sponsorId) {
+        List<Map<String, Object>> billDetails = billService.getBill(eventId, sponsorId);
+        if (billDetails.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(billDetails, HttpStatus.OK);
 
     }
     @GetMapping("/event/{eventId}/contributed-capital-percentage")

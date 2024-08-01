@@ -269,6 +269,7 @@ public class SponsorService implements SponsorProgramImp {
         }
 
     }
+
     @Override
     public boolean deleteSponsor(int eventId, Long sponsorId) {
         try {
